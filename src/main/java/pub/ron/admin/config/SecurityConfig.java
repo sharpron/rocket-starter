@@ -68,7 +68,7 @@ public class SecurityConfig {
     LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
     // 所有请求都要经过 jwt过滤器
     filterChainDefinitionMap.put("/api/authenticate", "anon");
-    filterChainDefinitionMap.put("/api/captchas", "anon");
+    filterChainDefinitionMap.put("/api/captcha", "anon");
     filterChainDefinitionMap.put("/api/**", "jwt");
     shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
     return shiroFilterFactoryBean;

@@ -1,7 +1,5 @@
 package pub.ron.admin.system.rest;
 
-import pub.ron.admin.system.body.DeptBody;
-import pub.ron.admin.system.service.DeptService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import javax.validation.Valid;
@@ -18,6 +16,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.system.body.DeptBody;
+import pub.ron.admin.system.service.DeptService;
+import pub.ron.admin.system.service.mapper.DeptMapper;
 
 /**
  * @author ron 2020/11/18
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class DeptRest {
 
   private final DeptService deptService;
+  private final DeptMapper deptMapper;
 
   @GetMapping
   @Operation(tags = "获取自己部门树")
@@ -52,19 +54,18 @@ public class DeptRest {
   @Operation(tags = "创建部门")
   @RequiresPermissions("dept:create")
   public ResponseEntity<?> create(@RequestBody @Valid DeptBody deptBody) {
-    deptService.add(deptBody);
+    deptService.create(deptMapper.mapDept(deptBody));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .build();
   }
 
-  @PutMapping("{id}")
+  @PutMapping
   @Operation(tags = "修改部门")
   @RequiresPermissions("dept:modify")
   public ResponseEntity<?> modify(
-      @PathVariable Long id,
       @RequestBody @Valid DeptBody deptBody) {
-    deptService.update(id, deptBody);
+    deptService.update(deptMapper.mapDept(deptBody));
     return ResponseEntity.ok().build();
   }
 
@@ -73,7 +74,7 @@ public class DeptRest {
   @RequiresPermissions("dept:remove")
   public ResponseEntity<?> remove(
       @PathVariable Long id) {
-    deptService.remove(id);
+    deptService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 

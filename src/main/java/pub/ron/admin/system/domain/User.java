@@ -2,7 +2,11 @@ package pub.ron.admin.system.domain;
 
 import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 
+import java.util.Set;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
@@ -57,6 +61,11 @@ public class User extends BaseEntity {
   @JoinColumn(foreignKey = @ForeignKey(NO_CONSTRAINT))
   @NotNull(message = "必须指定部门")
   private Dept dept;
+
+  @ElementCollection
+  @CollectionTable(name = "sys_user_role", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+  @Column(name = "role_id")
+  private Set<Long> roleIds;
 
   @PrePersist
   public void prePersist() {

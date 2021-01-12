@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
 /**
- * 全局异常处理器
+ * Global Exception handlers.
  *
  * @author ron 2020/11/19
  */
@@ -23,6 +23,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
+  /**
+   * Customize Application Exception
+   *
+   * @param e e
+   * @return Construct a Error from Exception's message
+   */
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleApp(AppException e) {
     log.error("handle failed!", e);

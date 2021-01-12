@@ -1,26 +1,25 @@
 package pub.ron.admin.system.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Resource;
+import org.springframework.stereotype.Service;
+import pub.ron.admin.common.AbstractService;
 import pub.ron.admin.system.domain.Menu;
 import pub.ron.admin.system.dto.MenuDto;
 import pub.ron.admin.system.repo.MenuRepo;
 import pub.ron.admin.system.security.SubjectUtils;
+import pub.ron.admin.system.security.principal.UserPrincipal;
 import pub.ron.admin.system.service.MenuService;
 import pub.ron.admin.system.service.mapper.MenuMapper;
-import java.util.ArrayList;
-import java.util.List;
-import javax.annotation.Resource;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 /**
  * @author ron 2020/12/14
  */
 @Service
-@RequiredArgsConstructor
 //@CacheConfig(cacheNames = "menus")
-public class MenuServiceImpl implements MenuService {
+public class MenuServiceImpl extends AbstractService<Menu, MenuRepo> implements MenuService {
 
-  private final MenuRepo menuRepo;
 
   private final MenuMapper menuMapper;
 
@@ -30,17 +29,24 @@ public class MenuServiceImpl implements MenuService {
   @Resource
   private MenuServiceImpl menuService;
 
+  public MenuServiceImpl(MenuRepo repository,
+      MenuMapper menuMapper) {
+    super(repository);
+    this.menuMapper = menuMapper;
+  }
+
 
   @Override
   public List<Menu> findMenusByUser(Long userId) {
-    return menuRepo.findMenusByUser(userId);
+    return repository.findMenusByUser(userId);
   }
 
   @Override
   public List<MenuDto> findAsTree() {
-    final List<Menu> menusByUser = menuService.findMenusByUser(
-        SubjectUtils.currentUser().getId()
-    );
+    final UserPrincipal userPrincipal = SubjectUtils.currentUser();
+
+    final List<Menu> menusByUser = userPrincipal.isAdmin() ?
+        repository.findAll() : menuService.findMenusByUser(userPrincipal.getId());
 
     List<MenuDto> result = new ArrayList<>();
     genTree(menusByUser, null, result);
@@ -60,24 +66,5 @@ public class MenuServiceImpl implements MenuService {
       }
 
     }
-  }
-
-  @Override
-//  @CacheEvict
-  public void create(Menu menu) {
-    menuRepo.save(menu);
-  }
-
-  @Override
-//  @CacheEvict
-  public void update(Menu menu) {
-    menuRepo.save(menu);
-  }
-
-
-  @Override
-//  @CacheEvict
-  public void removeById(Long id) {
-    menuRepo.deleteById(id);
   }
 }

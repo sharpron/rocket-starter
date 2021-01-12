@@ -1,10 +1,5 @@
 package pub.ron.admin.common.query;
 
-import pub.ron.admin.common.AppException;
-import pub.ron.admin.system.domain.Dept;
-import pub.ron.admin.system.domain.Role;
-import pub.ron.admin.system.security.SubjectUtils;
-import pub.ron.admin.system.security.principal.UserPrincipal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,6 +12,11 @@ import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import pub.ron.admin.common.AppException;
+import pub.ron.admin.system.domain.Dept;
+import pub.ron.admin.system.domain.Role;
+import pub.ron.admin.system.security.SubjectUtils;
+import pub.ron.admin.system.security.principal.UserPrincipal;
 
 /**
  * @author ron 2020/11/19
@@ -25,7 +25,7 @@ public class WhereBuilder {
 
 
   /**
-   * 禁用构造器
+   * Prevent external instantiation
    */
   private WhereBuilder() {
 
@@ -117,6 +117,15 @@ public class WhereBuilder {
     };
   }
 
+  /**
+   * Analysis of path
+   *
+   * @param rootName root name
+   * @param root     root
+   * @param <Y>      type of root
+   * @param <T>      type of entity
+   * @return Path
+   */
   @SuppressWarnings("unchecked")
   private static <Y, T> Path<Y> getPath(String rootName, Root<T> root) {
     final String[] paths = rootName.split("\\.");
@@ -127,6 +136,13 @@ public class WhereBuilder {
     return (Path<Y>) path;
   }
 
+  /**
+   * Convert parameters to numeric types
+   *
+   * @param o   对象
+   * @param <T> entity type
+   * @return Specification
+   */
   public static <T> Specification<T> buildSpecWithDept(Object o) {
     final Specification<T> specification = buildSpec(o);
     final UserPrincipal userPrincipal = SubjectUtils.currentUser();
@@ -144,6 +160,12 @@ public class WhereBuilder {
     };
   }
 
+  /**
+   * Convert parameters to numeric types
+   *
+   * @param value value
+   * @return number type
+   */
   private static Number asNumber(Object value) {
     if (value instanceof Number) {
       return (Number) value;
@@ -153,6 +175,13 @@ public class WhereBuilder {
     );
   }
 
+  /**
+   * type "between" need <span>List&lt;Long&gt; size=2</span>
+   * <p>supports array or Collection</p>
+   *
+   * @param value value
+   * @return <span>List&lt;Long&gt; size=2</span>
+   */
   @SuppressWarnings("unchecked")
   private static List<Long> asBetween(Object value) {
     if (value instanceof Long[]) {
