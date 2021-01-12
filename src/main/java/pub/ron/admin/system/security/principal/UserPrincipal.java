@@ -3,6 +3,7 @@ package pub.ron.admin.system.security.principal;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Getter;
+import pub.ron.admin.system.domain.User;
 
 /**
  * @author ron 2020/11/19
@@ -23,4 +24,8 @@ public class UserPrincipal {
   private final Set<Long> deptIds;
 
   private final String deptPath;
+
+  public boolean isAdmin() {
+    return User.ADMIN.equals(getUsername());
+  }
 }

@@ -1,16 +1,18 @@
 package pub.ron.admin.system.repo;
 
-import pub.ron.admin.system.domain.Dept;
 import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Set;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import pub.ron.admin.common.BaseRepo;
+import pub.ron.admin.system.domain.Dept;
 
 /**
  * @author ron 2020/11/19
  */
 @Repository
-public interface DeptRepo extends JpaRepository<Dept, Long> {
+public interface DeptRepo extends BaseRepo<Dept> {
 
   /**
    * 通过路径查询子部门
@@ -21,8 +23,22 @@ public interface DeptRepo extends JpaRepository<Dept, Long> {
   @Query("from Dept where path like :#{#path + '%'} order by orderNo")
   List<Dept> findByPath(String path);
 
-  long countByParent_Id(Long parentId);
-
+  /**
+   * 获取路径
+   *
+   * @param id id
+   * @return 路径
+   */
   @Query("select path from Dept where id=?1")
   String getPath(Long id);
+
+  /**
+   * 获取子部门
+   *
+   * @param deptId 部门id
+   * @return 子部门id
+   */
+  @Modifying
+  @Query("select id from Dept where parent.id=?1")
+  Set<Long> findChildrenDept(Long deptId);
 }

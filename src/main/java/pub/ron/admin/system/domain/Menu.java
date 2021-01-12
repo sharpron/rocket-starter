@@ -21,6 +21,8 @@ public class Menu extends BaseEntity {
 
   private String link;
 
+  private String icon;
+
   private String path;
 
   private String component;

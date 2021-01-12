@@ -19,6 +19,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
+ * 实体的基类
+ *
  * @author ron 2020/11/17
  */
 @Getter

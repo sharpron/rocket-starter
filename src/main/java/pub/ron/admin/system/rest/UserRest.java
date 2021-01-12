@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.system.service.mapper.UserMapper;
 
 /**
  * @author ron 2020/11/18
@@ -34,12 +35,14 @@ public class UserRest {
 
   private final UserService userService;
 
+  private final UserMapper userMapper;
+
   @GetMapping
   @Operation(tags = "分页查询用户")
   @RequiresPermissions("user:query")
   public ResponseEntity<?> findByPage(Pageable pageable, UserQuery userQuery) {
     return ResponseEntity.ok(
-        userService.findByPage(pageable, userQuery)
+        userService.findByPage(pageable, userQuery).map(userMapper::mapUserDto)
     );
   }
 
@@ -48,7 +51,7 @@ public class UserRest {
   @RequiresPermissions("user:create")
   public ResponseEntity<?> create(
       @Valid @RequestBody CreateUserBody createUser) {
-    userService.create(createUser);
+    userService.create(userMapper.mapUser(createUser));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .build();
@@ -59,7 +62,7 @@ public class UserRest {
   @RequiresPermissions("user:modify")
   public ResponseEntity<?> modify(
       @RequestBody @Valid ModifyUserBody modifyUserBody) {
-    userService.update(modifyUserBody);
+    userService.update(userMapper.mapUser(modifyUserBody));
     return ResponseEntity.ok().build();
   }
 
@@ -87,7 +90,7 @@ public class UserRest {
   @RequiresPermissions("user:remove")
   public ResponseEntity<?> remove(
       @PathVariable Long id) {
-    userService.removeById(id);
+    userService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 }

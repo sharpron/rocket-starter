@@ -1,6 +1,8 @@
 package pub.ron.admin.system.rest;
 
+import java.util.stream.Collectors;
 import pub.ron.admin.system.body.RoleBody;
+import pub.ron.admin.system.domain.Role;
 import pub.ron.admin.system.dto.RoleQuery;
 import pub.ron.admin.system.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +21,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.system.service.mapper.RoleMapper;
+import pub.ron.admin.system.service.mapper.UserMapper;
 
 /**
  * @author ron 2020/11/18
@@ -30,13 +34,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class RoleRest {
 
   private final RoleService roleService;
+  private final RoleMapper roleMapper;
 
   @GetMapping
   @Operation(tags = "分页查询角色")
   @RequiresPermissions("role:query")
   public ResponseEntity<?> findByPage(Pageable pageable, RoleQuery roleQuery) {
     return ResponseEntity.ok(
-        roleService.findByPage(pageable, roleQuery)
+        roleService.findByPage(pageable, roleQuery).map(roleMapper::mapDto)
     );
   }
 
@@ -44,7 +49,9 @@ public class RoleRest {
   @Operation(tags = "查询所有角色")
   public ResponseEntity<?> findAll() {
     return ResponseEntity.ok(
-        roleService.findAll()
+        roleService.findAll(null).stream()
+            .map(roleMapper::mapDto)
+            .collect(Collectors.toList())
     );
   }
 
@@ -52,7 +59,7 @@ public class RoleRest {
   @Operation(tags = "创建角色")
   @RequiresPermissions("role:create")
   public ResponseEntity<?> create(@RequestBody @Valid RoleBody roleBody) {
-    roleService.create(roleBody);
+    roleService.create(roleMapper.mapRole(roleBody));
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .build();
@@ -64,7 +71,10 @@ public class RoleRest {
   public ResponseEntity<?> modify(
       @PathVariable Long id,
       @RequestBody @Valid RoleBody roleBody) {
-    roleService.update(id, roleBody);
+
+    final Role role = roleMapper.mapRole(roleBody);
+    role.setId(id);
+    roleService.update(role);
     return ResponseEntity.ok().build();
   }
 
@@ -74,7 +84,7 @@ public class RoleRest {
   @RequiresPermissions("role:remove")
   public ResponseEntity<?> remove(
       @PathVariable Long id) {
-    roleService.remove(id);
+    roleService.deleteById(id);
     return ResponseEntity.ok().build();
   }
 

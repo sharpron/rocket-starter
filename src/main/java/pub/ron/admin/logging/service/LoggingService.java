@@ -1,15 +1,19 @@
 package pub.ron.admin.logging.service;
 
-import pub.ron.admin.logging.domain.Logging;
-import pub.ron.admin.logging.domain.Status;
-import pub.ron.admin.logging.repository.LoggingRepository;
-import pub.ron.admin.logging.util.IpUtils;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
+import pub.ron.admin.common.query.WhereBuilder;
+import pub.ron.admin.logging.domain.Logging;
+import pub.ron.admin.logging.domain.Status;
+import pub.ron.admin.logging.dto.LoggingQuery;
+import pub.ron.admin.logging.repository.LoggingRepository;
+import pub.ron.admin.logging.util.IpUtils;
 
 /**
  * @author ron 2020/9/20
@@ -28,6 +32,18 @@ public class LoggingService {
    * current request
    */
   private final HttpServletRequest request;
+
+  /**
+   * 分页查询
+   *
+   * @param pageable 分页器
+   * @param query    查询条件
+   * @return 数据
+   */
+  public Page<Logging> findByPage(Pageable pageable, LoggingQuery query) {
+    return loggingRepository.findAll(
+        WhereBuilder.buildSpec(query), pageable);
+  }
 
   /**
    * 为操作添加日志

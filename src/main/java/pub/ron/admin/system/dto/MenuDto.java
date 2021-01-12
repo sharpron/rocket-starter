@@ -20,6 +20,8 @@ public class MenuDto extends BaseDto {
 
   private String path;
 
+  private String icon;
+
   private String component;
 
   private boolean hide;

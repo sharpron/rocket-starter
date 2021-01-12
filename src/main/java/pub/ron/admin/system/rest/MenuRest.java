@@ -1,8 +1,5 @@
 package pub.ron.admin.system.rest;
 
-import pub.ron.admin.system.domain.Menu;
-import pub.ron.admin.system.dto.MenuQuery;
-import pub.ron.admin.system.service.MenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +15,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.system.domain.Menu;
+import pub.ron.admin.system.dto.MenuQuery;
+import pub.ron.admin.system.service.MenuService;
 
 /**
  * @author ron 2020/11/18
@@ -48,13 +48,11 @@ public class MenuRest {
         .build();
   }
 
-  @PutMapping("{id}")
+  @PutMapping
   @Operation(tags = "修改菜单")
   @RequiresPermissions("menu:modify")
   public ResponseEntity<?> modify(
-      @PathVariable Long id,
       @RequestBody @Valid Menu menu) {
-    menu.setId(id);
     menuService.update(menu);
     return ResponseEntity.ok().build();
   }
@@ -65,7 +63,7 @@ public class MenuRest {
   @RequiresPermissions("menu:remove")
   public ResponseEntity<?> remove(
       @PathVariable Long id) {
-    menuService.removeById(id);
+    menuService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
 

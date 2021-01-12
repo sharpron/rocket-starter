@@ -71,9 +71,8 @@ public class AuthRest {
         .body(new JWTToken(token));
   }
 
-  @SuppressWarnings("SpellCheckingInspection")
   @Operation(tags = "获取验证码")
-  @GetMapping("/captchas")
+  @GetMapping("/captcha")
   public ResponseEntity<byte[]> getCaptcha() {
     final Captcha captcha = captchaService.genCaptcha();
     return ResponseEntity.ok()
