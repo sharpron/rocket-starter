@@ -1,11 +1,7 @@
 package pub.ron.admin.system.rest;
 
-import java.util.stream.Collectors;
-import pub.ron.admin.system.body.RoleBody;
-import pub.ron.admin.system.domain.Role;
-import pub.ron.admin.system.dto.RoleQuery;
-import pub.ron.admin.system.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +17,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.system.body.RoleBody;
+import pub.ron.admin.system.domain.Role;
+import pub.ron.admin.system.dto.RoleQuery;
+import pub.ron.admin.system.service.RoleService;
 import pub.ron.admin.system.service.mapper.RoleMapper;
-import pub.ron.admin.system.service.mapper.UserMapper;
 
 /**
  * @author ron 2020/11/18
@@ -87,6 +86,5 @@ public class RoleRest {
     roleService.deleteById(id);
     return ResponseEntity.ok().build();
   }
-
 
 }

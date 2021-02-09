@@ -20,6 +20,14 @@ public interface CaptchaService {
    */
   void check(String key, String code);
 
+  /**
+   * 获取验证码
+   *
+   * @param key key
+   * @return code
+   */
+  String getCode(String key);
+
   @Value
   class Captcha {
 

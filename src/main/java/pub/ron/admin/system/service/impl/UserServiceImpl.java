@@ -1,5 +1,6 @@
 package pub.ron.admin.system.service.impl;
 
+import java.util.Optional;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,16 +31,14 @@ public class UserServiceImpl extends AbstractService<User, UserRepo>
   }
 
   @Override
-  protected void beforeSave(User user) {
-    // only create
-    if (user.getId() == null) {
-      final String salt = randomSalt();
-      final String encryptPass = passwordEncoder.encoded(
-          user.getPassword(), salt
-      );
-      user.setPasswordSalt(salt);
-      user.setPassword(encryptPass);
-    }
+  public void create(User user) {
+    final String salt = randomSalt();
+    final String encryptPass = passwordEncoder.encoded(
+        user.getPassword(), salt
+    );
+    user.setPasswordSalt(salt);
+    user.setPassword(encryptPass);
+    super.create(user);
   }
 
   @Override
@@ -66,10 +65,14 @@ public class UserServiceImpl extends AbstractService<User, UserRepo>
   }
 
   @Override
-  protected void beforeDelete(User user) {
-    if (user.getUsername().equals(User.ADMIN)) {
-      throw new AppException("不能删除超级管理员");
-    }
+  public void deleteById(Long id) {
+    final Optional<User> optionalUser = repository.findById(id);
+    optionalUser.ifPresent(user -> {
+      if (User.ADMIN.equals(user.getUsername())) {
+        throw new AppException("不能删除超级管理员");
+      }
+      repository.deleteById(id);
+    });
   }
 
   private static String randomSalt() {

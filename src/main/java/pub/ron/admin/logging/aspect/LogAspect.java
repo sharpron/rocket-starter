@@ -1,16 +1,16 @@
 package pub.ron.admin.logging.aspect;
 
-import pub.ron.admin.logging.Log;
-import pub.ron.admin.logging.service.LoggingService;
+import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import pub.ron.admin.logging.Log;
+import pub.ron.admin.logging.service.LoggingService;
 
 /**
  * 扫描{@link Log}定义的public方法，处理日志行为
@@ -25,14 +25,6 @@ public class LogAspect {
 
   private final LoggingService loggingService;
 
-
-  /**
-   * 切点
-   */
-  @Pointcut("@annotation(pub.ron.admin.logging.Log)")
-  public void pointCut() {
-  }
-
   /**
    * 环绕增强
    *
@@ -40,11 +32,12 @@ public class LogAspect {
    * @return 方法调用结果
    * @throws Throwable 方法调用可能抛出异常
    */
-  @Around("pointCut()")
+  @Around("@annotation(pub.ron.admin.logging.Log)")
   public Object around(ProceedingJoinPoint point) throws Throwable {
     return loggingService.addLogForOperation(
         point::proceed,
-        LogAspect.getLogDef(point).value()
+        LogAspect.getLogDef(point).value(),
+        Arrays.toString(point.getArgs())
     );
   }
 

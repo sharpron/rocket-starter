@@ -96,15 +96,28 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
   }
 
   @Override
-  protected void beforeSave(Dept dept) {
+  public void create(Dept dept) {
+    updatePath(dept);
+    super.create(dept);
+  }
+
+  @Override
+  public void update(Dept dept) {
+    updatePath(dept);
+    super.update(dept);
+  }
+
+  private void updatePath(Dept dept) {
     final Long parentId = dept.getParent().getId();
     final String path = repository.getPath(parentId) + parentId + DEPT_PATH_SEPARATOR;
     dept.setPath(path);
   }
 
   @Override
-  protected void beforeDelete(Dept dept) {
-    final List<Dept> children = repository.findByPath(dept.getPath());
+  public void deleteById(Long id) {
+    final String path = repository.getPath(id);
+    final List<Dept> children = repository.findByPath(path);
     repository.deleteAll(children);
   }
+
 }

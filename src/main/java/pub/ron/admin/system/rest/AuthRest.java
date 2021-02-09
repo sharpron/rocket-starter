@@ -46,7 +46,7 @@ public class AuthRest {
 
   @Operation(tags = "用户登录")
   @PostMapping("/authenticate")
-  public ResponseEntity<JWTToken> authorize(
+  public ResponseEntity<JWTToken> authenticate(
       @Valid @RequestBody LoginDto loginDto,
       @RequestHeader(CACHE_KEY) String cacheKey) {
 

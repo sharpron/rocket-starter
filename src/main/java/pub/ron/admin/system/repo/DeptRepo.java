@@ -32,13 +32,4 @@ public interface DeptRepo extends BaseRepo<Dept> {
   @Query("select path from Dept where id=?1")
   String getPath(Long id);
 
-  /**
-   * 获取子部门
-   *
-   * @param deptId 部门id
-   * @return 子部门id
-   */
-  @Modifying
-  @Query("select id from Dept where parent.id=?1")
-  Set<Long> findChildrenDept(Long deptId);
 }
