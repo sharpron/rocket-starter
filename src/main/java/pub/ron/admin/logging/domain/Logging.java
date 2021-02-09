@@ -25,6 +25,11 @@ public class Logging extends BaseEntity {
   private String description;
 
   /**
+   * 执行参数
+   */
+  private String params;
+
+  /**
    * 花费时间
    */
   private Long spendTime;

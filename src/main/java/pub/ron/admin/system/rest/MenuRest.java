@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pub.ron.admin.system.domain.Menu;
-import pub.ron.admin.system.dto.MenuQuery;
 import pub.ron.admin.system.service.MenuService;
 
 /**
@@ -32,7 +31,7 @@ public class MenuRest {
 
   @GetMapping
   @Operation(tags = "查询自己拥有的菜单")
-  public ResponseEntity<?> findOwner(MenuQuery menuQuery) {
+  public ResponseEntity<?> getMenus() {
     return ResponseEntity.ok(
         menuService.findAsTree()
     );

@@ -63,7 +63,7 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler
-  public ResponseEntity<ErrorInfo> handleOther(Exception e) {
+  public ResponseEntity<ErrorInfo> handleOther(Throwable e) {
     log.error("handle failed!", e);
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body(new ErrorInfo("服务器内部错误"));

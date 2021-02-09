@@ -29,7 +29,7 @@ public class LoggingService {
   private final LoggingRepository loggingRepository;
 
   /**
-   * current request
+   * current request proxy
    */
   private final HttpServletRequest request;
 
@@ -48,12 +48,13 @@ public class LoggingService {
   /**
    * 为操作添加日志
    *
-   * @param func 操作
-   * @param log  日志
+   * @param func   操作
+   * @param log    日志
+   * @param params 参数
    * @return func returns
    * @throws Throwable throws on func call
    */
-  public Object addLogForOperation(Func func, String log) throws Throwable {
+  public Object addLogForOperation(Func func, String log, String params) throws Throwable {
     long beginTime = System.currentTimeMillis();
     Exception exception = null;
     try {
@@ -68,9 +69,9 @@ public class LoggingService {
       logging.setDescription(log);
       logging.setSpendTime(time);
 
-      String clientIpAddr = IpUtils.getClientIpAddr(request);
-      logging.setClientIp(clientIpAddr);
-      logging.setClientRegion(IpUtils.ip2Region(clientIpAddr));
+      String clientIp = IpUtils.getClientIpAddr(request);
+      logging.setClientIp(clientIp);
+      logging.setClientRegion(IpUtils.ip2Region(clientIp));
       logging.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
 
       if (exception == null) {

@@ -41,13 +41,18 @@ public class CaptchaServiceImpl implements CaptchaService {
 
   @Override
   public void check(String key, String code) {
-    final String oldCode = redisTemplate.opsForValue().get(
-        CAPTCHA_CACHE_KEY + key);
+    final String oldCode = getCode(key);
     if (oldCode == null) {
       throw new AppException("验证码超时");
     }
     if (!oldCode.equals(code)) {
       throw new AppException("验证码错误");
     }
+  }
+
+  @Override
+  public String getCode(String key) {
+    return redisTemplate.opsForValue().get(
+        CAPTCHA_CACHE_KEY + key);
   }
 }

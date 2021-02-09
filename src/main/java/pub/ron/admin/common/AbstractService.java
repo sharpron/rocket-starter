@@ -29,50 +29,13 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param t t
    */
   @Override
-  public final void create(T t) {
+  public void create(T t) {
     if (t.getId() != null) {
       throw new IllegalArgumentException("创建时不能指定id");
     }
-    beforeSave(t);
     repository.save(t);
-    afterSave(t);
   }
 
-  /**
-   * 创建或者修改之前的回调
-   *
-   * @param t t
-   */
-  protected void beforeSave(T t) {
-
-  }
-
-  /**
-   * 创建或者修改后的回调
-   *
-   * @param t t
-   */
-  protected void afterSave(T t) {
-
-  }
-
-  /**
-   * 删除之前的回调
-   *
-   * @param t t
-   */
-  protected void beforeDelete(T t) {
-
-  }
-
-  /**
-   * 删除之后的回调
-   *
-   * @param t t
-   */
-  protected void afterDelete(T t) {
-
-  }
 
   /**
    * 更新操作
@@ -80,13 +43,11 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param t t
    */
   @Override
-  public final void update(T t) {
+  public void update(T t) {
     if (t.getId() == null) {
       throw new IllegalArgumentException("修改时必须指定id");
     }
-    beforeSave(t);
     repository.save(t);
-    afterSave(t);
   }
 
   /**
@@ -95,15 +56,12 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param id id
    */
   @Override
-  public final void deleteById(Long id) {
+  public void deleteById(Long id) {
     final Optional<T> optional = repository.findById(id);
     if (optional.isEmpty()) {
       throw new IllegalArgumentException("数据不存在" + id);
     }
-    final T t = optional.get();
-    beforeDelete(t);
-    repository.delete(t);
-    afterDelete(t);
+    repository.delete(optional.get());
   }
 
   /**
