@@ -1,8 +1,6 @@
 package pub.ron.admin.logging.dto;
 
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Enumerated;
 import lombok.Data;
 import pub.ron.admin.common.query.Where;
 import pub.ron.admin.common.query.Where.Type;
@@ -29,27 +27,30 @@ public class LoggingQuery {
   /**
    * 状态 成功或者失败
    */
-  @Enumerated
+  @Where
   private Status status;
 
   /**
    * 异常发生时的异常信息
    */
-  @Column(columnDefinition = "text")
+  @Where(type = Type.like)
   private String exception;
 
   /**
    * 客户端IP
    */
+  @Where(type = Type.like)
   private String clientIp;
 
   /**
    * 客户端区域
    */
+  @Where(type = Type.like)
   private String clientRegion;
 
   /**
    * 用户代理，浏览器信息等
    */
+  @Where(type = Type.like)
   private String userAgent;
 }
