@@ -24,7 +24,7 @@ public @interface Where {
   /**
    * @return relation query type
    */
-  Type type();
+  Type type() default Type.eq;
 
   /**
    * relation query type
