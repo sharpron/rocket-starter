@@ -9,6 +9,8 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import pub.ron.admin.system.security.SubjectUtils;
 
 /**
+ * project web socket supports.
+ *
  * @author herong
  */
 @Configuration
@@ -17,15 +19,15 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator {
   public static final String USERNAME_KEY = "USERNAME";
 
   /**
-   * 协议建立之前添加认证信息
+   * 协议建立之前添加认证信息.
    *
-   * @param sec      config
-   * @param request  request
+   * @param sec config
+   * @param request request
    * @param response response
    */
   @Override
-  public void modifyHandshake(ServerEndpointConfig sec,
-      HandshakeRequest request, HandshakeResponse response) {
+  public void modifyHandshake(
+      ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
     sec.getUserProperties().put(USERNAME_KEY, SubjectUtils.getCurrentUsername().orElse(null));
     super.modifyHandshake(sec, request, response);
   }

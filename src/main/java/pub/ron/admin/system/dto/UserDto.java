@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import lombok.Data;
 
 /**
+ * user dto.
+ *
  * @author ron 2020/12/12
  */
 @Data
@@ -24,5 +26,4 @@ public class UserDto {
   private boolean disabled;
 
   private LocalDateTime createTime;
-
 }

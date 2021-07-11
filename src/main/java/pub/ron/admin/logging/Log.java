@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 在方法上进行日志申明
+ * 在方法上进行日志申明.
  *
  * @author ron 2020.09.19
  */
@@ -15,8 +15,9 @@ import java.lang.annotation.Target;
 public @interface Log {
 
   /**
+   * value.
+   *
    * @return 日志申明名称
    */
   String value() default "";
-
 }

@@ -15,20 +15,26 @@ import pub.ron.admin.quartz.repo.QuartzLogRepo;
 import pub.ron.admin.quartz.service.QuartzJobService;
 
 /**
+ * quartz job service.
+ *
  * @author herong 2021/2/9
  */
 @Service
-public class QuartzJobServiceImpl
-    extends AbstractService<QuartzJob, QuartzJobRepo>
+public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRepo>
     implements QuartzJobService {
 
   private final QuartzLogRepo quartzLogRepo;
   private final QuartzJobManager quartzJobManager;
 
-
-  public QuartzJobServiceImpl(QuartzJobRepo repository,
-      QuartzLogRepo quartzLogRepo,
-      QuartzJobManager quartzJobManager) {
+  /**
+   * constructor.
+   *
+   * @param repository quartz job repository
+   * @param quartzLogRepo quartzLogRepo
+   * @param quartzJobManager quartzJobManager
+   */
+  public QuartzJobServiceImpl(
+      QuartzJobRepo repository, QuartzLogRepo quartzLogRepo, QuartzJobManager quartzJobManager) {
     super(repository);
     this.quartzLogRepo = quartzLogRepo;
     this.quartzJobManager = quartzJobManager;
@@ -74,5 +80,4 @@ public class QuartzJobServiceImpl
     super.deleteById(id);
     quartzJobManager.delete(id);
   }
-
 }

@@ -8,6 +8,8 @@ import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.quartz.domain.QuartzJob;
 
 /**
+ * quartz job repository.
+ *
  * @author herong 2021/2/9
  */
 @Repository

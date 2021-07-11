@@ -17,6 +17,8 @@ import pub.ron.admin.common.AppException;
 import pub.ron.admin.quartz.domain.QuartzJob;
 
 /**
+ * quartz job manager.
+ *
  * @author herong 2021/2/9
  */
 @Component
@@ -24,30 +26,29 @@ import pub.ron.admin.quartz.domain.QuartzJob;
 @RequiredArgsConstructor
 public class QuartzJobManager {
 
-
   private static final String JOB_NAME = "JOB:";
 
   private final Scheduler scheduler;
 
   /**
-   * 添加作业
+   * 添加作业.
    *
    * @param quartzJob 作业
    */
   public void addJob(QuartzJob quartzJob) {
     try {
       final String jobIdentity = jobName(quartzJob.getId());
-      JobDetail jobDetail = JobBuilder.newJob(JobRunner.class)
-          .withIdentity(jobIdentity).build();
+      JobDetail jobDetail = JobBuilder.newJob(JobRunner.class).withIdentity(jobIdentity).build();
 
-      Trigger cronTrigger = TriggerBuilder.newTrigger()
-          .withIdentity(jobIdentity)
-          .startNow()
-          .withSchedule(CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()))
-          .build();
+      Trigger cronTrigger =
+          TriggerBuilder.newTrigger()
+              .withIdentity(jobIdentity)
+              .startNow()
+              .withSchedule(CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()))
+              .build();
 
       cronTrigger.getJobDataMap().put(JobRunner.JOB_KEY, quartzJob);
-      //执行定时任务
+      // 执行定时任务
       scheduler.scheduleJob(jobDetail, cronTrigger);
 
       // 暂停任务
@@ -65,7 +66,7 @@ public class QuartzJobManager {
   }
 
   /**
-   * 暂停任务
+   * 暂停任务.
    *
    * @param jobId 任务id
    */
@@ -80,7 +81,7 @@ public class QuartzJobManager {
   }
 
   /**
-   * 删除任务
+   * 删除任务.
    *
    * @param id id
    */
@@ -96,7 +97,7 @@ public class QuartzJobManager {
   }
 
   /**
-   * 恢复任务
+   * 恢复任务.
    *
    * @param jobId 任务id
    */
@@ -111,7 +112,7 @@ public class QuartzJobManager {
   }
 
   /**
-   * 更新cron 表达式
+   * 更新cron 表达式.
    *
    * @param quartzJob job
    */
@@ -119,12 +120,14 @@ public class QuartzJobManager {
     TriggerKey triggerKey = TriggerKey.triggerKey(JOB_NAME + quartzJob.getId());
     try {
       CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
-      CronScheduleBuilder scheduleBuilder = CronScheduleBuilder
-          .cronSchedule(quartzJob.getCronExpression());
-      trigger = trigger.getTriggerBuilder()
-          .withIdentity(triggerKey)
-          .withSchedule(scheduleBuilder)
-          .build();
+      CronScheduleBuilder scheduleBuilder =
+          CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression());
+      trigger =
+          trigger
+              .getTriggerBuilder()
+              .withIdentity(triggerKey)
+              .withSchedule(scheduleBuilder)
+              .build();
       trigger.getJobDataMap().put(JobRunner.JOB_KEY, quartzJob);
 
       scheduler.rescheduleJob(triggerKey, trigger);

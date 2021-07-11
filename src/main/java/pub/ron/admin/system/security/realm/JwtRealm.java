@@ -1,12 +1,5 @@
 package pub.ron.admin.system.security.realm;
 
-import pub.ron.admin.system.domain.Menu;
-import pub.ron.admin.system.security.JwtToken;
-import pub.ron.admin.system.security.provider.TokenException;
-import pub.ron.admin.system.security.provider.TokenProvider;
-import pub.ron.admin.system.security.principal.UserPrincipal;
-import pub.ron.admin.system.service.MenuService;
-import io.jsonwebtoken.JwtException;
 import java.util.Objects;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -16,8 +9,16 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import pub.ron.admin.system.domain.Menu;
+import pub.ron.admin.system.security.JwtToken;
+import pub.ron.admin.system.security.principal.UserPrincipal;
+import pub.ron.admin.system.security.provider.TokenException;
+import pub.ron.admin.system.security.provider.TokenProvider;
+import pub.ron.admin.system.service.MenuService;
 
 /**
+ * jwt realm.
+ *
  * @author ron 2020/12/17
  */
 public class JwtRealm extends AuthorizingRealm {
@@ -25,8 +26,13 @@ public class JwtRealm extends AuthorizingRealm {
   private final TokenProvider tokenProvider;
   private final MenuService menuService;
 
-  public JwtRealm(TokenProvider tokenProvider,
-      MenuService menuService) {
+  /**
+   * constructor.
+   *
+   * @param tokenProvider tokenProvider
+   * @param menuService menuService
+   */
+  public JwtRealm(TokenProvider tokenProvider, MenuService menuService) {
     this.tokenProvider = tokenProvider;
     this.menuService = menuService;
     // 不需要校验密码
@@ -39,14 +45,12 @@ public class JwtRealm extends AuthorizingRealm {
   }
 
   @Override
-  protected AuthorizationInfo doGetAuthorizationInfo(
-      PrincipalCollection principalCollection) {
-    final UserPrincipal primaryPrincipal = (UserPrincipal)
-        principalCollection.getPrimaryPrincipal();
+  protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+    final UserPrincipal primaryPrincipal =
+        (UserPrincipal) principalCollection.getPrimaryPrincipal();
 
     final SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-    menuService.findMenusByUser(
-        primaryPrincipal.getId()).stream()
+    menuService.findMenusByUser(primaryPrincipal.getId()).stream()
         .map(Menu::getPerm)
         .filter(Objects::nonNull)
         .forEach(info::addStringPermission);

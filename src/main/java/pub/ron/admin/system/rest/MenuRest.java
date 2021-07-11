@@ -19,6 +19,8 @@ import pub.ron.admin.system.domain.Menu;
 import pub.ron.admin.system.service.MenuService;
 
 /**
+ * menu rest api.
+ *
  * @author ron 2020/11/18
  */
 @Slf4j
@@ -29,12 +31,15 @@ public class MenuRest {
 
   private final MenuService menuService;
 
+  /**
+   * query self menu.
+   *
+   * @return response
+   */
   @GetMapping
   @Operation(tags = "查询自己拥有的菜单")
   public ResponseEntity<?> getMenus() {
-    return ResponseEntity.ok(
-        menuService.findAsTree()
-    );
+    return ResponseEntity.ok(menuService.findAsTree());
   }
 
   @PostMapping
@@ -42,29 +47,22 @@ public class MenuRest {
   @RequiresPermissions("menu:create")
   public ResponseEntity<?> create(@RequestBody @Valid Menu menu) {
     menuService.create(menu);
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping
   @Operation(tags = "修改菜单")
   @RequiresPermissions("menu:modify")
-  public ResponseEntity<?> modify(
-      @RequestBody @Valid Menu menu) {
+  public ResponseEntity<?> modify(@RequestBody @Valid Menu menu) {
     menuService.update(menu);
     return ResponseEntity.ok().build();
   }
 
-
   @DeleteMapping("{id}")
   @Operation(tags = "删除菜单")
   @RequiresPermissions("menu:remove")
-  public ResponseEntity<?> remove(
-      @PathVariable Long id) {
+  public ResponseEntity<?> remove(@PathVariable Long id) {
     menuService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
-
-
 }

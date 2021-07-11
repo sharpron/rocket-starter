@@ -17,6 +17,8 @@ import pub.ron.admin.message.service.MessageHistoryService;
 import pub.ron.admin.system.security.SubjectUtils;
 
 /**
+ * controller for message history.
+ *
  * @author ron 2020/11/18
  */
 @Slf4j
@@ -28,32 +30,26 @@ public class MessageHistoryRest {
 
   private final MessageHistoryService messageHistoryService;
 
-
   @GetMapping
   @Operation(tags = "分页查询历史消息")
   @RequiresPermissions("message:query")
   public ResponseEntity<?> findByPage(Pageable pageable, MessageHistoryQuery query) {
-    return ResponseEntity.ok(
-        messageHistoryService.findByPage(pageable, query)
-    );
+    return ResponseEntity.ok(messageHistoryService.findByPage(pageable, query));
   }
 
   @DeleteMapping
   @Operation(tags = "清空自己的历史消息")
   @RequiresPermissions("message:remove")
   public ResponseEntity<?> clear() {
-    SubjectUtils.getCurrentUsername().ifPresent(
-        messageHistoryService::deleteByUsername);
+    SubjectUtils.getCurrentUsername().ifPresent(messageHistoryService::deleteByUsername);
     return ResponseEntity.noContent().build();
   }
 
   @DeleteMapping("{id}")
   @Operation(tags = "删除历史消息")
   @RequiresPermissions("message:remove")
-  public ResponseEntity<?> remove(
-      @PathVariable Long id) {
+  public ResponseEntity<?> remove(@PathVariable Long id) {
     messageHistoryService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
-
 }

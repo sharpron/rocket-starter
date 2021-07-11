@@ -5,6 +5,8 @@ import pub.ron.admin.system.domain.User;
 import pub.ron.admin.system.dto.ModifyPassDto;
 
 /**
+ * user service.
+ *
  * @author ron 2020/11/18
  */
 public interface UserService extends BaseService<User> {
@@ -12,5 +14,4 @@ public interface UserService extends BaseService<User> {
   void modifyPass(ModifyPassDto modifyPassDto);
 
   void forceModifyPass(String username, String password);
-
 }

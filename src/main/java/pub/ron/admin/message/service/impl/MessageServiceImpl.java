@@ -14,6 +14,8 @@ import pub.ron.admin.message.transmitter.SmsTransmitter;
 import pub.ron.admin.message.transmitter.WebSocketTransmitter;
 
 /**
+ * message service.
+ *
  * @author herong 2021/2/9
  */
 @Service
@@ -28,13 +30,13 @@ public class MessageServiceImpl implements MessageService {
   @Override
   public void send(MessageHistory messageHistory, EnumSet<SendType> sendTypes) {
 
-    final Message message = new Message(
-        messageHistory.getSenderContact(),
-        messageHistory.getReceiverContact(),
-        messageHistory.getTitle(),
-        messageHistory.getContent(),
-        LocalDateTime.now()
-    );
+    final Message message =
+        new Message(
+            messageHistory.getSenderContact(),
+            messageHistory.getReceiverContact(),
+            messageHistory.getTitle(),
+            messageHistory.getContent(),
+            LocalDateTime.now());
 
     for (SendType sendType : sendTypes) {
       switch (sendType) {
@@ -44,6 +46,8 @@ public class MessageServiceImpl implements MessageService {
         case EMAIL:
           emailTransmitter.transmit(message);
           break;
+        default:
+          throw new AssertionError();
       }
     }
     webSocketTransmitter.transmit(message);

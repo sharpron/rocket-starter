@@ -6,6 +6,8 @@ import pub.ron.admin.common.AppException;
 import pub.ron.admin.system.security.principal.UserPrincipal;
 
 /**
+ * token exception.
+ *
  * @author herong 2021/5/30
  */
 @Getter
@@ -15,14 +17,21 @@ public class TokenException extends AppException {
 
   private final UserPrincipal userPrincipal;
 
-  public TokenException(Result result, String message,
-      UserPrincipal userPrincipal) {
+  /**
+   * constructor.
+   *
+   * @param result result
+   * @param message message
+   * @param userPrincipal userPrincipal
+   */
+  public TokenException(Result result, String message, UserPrincipal userPrincipal) {
     super(HttpStatus.UNAUTHORIZED, message);
     this.result = result;
     this.userPrincipal = userPrincipal;
   }
 
   public enum Result {
-    EXPIRED, ILLEGAL;
+    EXPIRED,
+    ILLEGAL;
   }
 }

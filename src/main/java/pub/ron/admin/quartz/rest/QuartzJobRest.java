@@ -23,6 +23,8 @@ import pub.ron.admin.quartz.dto.QuartzLogQuery;
 import pub.ron.admin.quartz.service.QuartzJobService;
 
 /**
+ * quartz job rest api.
+ *
  * @author ron 2020/11/18
  */
 @Slf4j
@@ -34,40 +36,37 @@ public class QuartzJobRest {
 
   private final QuartzJobService quartzJobService;
 
-
   @GetMapping
   @Operation(tags = "分页查询定时任务")
   @RequiresPermissions("task:query")
   public ResponseEntity<?> findByPage(Pageable pageable, QuartzJobQuery query) {
-    return ResponseEntity.ok(
-        quartzJobService.findByPage(pageable, query)
-    );
+    return ResponseEntity.ok(quartzJobService.findByPage(pageable, query));
   }
 
   @GetMapping("/logs")
   @Operation(tags = "定时任务日志展示")
   @RequiresPermissions("task:query")
-  public ResponseEntity<?> findByPage(
-      Pageable pageable, QuartzLogQuery query) {
-    return ResponseEntity.ok(
-        quartzJobService.findLogsByPage(pageable, query)
-    );
+  public ResponseEntity<?> findByPage(Pageable pageable, QuartzLogQuery query) {
+    return ResponseEntity.ok(quartzJobService.findLogsByPage(pageable, query));
   }
 
+  /**
+   * 修改定时任务状态.
+   *
+   * @param jobId job id
+   * @param statusType statusType
+   * @return response
+   */
   @PutMapping("/{id}/status")
   @Operation(tags = "修改定时任务状态")
   @RequiresPermissions("task:modify")
-  public ResponseEntity<?> updateStatus(
-      @PathVariable Long jobId,
-      StatusType statusType) {
+  public ResponseEntity<?> updateStatus(@PathVariable Long jobId, StatusType statusType) {
     if (statusType == StatusType.PAUSE) {
       quartzJobService.pause(jobId);
     } else {
       quartzJobService.resume(jobId);
     }
-    return ResponseEntity
-        .status(HttpStatus.OK)
-        .build();
+    return ResponseEntity.status(HttpStatus.OK).build();
   }
 
   @PostMapping
@@ -75,16 +74,13 @@ public class QuartzJobRest {
   @RequiresPermissions("task:create")
   public ResponseEntity<?> create(@RequestBody @Valid QuartzJob quartzJob) {
     quartzJobService.create(quartzJob);
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping
   @Operation(tags = "修改定时任务")
   @RequiresPermissions("task:modify")
-  public ResponseEntity<?> modify(
-      @RequestBody @Valid QuartzJob quartzJob) {
+  public ResponseEntity<?> modify(@RequestBody @Valid QuartzJob quartzJob) {
     quartzJobService.update(quartzJob);
     return ResponseEntity.ok().build();
   }
@@ -92,10 +88,8 @@ public class QuartzJobRest {
   @DeleteMapping("{id}")
   @Operation(tags = "删除定时任务")
   @RequiresPermissions("task:remove")
-  public ResponseEntity<?> remove(
-      @PathVariable Long id) {
+  public ResponseEntity<?> remove(@PathVariable Long id) {
     quartzJobService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
-
 }

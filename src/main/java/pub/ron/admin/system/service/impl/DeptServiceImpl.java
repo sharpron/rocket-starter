@@ -20,6 +20,8 @@ import pub.ron.admin.system.service.DeptService;
 import pub.ron.admin.system.service.mapper.DeptMapper;
 
 /**
+ * dept service impl.
+ *
  * @author ron 2020/11/19
  */
 @Service
@@ -30,33 +32,14 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
 
   private final DeptMapper deptMapper;
 
-  public DeptServiceImpl(DeptRepo deptRepo,
-      DeptMapper deptMapper) {
+  public DeptServiceImpl(DeptRepo deptRepo, DeptMapper deptMapper) {
     super(deptRepo);
     this.deptMapper = deptMapper;
   }
 
-  @Override
-  public List<DeptNode> findAsTree() {
-    return findAsTree(deptMapper::mapNode, DeptNode::getChildren);
-  }
-
-  @Override
-  public Page<DeptDto> findFullAsTree() {
-    final List<DeptDto> asTree = findAsTree(deptMapper::mapDto, DeptDto::getChildren);
-    return new PageImpl<>(
-        asTree,
-        Pageable.unpaged(),
-        asTree.size()
-    );
-  }
-
-  private <T> List<T> findAsTree(
-      Function<Dept, T> mapping, Function<T, List<T>> childrenGetter) {
+  private <T> List<T> findAsTree(Function<Dept, T> mapping, Function<T, List<T>> childrenGetter) {
     final UserPrincipal principal = SubjectUtils.currentUser();
-    final List<Dept> childrenByPath = repository.findByPath(
-        principal.getDeptPath()
-    );
+    final List<Dept> childrenByPath = repository.findByPath(principal.getDeptPath());
 
     Dept root = null;
     for (int i = 0; i < childrenByPath.size(); i++) {
@@ -68,9 +51,20 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
     }
     assert root != null;
     final T rootNode = mapping.apply(root);
-    genTreeByPath(childrenByPath, root.getId(),
-        childrenGetter.apply(rootNode), mapping, childrenGetter);
+    genTreeByPath(
+        childrenByPath, root.getId(), childrenGetter.apply(rootNode), mapping, childrenGetter);
     return Collections.singletonList(rootNode);
+  }
+
+  @Override
+  public List<DeptNode> findAsTree() {
+    return findAsTree(deptMapper::mapNode, DeptNode::getChildren);
+  }
+
+  @Override
+  public Page<DeptDto> findFullAsTree() {
+    final List<DeptDto> asTree = findAsTree(deptMapper::mapDto, DeptDto::getChildren);
+    return new PageImpl<>(asTree, Pageable.unpaged(), asTree.size());
   }
 
   private <R> void genTreeByPath(
@@ -89,8 +83,8 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
         log.debug("mapped {} to node {}", next, node);
         children.add(node);
         iterator.remove();
-        genTreeByPath(departments, next.getId(),
-            childrenGetter.apply(node), mapping, childrenGetter);
+        genTreeByPath(
+            departments, next.getId(), childrenGetter.apply(node), mapping, childrenGetter);
       }
     }
   }
@@ -119,5 +113,4 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
     final List<Dept> children = repository.findByPath(path);
     repository.deleteAll(children);
   }
-
 }

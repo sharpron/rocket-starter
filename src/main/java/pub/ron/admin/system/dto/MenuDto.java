@@ -1,11 +1,13 @@
 package pub.ron.admin.system.dto;
 
-import pub.ron.admin.common.BaseDto;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import pub.ron.admin.common.BaseDto;
 
 /**
+ * menu info.
+ *
  * @author ron 2020/12/14
  */
 @Getter
@@ -29,6 +31,4 @@ public class MenuDto extends BaseDto {
   private String perm;
 
   private List<MenuDto> children;
-
-
 }

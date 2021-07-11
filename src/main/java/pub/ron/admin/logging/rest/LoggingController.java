@@ -13,6 +13,8 @@ import pub.ron.admin.logging.dto.LoggingQuery;
 import pub.ron.admin.logging.service.LoggingService;
 
 /**
+ * controller for logging.
+ *
  * @author ron 2021/1/1
  */
 @Slf4j
@@ -23,13 +25,10 @@ public class LoggingController {
 
   private final LoggingService loggingService;
 
-
   @GetMapping
   @Operation(tags = "分页查询日志")
   @RequiresPermissions("log:query")
   public ResponseEntity<?> findByPage(Pageable pageable, LoggingQuery query) {
-    return ResponseEntity.ok(
-        loggingService.findByPage(pageable, query)
-    );
+    return ResponseEntity.ok(loggingService.findByPage(pageable, query));
   }
 }

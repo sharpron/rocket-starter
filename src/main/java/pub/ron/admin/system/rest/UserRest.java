@@ -1,11 +1,5 @@
 package pub.ron.admin.system.rest;
 
-import pub.ron.admin.system.body.CreateUserBody;
-import pub.ron.admin.system.body.ModifyUserBody;
-import pub.ron.admin.system.dto.ForceModifyPassDto;
-import pub.ron.admin.system.dto.ModifyPassDto;
-import pub.ron.admin.system.dto.UserQuery;
-import pub.ron.admin.system.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,9 +16,17 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.system.body.CreateUserBody;
+import pub.ron.admin.system.body.ModifyUserBody;
+import pub.ron.admin.system.dto.ForceModifyPassDto;
+import pub.ron.admin.system.dto.ModifyPassDto;
+import pub.ron.admin.system.dto.UserQuery;
+import pub.ron.admin.system.service.UserService;
 import pub.ron.admin.system.service.mapper.UserMapper;
 
 /**
+ * user rest api.
+ *
  * @author ron 2020/11/18
  */
 @Slf4j
@@ -42,34 +44,28 @@ public class UserRest {
   @RequiresPermissions("user:query")
   public ResponseEntity<?> findByPage(Pageable pageable, UserQuery userQuery) {
     return ResponseEntity.ok(
-        userService.findByPage(pageable, userQuery).map(userMapper::mapUserDto)
-    );
+        userService.findByPage(pageable, userQuery).map(userMapper::mapUserDto));
   }
 
   @PostMapping
   @Operation(tags = "创建用户")
   @RequiresPermissions("user:create")
-  public ResponseEntity<?> create(
-      @Valid @RequestBody CreateUserBody createUser) {
+  public ResponseEntity<?> create(@Valid @RequestBody CreateUserBody createUser) {
     userService.create(userMapper.mapUser(createUser));
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping
   @Operation(tags = "修改用户")
   @RequiresPermissions("user:modify")
-  public ResponseEntity<?> modify(
-      @RequestBody @Valid ModifyUserBody modifyUserBody) {
+  public ResponseEntity<?> modify(@RequestBody @Valid ModifyUserBody modifyUserBody) {
     userService.update(userMapper.mapUser(modifyUserBody));
     return ResponseEntity.ok().build();
   }
 
   @PutMapping("/me/passwords")
   @Operation(tags = "用户修改自己的密码")
-  public ResponseEntity<?> modifySelfPass(
-      @RequestBody @Valid ModifyPassDto modifyPassDto) {
+  public ResponseEntity<?> modifySelfPass(@RequestBody @Valid ModifyPassDto modifyPassDto) {
     userService.modifyPass(modifyPassDto);
     return ResponseEntity.ok().build();
   }
@@ -77,19 +73,15 @@ public class UserRest {
   @PutMapping("/passwords")
   @Operation(tags = "管理员修改用户的密码")
   @RequiresPermissions("user:password:modify")
-  public ResponseEntity<?> modifyPass(
-      @RequestBody @Valid ForceModifyPassDto modifyPassDto) {
-    userService.forceModifyPass(
-        modifyPassDto.getUsername(),
-        modifyPassDto.getNewPass());
+  public ResponseEntity<?> modifyPass(@RequestBody @Valid ForceModifyPassDto modifyPassDto) {
+    userService.forceModifyPass(modifyPassDto.getUsername(), modifyPassDto.getNewPass());
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping("/{id}")
   @Operation(tags = "管理员删除用户")
   @RequiresPermissions("user:remove")
-  public ResponseEntity<?> remove(
-      @PathVariable Long id) {
+  public ResponseEntity<?> remove(@PathVariable Long id) {
     userService.deleteById(id);
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }

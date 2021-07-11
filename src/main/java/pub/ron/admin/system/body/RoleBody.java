@@ -8,16 +8,16 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 
 /**
+ * role body.
+ *
  * @author ron 2020/11/22
  */
 @Data
 public class RoleBody {
 
-  @NotBlank
-  private String name;
+  @NotBlank private String name;
 
-  @NotNull
-  private Long deptId;
+  @NotNull private Long deptId;
 
   private boolean disabled;
 

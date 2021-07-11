@@ -14,27 +14,22 @@ import pub.ron.admin.system.service.MenuService;
 import pub.ron.admin.system.service.mapper.MenuMapper;
 
 /**
+ * menu service impl.
+ *
  * @author ron 2020/12/14
  */
 @Service
-//@CacheConfig(cacheNames = "menus")
 public class MenuServiceImpl extends AbstractService<Menu, MenuRepo> implements MenuService {
-
 
   private final MenuMapper menuMapper;
 
-  /**
-   * 注入自己，走缓存
-   */
-  @Resource
-  private MenuServiceImpl menuService;
+  /** 注入自己，走缓存. */
+  @Resource private MenuServiceImpl menuService;
 
-  public MenuServiceImpl(MenuRepo repository,
-      MenuMapper menuMapper) {
+  public MenuServiceImpl(MenuRepo repository, MenuMapper menuMapper) {
     super(repository);
     this.menuMapper = menuMapper;
   }
-
 
   @Override
   public List<Menu> findMenusByUser(Long userId) {
@@ -45,26 +40,26 @@ public class MenuServiceImpl extends AbstractService<Menu, MenuRepo> implements 
   public List<MenuDto> findAsTree() {
     final UserPrincipal userPrincipal = SubjectUtils.currentUser();
 
-    final List<Menu> menusByUser = userPrincipal.isAdmin() ?
-        repository.findAll() : menuService.findMenusByUser(userPrincipal.getId());
+    final List<Menu> menusByUser =
+        userPrincipal.isAdmin()
+            ? repository.findAll()
+            : menuService.findMenusByUser(userPrincipal.getId());
 
     List<MenuDto> result = new ArrayList<>();
     genTree(menusByUser, null, result);
     return result;
   }
 
-  private void genTree(List<Menu> inputs,
-      Long parentId, List<MenuDto> outputs) {
+  private void genTree(List<Menu> inputs, Long parentId, List<MenuDto> outputs) {
     for (Menu input : inputs) {
 
-      if (input.getParentId() == null && parentId == null ||
-          input.getParentId() != null && input.getParentId().equals(parentId)) {
+      if (input.getParentId() == null && parentId == null
+          || input.getParentId() != null && input.getParentId().equals(parentId)) {
         final MenuDto menuDto = menuMapper.mapDto(input);
         outputs.add(menuDto);
         menuDto.setChildren(new ArrayList<>());
         genTree(inputs, menuDto.getId(), menuDto.getChildren());
       }
-
     }
   }
 }

@@ -6,6 +6,8 @@ import pub.ron.admin.system.domain.Menu;
 import pub.ron.admin.system.dto.MenuDto;
 
 /**
+ * menu service.
+ *
  * @author ron 2020/12/14
  */
 public interface MenuService extends BaseService<Menu> {
@@ -13,5 +15,4 @@ public interface MenuService extends BaseService<Menu> {
   List<Menu> findMenusByUser(Long userId);
 
   List<MenuDto> findAsTree();
-
 }

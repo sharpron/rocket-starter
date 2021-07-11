@@ -11,6 +11,8 @@ import pub.ron.admin.common.AppException;
 import pub.ron.admin.system.service.CaptchaService;
 
 /**
+ * captcha service impl.
+ *
  * @author ron 2020/11/23
  */
 @Service
@@ -29,14 +31,8 @@ public class CaptchaServiceImpl implements CaptchaService {
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
     captcha.out(os);
     final String key = UUID.randomUUID().toString();
-    redisTemplate.opsForValue().set(
-        CAPTCHA_CACHE_KEY + key, captcha.text(),
-        EXPIRE
-    );
-    return new Captcha(
-        key,
-        os.toByteArray()
-    );
+    redisTemplate.opsForValue().set(CAPTCHA_CACHE_KEY + key, captcha.text(), EXPIRE);
+    return new Captcha(key, os.toByteArray());
   }
 
   @Override
@@ -52,7 +48,6 @@ public class CaptchaServiceImpl implements CaptchaService {
 
   @Override
   public String getCode(String key) {
-    return redisTemplate.opsForValue().get(
-        CAPTCHA_CACHE_KEY + key);
+    return redisTemplate.opsForValue().get(CAPTCHA_CACHE_KEY + key);
   }
 }

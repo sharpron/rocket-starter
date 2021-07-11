@@ -21,6 +21,8 @@ import pub.ron.admin.system.service.DeptService;
 import pub.ron.admin.system.service.mapper.DeptMapper;
 
 /**
+ * dept rest api.
+ *
  * @author ron 2020/11/18
  */
 @Slf4j
@@ -33,21 +35,22 @@ public class DeptRest {
   private final DeptService deptService;
   private final DeptMapper deptMapper;
 
+  /**
+   * get dept tree.
+   *
+   * @return self dept tree.
+   */
   @GetMapping
   @Operation(tags = "获取自己部门树")
   public ResponseEntity<?> getDepartments() {
-    return ResponseEntity.ok(
-        deptService.findAsTree()
-    );
+    return ResponseEntity.ok(deptService.findAsTree());
   }
 
   @GetMapping(params = "type=full")
   @Operation(tags = "获取自己部门树")
   @RequiresPermissions("department:self")
   public ResponseEntity<?> getDepartmentsWithFullProperties() {
-    return ResponseEntity.ok(
-        deptService.findFullAsTree()
-    );
+    return ResponseEntity.ok(deptService.findFullAsTree());
   }
 
   @PostMapping
@@ -55,16 +58,13 @@ public class DeptRest {
   @RequiresPermissions("department:create")
   public ResponseEntity<?> create(@RequestBody @Valid DeptBody deptBody) {
     deptService.create(deptMapper.mapDept(deptBody));
-    return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping
   @Operation(tags = "修改部门")
   @RequiresPermissions("department:modify")
-  public ResponseEntity<?> modify(
-      @RequestBody @Valid DeptBody deptBody) {
+  public ResponseEntity<?> modify(@RequestBody @Valid DeptBody deptBody) {
     deptService.update(deptMapper.mapDept(deptBody));
     return ResponseEntity.ok().build();
   }
@@ -72,10 +72,8 @@ public class DeptRest {
   @DeleteMapping("{id}")
   @Operation(tags = "删除部门")
   @RequiresPermissions("department:remove")
-  public ResponseEntity<?> remove(
-      @PathVariable Long id) {
+  public ResponseEntity<?> remove(@PathVariable Long id) {
     deptService.deleteById(id);
     return ResponseEntity.noContent().build();
   }
-
 }

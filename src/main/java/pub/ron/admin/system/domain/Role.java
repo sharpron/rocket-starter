@@ -11,7 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
@@ -19,6 +18,8 @@ import lombok.Setter;
 import pub.ron.admin.common.BaseEntity;
 
 /**
+ * role.
+ *
  * @author ron 2020/11/17
  */
 @Getter
@@ -50,6 +51,7 @@ public class Role extends BaseEntity {
   @Column(name = "menu_id")
   private Set<Long> menuIds;
 
+  /** pre persist. */
   @PrePersist
   public void prePersist() {
     if (this.disabled == null) {

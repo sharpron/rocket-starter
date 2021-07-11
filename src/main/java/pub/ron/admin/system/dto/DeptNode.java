@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
+ * dept node.
+ *
  * @author ron 2020/11/19
  */
 @Getter
@@ -18,5 +20,4 @@ public class DeptNode {
   private String name;
 
   private List<DeptNode> children;
-
 }

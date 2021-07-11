@@ -42,7 +42,13 @@ public class JwtTokenProvider implements TokenProvider {
   private final JwtParser jwtParser;
   private final Key signKey;
 
-
+  /**
+   * constructor.
+   *
+   * @param base64Secret base64Secret
+   * @param accessTokenValidity accessTokenValidity
+   * @param redisTemplate redisTemplate
+   */
   public JwtTokenProvider(
       @Value("${jwt.base64-secret}") String base64Secret,
       @Value("${jwt.access-token-validity}") Duration accessTokenValidity,
@@ -52,9 +58,7 @@ public class JwtTokenProvider implements TokenProvider {
     byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
     this.signKey = Keys.hmacShaKeyFor(keyBytes);
 
-    this.jwtParser = Jwts.parserBuilder()
-        .setSigningKey(signKey)
-        .build();
+    this.jwtParser = Jwts.parserBuilder().setSigningKey(signKey).build();
   }
 
   @Override
@@ -64,7 +68,6 @@ public class JwtTokenProvider implements TokenProvider {
     return jwt;
   }
 
-
   @Override
   public UserPrincipal validateToken(String token) throws TokenException {
     try {
@@ -73,17 +76,10 @@ public class JwtTokenProvider implements TokenProvider {
       return parseClaims(claims);
     } catch (ExpiredJwtException e) {
       throw new TokenException(
-          Result.EXPIRED,
-          String.format("认证过期[%s]", token),
-          parseClaims(e.getClaims())
-      );
+          Result.EXPIRED, String.format("认证过期[%s]", token), parseClaims(e.getClaims()));
     } catch (JwtException e) {
       log.error(e.getMessage());
-      throw new TokenException(
-          Result.ILLEGAL,
-          String.format("JWT[%s]已经过期", token),
-          null
-      );
+      throw new TokenException(Result.ILLEGAL, String.format("JWT[%s]已经过期", token), null);
     }
   }
 
@@ -97,20 +93,20 @@ public class JwtTokenProvider implements TokenProvider {
         .setId(String.valueOf(principal.getId()))
         .claim(DEPT_PATH_KEY, principal.getDeptPath())
         .claim(DEPT_ID_KEY, principal.getDeptId())
-        .claim(DEPT_IDS_KEY, principal.getDeptIds().stream()
-            .map(String::valueOf)
-            .collect(Collectors.joining(COMMA)))
+        .claim(
+            DEPT_IDS_KEY,
+            principal.getDeptIds().stream().map(String::valueOf).collect(Collectors.joining(COMMA)))
         .signWith(signKey, SignatureAlgorithm.HS512)
         .setExpiration(new Date(System.currentTimeMillis() + validity.toMillis()))
         .compact();
   }
 
   private UserPrincipal parseClaims(Claims claims) {
-    final Set<Long> deptIds = Arrays.stream(
-        claims.get(DEPT_IDS_KEY).toString().split(COMMA))
-        .filter(e -> e.length() > 0)
-        .map(Long::valueOf)
-        .collect(Collectors.toSet());
+    final Set<Long> deptIds =
+        Arrays.stream(claims.get(DEPT_IDS_KEY).toString().split(COMMA))
+            .filter(e -> e.length() > 0)
+            .map(Long::valueOf)
+            .collect(Collectors.toSet());
 
     return UserPrincipal.builder()
         .id(Long.valueOf(claims.getId()))

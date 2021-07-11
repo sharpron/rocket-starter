@@ -11,6 +11,8 @@ import pub.ron.admin.message.repo.MessageHistoryRepo;
 import pub.ron.admin.message.service.MessageHistoryService;
 
 /**
+ * message history service.
+ *
  * @author herong 2021/2/9
  */
 @Service
