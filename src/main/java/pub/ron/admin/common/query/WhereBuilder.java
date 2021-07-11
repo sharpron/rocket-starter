@@ -99,7 +99,7 @@ public class WhereBuilder {
   }
 
   /**
-   * Analysis of path
+   * Analysis of path.
    *
    * @param rootName root name
    * @param root root
@@ -118,7 +118,7 @@ public class WhereBuilder {
   }
 
   /**
-   * Convert parameters to numeric types
+   * Convert parameters to numeric types.
    *
    * @param o 对象
    * @param <T> entity type
