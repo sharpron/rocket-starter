@@ -1,8 +1,8 @@
 package pub.ron.admin.system.security.provider;
 
-import pub.ron.admin.system.security.TokenProvider;
-import pub.ron.admin.system.security.principal.UserPrincipal;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -15,10 +15,11 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import pub.ron.admin.system.security.principal.UserPrincipal;
+import pub.ron.admin.system.security.provider.TokenException.Result;
 
 @Component
 @Slf4j
@@ -34,11 +35,7 @@ public class JwtTokenProvider implements TokenProvider {
 
   private static final String TOKEN_PREFIX = "tokens:";
 
-  private static final String TOKEN_VALUE = "1";
-
-  private final Duration tokenValidity;
-
-  private final Duration tokenValidityForRememberMe;
+  private final Duration accessTokenValidity;
 
   private final StringRedisTemplate redisTemplate;
 
@@ -48,11 +45,9 @@ public class JwtTokenProvider implements TokenProvider {
 
   public JwtTokenProvider(
       @Value("${jwt.base64-secret}") String base64Secret,
-      @Value("${jwt.token-validity}") Duration tokenValidity,
-      @Value("${jwt.token-validity-for-remember-me}") Duration tokenValidityForRememberMe,
+      @Value("${jwt.access-token-validity}") Duration accessTokenValidity,
       StringRedisTemplate redisTemplate) {
-    this.tokenValidity = tokenValidity;
-    this.tokenValidityForRememberMe = tokenValidityForRememberMe;
+    this.accessTokenValidity = accessTokenValidity;
     this.redisTemplate = redisTemplate;
     byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
     this.signKey = Keys.hmacShaKeyFor(keyBytes);
@@ -63,9 +58,41 @@ public class JwtTokenProvider implements TokenProvider {
   }
 
   @Override
-  public String generateToken(UserPrincipal principal, boolean rememberMe) {
-    final Duration validity = rememberMe ? tokenValidityForRememberMe : tokenValidity;
-    final String jwt = Jwts.builder()
+  public String generateToken(UserPrincipal principal) {
+    final String jwt = generateJwt(principal, accessTokenValidity);
+    redisTemplate.opsForValue().set(getTokenKey(jwt), jwt, accessTokenValidity);
+    return jwt;
+  }
+
+
+  @Override
+  public UserPrincipal validateToken(String token) throws TokenException {
+    try {
+      Claims claims = jwtParser.parseClaimsJwt(token).getBody();
+      redisTemplate.opsForValue().set(getTokenKey(token), token, accessTokenValidity);
+      return parseClaims(claims);
+    } catch (ExpiredJwtException e) {
+      throw new TokenException(
+          Result.EXPIRED,
+          String.format("认证过期[%s]", token),
+          parseClaims(e.getClaims())
+      );
+    } catch (JwtException e) {
+      log.error(e.getMessage());
+      throw new TokenException(
+          Result.ILLEGAL,
+          String.format("JWT[%s]已经过期", token),
+          null
+      );
+    }
+  }
+
+  private String getTokenKey(String token) {
+    return TOKEN_PREFIX + token;
+  }
+
+  private String generateJwt(UserPrincipal principal, Duration validity) {
+    return Jwts.builder()
         .setSubject(principal.getUsername())
         .setId(String.valueOf(principal.getId()))
         .claim(DEPT_PATH_KEY, principal.getDeptPath())
@@ -76,19 +103,9 @@ public class JwtTokenProvider implements TokenProvider {
         .signWith(signKey, SignatureAlgorithm.HS512)
         .setExpiration(new Date(System.currentTimeMillis() + validity.toMillis()))
         .compact();
-    redisTemplate.opsForValue().set(
-        TOKEN_PREFIX + jwt,
-        TOKEN_VALUE, validity
-    );
-    return jwt;
   }
 
-  @Override
-  public UserPrincipal validate(String token) {
-    if (redisTemplate.hasKey(TOKEN_PREFIX + token) != Boolean.TRUE) {
-      throw new UnauthorizedException("jwt过期");
-    }
-    Claims claims = jwtParser.parseClaimsJws(token).getBody();
+  private UserPrincipal parseClaims(Claims claims) {
     final Set<Long> deptIds = Arrays.stream(
         claims.get(DEPT_IDS_KEY).toString().split(COMMA))
         .filter(e -> e.length() > 0)
@@ -106,6 +123,6 @@ public class JwtTokenProvider implements TokenProvider {
 
   @Override
   public void clear(String token) {
-    redisTemplate.delete(TOKEN_PREFIX + token);
+    redisTemplate.delete(getTokenKey(token));
   }
 }

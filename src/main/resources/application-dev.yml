@@ -1,0 +1,32 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/admin_dev?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
+    username: root
+    password: agVyPWw+m1Z5
+
+  redis:
+    host: localhost
+    port: 6379
+    password: Lkrn+nQzPdjea+P1IVpWaFIDdtc=
+
+  mail:
+    host: smtp.qq.com
+    username: test@qq.com
+    password: xxxxxxxxxxx
+    default-encoding: utf-8
+
+  main:
+    lazy-initialization: true
+
+# 以下是jwt配置
+jwt:
+  # This token must be encoded using Base64 with mininum 88 Bits (you can type `echo 'secret-key'|base64` on your command line)
+  base64-secret: ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI=
+  # token is valid 24 hours
+  access-token-validity: 86400s
+

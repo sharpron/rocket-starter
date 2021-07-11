@@ -1,4 +1,3 @@
-use swt_gateway;
 insert into sys_dept values (1, 'admin', sysdate(), 'admin', sysdate(), '中心', 1, '/', null);
 
 insert into sys_user values (1, 'admin', sysdate(), 'admin', sysdate(), 0, 'sharprons@gmail.com', 0, '18281697060',

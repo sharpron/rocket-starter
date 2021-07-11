@@ -15,8 +15,6 @@ public class LoginDto {
   @NotBlank
   private String password;
 
-  private boolean rememberMe;
-
   @NotBlank
   private String captcha;
 }

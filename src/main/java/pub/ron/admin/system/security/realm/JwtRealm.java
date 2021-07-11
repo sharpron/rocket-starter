@@ -2,7 +2,8 @@ package pub.ron.admin.system.security.realm;
 
 import pub.ron.admin.system.domain.Menu;
 import pub.ron.admin.system.security.JwtToken;
-import pub.ron.admin.system.security.TokenProvider;
+import pub.ron.admin.system.security.provider.TokenException;
+import pub.ron.admin.system.security.provider.TokenProvider;
 import pub.ron.admin.system.security.principal.UserPrincipal;
 import pub.ron.admin.system.service.MenuService;
 import io.jsonwebtoken.JwtException;
@@ -59,10 +60,18 @@ public class JwtRealm extends AuthorizingRealm {
     final String jwt = (String) authenticationToken.getPrincipal();
 
     try {
-      final UserPrincipal principal = tokenProvider.validate(jwt);
+      final UserPrincipal principal = tokenProvider.validateToken(jwt);
       return new SimpleAuthenticationInfo(principal, null, getName());
-    } catch (JwtException e) {
-      throw new AuthenticationException(e);
+    } catch (TokenException e) {
+      switch (e.getResult()) {
+        case EXPIRED:
+          final String refreshToken = tokenProvider.generateToken(e.getUserPrincipal());
+          throw new RefreshTokenException(refreshToken);
+        case ILLEGAL:
+          throw new AuthenticationException(e);
+        default:
+          throw new AssertionError();
+      }
     }
   }
 }

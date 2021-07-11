@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 业务出现异常
+ * 应用异常 所有可处理的异常应该继承它
  *
  * @author ron 2020/11/19
  */

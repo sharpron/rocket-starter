@@ -15,6 +15,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
+import pub.ron.admin.system.security.provider.TokenException;
+import pub.ron.admin.system.security.realm.RefreshTokenException;
 
 /**
  * Filters incoming requests and installs a Spring Security principal if a header corresponding to a
@@ -43,6 +45,10 @@ public class JWTFilter extends GenericFilterBean {
       try {
         SecurityUtils.getSubject().login(new JwtToken(jwt));
         filterChain.doFilter(servletRequest, servletResponse);
+      } catch (RefreshTokenException e) {
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setHeader(AUTHORIZATION_HEADER, TOKEN_PREFIX + e.getToken());
       } catch (AuthenticationException e) {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

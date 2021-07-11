@@ -1,12 +1,5 @@
 package pub.ron.admin.system.rest;
 
-import pub.ron.admin.common.AppException;
-import pub.ron.admin.system.dto.LoginDto;
-import pub.ron.admin.system.security.JWTFilter;
-import pub.ron.admin.system.security.TokenProvider;
-import pub.ron.admin.system.security.principal.UserPrincipal;
-import pub.ron.admin.system.service.CaptchaService;
-import pub.ron.admin.system.service.CaptchaService.Captcha;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.common.AppException;
+import pub.ron.admin.system.dto.LoginDto;
+import pub.ron.admin.system.security.JWTFilter;
+import pub.ron.admin.system.security.principal.UserPrincipal;
+import pub.ron.admin.system.security.provider.TokenProvider;
+import pub.ron.admin.system.service.CaptchaService;
+import pub.ron.admin.system.service.CaptchaService.Captcha;
 
 /**
  * @author ron 2020/11/19
@@ -62,8 +62,7 @@ public class AuthRest {
     }
 
     final String token = tokenProvider.generateToken(
-        (UserPrincipal) subject.getPrincipal(),
-        loginDto.isRememberMe()
+        (UserPrincipal) subject.getPrincipal()
     );
     return ResponseEntity
         .ok()
