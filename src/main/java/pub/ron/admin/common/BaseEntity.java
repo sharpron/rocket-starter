@@ -20,7 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 /**
- * 实体的基类
+ * 实体的基类.
  *
  * @author ron 2020/11/17
  */
@@ -53,7 +53,7 @@ public abstract class BaseEntity {
   private LocalDateTime modifyTime;
 
   /**
-   * Don't call its setter, JPA back to automatic processing
+   * Don't call its setter, JPA back to automatic processing.
    */
   @Version
   private Long version;

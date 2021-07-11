@@ -6,6 +6,8 @@ import lombok.Getter;
 import pub.ron.admin.system.domain.User;
 
 /**
+ * user principal.
+ *
  * @author ron 2020/11/19
  */
 @Builder
@@ -18,9 +20,7 @@ public class UserPrincipal {
 
   private final Long deptId;
 
-  /**
-   * 管辖的部门id
-   */
+  /** 管辖的部门id. */
   private final Set<Long> deptIds;
 
   private final String deptPath;

@@ -16,40 +16,36 @@ import pub.ron.admin.logging.repository.LoggingRepository;
 import pub.ron.admin.logging.util.IpUtils;
 
 /**
+ * logging service.
+ *
  * @author ron 2020/9/20
  */
 @Service
 @RequiredArgsConstructor
 public class LoggingService {
 
-
-  /**
-   * 自动注入日志模块
-   */
+  /** 自动注入日志模块. */
   private final LoggingRepository loggingRepository;
 
-  /**
-   * current request proxy
-   */
+  /** current request proxy. */
   private final HttpServletRequest request;
 
   /**
-   * 分页查询
+   * 分页查询.
    *
    * @param pageable 分页器
-   * @param query    查询条件
+   * @param query 查询条件
    * @return 数据
    */
   public Page<Logging> findByPage(Pageable pageable, LoggingQuery query) {
-    return loggingRepository.findAll(
-        WhereBuilder.buildSpec(query), pageable);
+    return loggingRepository.findAll(WhereBuilder.buildSpec(query), pageable);
   }
 
   /**
-   * 为操作添加日志
+   * 为操作添加日志.
    *
-   * @param func   操作
-   * @param log    日志
+   * @param func 操作
+   * @param log 日志
    * @param params 参数
    * @return func returns
    * @throws Throwable throws on func call
@@ -69,7 +65,7 @@ public class LoggingService {
       logging.setDescription(log);
       logging.setSpendTime(time);
 
-      String clientIp = IpUtils.getClientIpAddr(request);
+      String clientIp = IpUtils.getClientIpAddress(request);
       logging.setClientIp(clientIp);
       logging.setClientRegion(IpUtils.ip2Region(clientIp));
       logging.setUserAgent(request.getHeader(HttpHeaders.USER_AGENT));
@@ -85,9 +81,8 @@ public class LoggingService {
     }
   }
 
-
   /**
-   * 获取异常日志
+   * 获取异常日志.
    *
    * @param e 异常
    * @return 日志信息
@@ -100,14 +95,12 @@ public class LoggingService {
     }
   }
 
-  /**
-   * 接口回调
-   */
+  /** 接口回调. */
   @FunctionalInterface
   public interface Func {
 
     /**
-     * 调用
+     * 调用.
      *
      * @return 方法调用结果
      * @throws Throwable 异常

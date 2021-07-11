@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * data transfer object 与{@link BaseEntity}一一对应
+ * data transfer object 与{@link BaseEntity}一一对应.
  *
  * @author ron 2020/11/17
  */

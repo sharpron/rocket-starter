@@ -4,22 +4,20 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 应用异常 所有可处理的异常应该继承它
+ * 应用异常 所有可处理的异常应该继承它.
  *
  * @author ron 2020/11/19
  */
 @Getter
 public class AppException extends RuntimeException {
 
-  /**
-   * 状态码
-   */
+  /** 状态码. */
   private final HttpStatus status;
 
   /**
-   * 使用指定的状态码和消息构造一个异常
+   * 使用指定的状态码和消息构造一个异常.
    *
-   * @param status  状态
+   * @param status 状态
    * @param message 消息
    */
   public AppException(HttpStatus status, String message) {
@@ -28,7 +26,7 @@ public class AppException extends RuntimeException {
   }
 
   /**
-   * 使用默认的状态码和消息构建异常
+   * 使用默认的状态码和消息构建异常.
    *
    * @param message 消息
    */

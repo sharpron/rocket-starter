@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authc.AuthenticationToken;
 
 /**
+ * jwt token.
+ *
  * @author ron 2020/12/17
  */
 @RequiredArgsConstructor

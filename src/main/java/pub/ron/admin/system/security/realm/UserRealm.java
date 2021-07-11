@@ -1,9 +1,5 @@
 package pub.ron.admin.system.security.realm;
 
-import pub.ron.admin.system.domain.User;
-import pub.ron.admin.system.repo.RoleRepo;
-import pub.ron.admin.system.repo.UserRepo;
-import pub.ron.admin.system.security.principal.UserPrincipal;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authc.AuthenticationException;
@@ -17,8 +13,14 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.realm.AuthenticatingRealm;
 import org.apache.shiro.util.ByteSource;
 import org.apache.shiro.util.ByteSource.Util;
+import pub.ron.admin.system.domain.User;
+import pub.ron.admin.system.repo.RoleRepo;
+import pub.ron.admin.system.repo.UserRepo;
+import pub.ron.admin.system.security.principal.UserPrincipal;
 
 /**
+ * user realm.
+ *
  * @author ron 2020/12/17
  */
 @RequiredArgsConstructor
@@ -36,9 +38,10 @@ public class UserRealm extends AuthenticatingRealm {
   protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
       throws AuthenticationException {
 
-    final User user = userRepo.findByUsername(
-        (String) token.getPrincipal()
-    ).orElseThrow(UnknownAccountException::new);
+    final User user =
+        userRepo
+            .findByUsername((String) token.getPrincipal())
+            .orElseThrow(UnknownAccountException::new);
 
     if (user.getDisabled()) {
       throw new DisabledAccountException();
@@ -50,17 +53,15 @@ public class UserRealm extends AuthenticatingRealm {
 
     final Set<Long> manageDeptIds = roleRepo.findManageDeptIds(user.getId());
 
-    final UserPrincipal principal = UserPrincipal.builder()
-        .id(user.getId())
-        .username(user.getUsername())
-        .deptId(user.getDept().getId())
-        .deptPath(user.getDept().getPath())
-        .deptIds(manageDeptIds)
-        .build();
+    final UserPrincipal principal =
+        UserPrincipal.builder()
+            .id(user.getId())
+            .username(user.getUsername())
+            .deptId(user.getDept().getId())
+            .deptPath(user.getDept().getPath())
+            .deptIds(manageDeptIds)
+            .build();
     final ByteSource salt = Util.bytes(user.getPasswordSalt());
-    return new SimpleAuthenticationInfo(
-        principal, user.getPassword(), salt, getName()
-    );
-
+    return new SimpleAuthenticationInfo(principal, user.getPassword(), salt, getName());
   }
 }

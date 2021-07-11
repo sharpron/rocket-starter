@@ -1,7 +1,6 @@
 package pub.ron.admin.system.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import pub.ron.admin.common.ErrorInfo;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,7 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
-import pub.ron.admin.system.security.provider.TokenException;
+import pub.ron.admin.common.ErrorInfo;
 import pub.ron.admin.system.security.realm.RefreshTokenException;
 
 /**
@@ -24,7 +23,7 @@ import pub.ron.admin.system.security.realm.RefreshTokenException;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class JWTFilter extends GenericFilterBean {
+public class JwtFilter extends GenericFilterBean {
 
   public static final String AUTHORIZATION_HEADER = "Authorization";
 
@@ -32,11 +31,9 @@ public class JWTFilter extends GenericFilterBean {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-
   @Override
-  public void doFilter(ServletRequest servletRequest,
-      ServletResponse servletResponse,
-      FilterChain filterChain)
+  public void doFilter(
+      ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
       throws IOException, ServletException {
     HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
     String jwt = resolveToken(httpServletRequest);
@@ -52,13 +49,9 @@ public class JWTFilter extends GenericFilterBean {
       } catch (AuthenticationException e) {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        OBJECT_MAPPER.writeValue(
-            response.getOutputStream(),
-            new ErrorInfo("jwt认证失败")
-        );
+        OBJECT_MAPPER.writeValue(response.getOutputStream(), new ErrorInfo("jwt认证失败"));
       }
     }
-
   }
 
   private String resolveToken(HttpServletRequest request) {

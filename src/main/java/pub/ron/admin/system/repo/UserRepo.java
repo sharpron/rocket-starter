@@ -10,13 +10,15 @@ import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.system.domain.User;
 
 /**
+ * user repository.
+ *
  * @author ron 2020/11/18
  */
 @Repository
 public interface UserRepo extends BaseRepo<User> {
 
   /**
-   * 通过用户名查询用户
+   * 通过用户名查询用户.
    *
    * @param username 用户名
    * @return 用户
@@ -24,14 +26,13 @@ public interface UserRepo extends BaseRepo<User> {
   Optional<User> findByUsername(String username);
 
   /**
-   * 更新用户密码
+   * 更新用户密码.
    *
    * @param username 用户名
    * @param password 密码
-   * @param salt     密码盐
+   * @param salt 密码盐
    */
   @Query("update User set password=?2, passwordSalt=?3 where username=?1")
   @Modifying
   void updatePass(String username, String password, String salt);
-
 }

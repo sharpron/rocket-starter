@@ -1,11 +1,13 @@
 package pub.ron.admin.system.dto;
 
-import pub.ron.admin.common.BaseDto;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import pub.ron.admin.common.BaseDto;
 
 /**
+ * role dto.
+ *
  * @author ron 2020/11/22
  */
 @Getter

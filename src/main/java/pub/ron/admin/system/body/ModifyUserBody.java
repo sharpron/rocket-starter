@@ -7,6 +7,8 @@ import lombok.Data;
 import pub.ron.admin.common.validator.Mobile;
 
 /**
+ * modify user body.
+ *
  * @author ron 2020/11/18
  */
 @Data
@@ -14,16 +16,13 @@ public class ModifyUserBody {
 
   private Long id;
 
-  @Mobile
-  private String mobile;
+  @Mobile private String mobile;
 
-  @Email
-  private String email;
+  @Email private String email;
 
   private Boolean disabled;
 
   private List<Long> roleIds;
 
-  @NotNull
-  private Long deptId;
+  @NotNull private Long deptId;
 }

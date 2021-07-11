@@ -12,6 +12,8 @@ import pub.ron.admin.quartz.domain.QuartzLog;
 import pub.ron.admin.quartz.repo.QuartzLogRepo;
 
 /**
+ * job runner.
+ *
  * @author herong 2021/2/9
  */
 @RequiredArgsConstructor
@@ -26,8 +28,7 @@ public class JobRunner extends QuartzJobBean implements ApplicationContextAware 
   @Override
   protected void executeInternal(JobExecutionContext jobExecutionContext) {
 
-    final QuartzJob quartzJob = (QuartzJob) jobExecutionContext
-        .getMergedJobDataMap().get(JOB_KEY);
+    final QuartzJob quartzJob = (QuartzJob) jobExecutionContext.getMergedJobDataMap().get(JOB_KEY);
 
     final QuartzLog quartzLog = new QuartzLog();
     quartzLog.setJobId(quartzJob.getId());
@@ -44,7 +45,6 @@ public class JobRunner extends QuartzJobBean implements ApplicationContextAware 
       quartzLog.setDuration(System.currentTimeMillis() - start);
       quartzLogRepo.save(quartzLog);
     }
-
   }
 
   private void doJob(QuartzJob quartzJob) {

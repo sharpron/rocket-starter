@@ -6,12 +6,13 @@ import org.springframework.stereotype.Repository;
 import pub.ron.admin.message.domain.MessageHistory;
 
 /**
+ * repository for message history.
+ *
  * @author herong 2021/2/9
  */
 @Repository
-public interface MessageHistoryRepo extends JpaRepository<MessageHistory, Long>,
-    JpaSpecificationExecutor<MessageHistory> {
+public interface MessageHistoryRepo
+    extends JpaRepository<MessageHistory, Long>, JpaSpecificationExecutor<MessageHistory> {
 
-  int deleteByCreateBy(String createBy);
-
+  void deleteByCreateBy(String createBy);
 }

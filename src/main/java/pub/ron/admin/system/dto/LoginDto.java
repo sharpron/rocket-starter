@@ -4,17 +4,16 @@ import javax.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
+ * login info.
+ *
  * @author ron 2020/11/18
  */
 @Data
 public class LoginDto {
 
-  @NotBlank
-  private String username;
+  @NotBlank private String username;
 
-  @NotBlank
-  private String password;
+  @NotBlank private String password;
 
-  @NotBlank
-  private String captcha;
+  @NotBlank private String captcha;
 }

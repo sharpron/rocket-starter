@@ -13,18 +13,28 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class LocalDateTimeSerializerConfig {
 
+  /**
+   * jackson LocalDateTime serialize support.
+   *
+   * @return Jackson2ObjectMapperBuilderCustomizer
+   */
   @Bean
   public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
-    return builder -> builder
-        .serializerByType(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
-          @Override
-          public void serialize(LocalDateTime o, JsonGenerator jsonGenerator,
-              SerializerProvider serializerProvider) throws IOException {
-            if (o != null) {
-              final long epochMilli = o.toInstant(ZoneOffset.of("+8")).toEpochMilli();
-              jsonGenerator.writeNumber(epochMilli);
-            }
-          }
-        });
+    return builder ->
+        builder.serializerByType(
+            LocalDateTime.class,
+            new JsonSerializer<LocalDateTime>() {
+              @Override
+              public void serialize(
+                  LocalDateTime o,
+                  JsonGenerator jsonGenerator,
+                  SerializerProvider serializerProvider)
+                  throws IOException {
+                if (o != null) {
+                  final long epochMilli = o.toInstant(ZoneOffset.of("+8")).toEpochMilli();
+                  jsonGenerator.writeNumber(epochMilli);
+                }
+              }
+            });
   }
 }

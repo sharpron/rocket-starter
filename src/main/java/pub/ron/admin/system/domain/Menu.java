@@ -1,12 +1,14 @@
 package pub.ron.admin.system.domain;
 
-import pub.ron.admin.common.BaseEntity;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import pub.ron.admin.common.BaseEntity;
 
 /**
+ * menu.
+ *
  * @author ron 2020/12/14
  */
 @Getter
@@ -32,5 +34,4 @@ public class Menu extends BaseEntity {
   private String perm;
 
   private Long parentId;
-
 }

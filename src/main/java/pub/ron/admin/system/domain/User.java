@@ -22,6 +22,8 @@ import org.hibernate.annotations.DynamicUpdate;
 import pub.ron.admin.common.BaseEntity;
 
 /**
+ * user.
+ *
  * @author ron 2020/11/17
  */
 @Getter
@@ -33,11 +35,7 @@ public class User extends BaseEntity {
 
   public static final String ADMIN = "admin";
 
-  @Column(
-      unique = true,
-      columnDefinition = "char(10)",
-      updatable = false
-  )
+  @Column(unique = true, columnDefinition = "char(10)", updatable = false)
   private String username;
 
   @Column(columnDefinition = "char(64)")
@@ -67,6 +65,7 @@ public class User extends BaseEntity {
   @Column(name = "role_id")
   private Set<Long> roleIds;
 
+  /** pre persist. */
   @PrePersist
   public void prePersist() {
     if (this.disabled == null) {

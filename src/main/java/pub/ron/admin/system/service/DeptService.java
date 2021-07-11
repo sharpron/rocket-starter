@@ -8,6 +8,8 @@ import pub.ron.admin.system.dto.DeptDto;
 import pub.ron.admin.system.dto.DeptNode;
 
 /**
+ * dept service.
+ *
  * @author ron 2020/11/18
  */
 public interface DeptService extends BaseService<Dept> {
@@ -15,5 +17,4 @@ public interface DeptService extends BaseService<Dept> {
   List<DeptNode> findAsTree();
 
   Page<DeptDto> findFullAsTree();
-
 }

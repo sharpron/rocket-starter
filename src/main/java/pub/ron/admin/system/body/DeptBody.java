@@ -5,6 +5,8 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 /**
+ * dept body.
+ *
  * @author ron 2020/11/20
  */
 @Data

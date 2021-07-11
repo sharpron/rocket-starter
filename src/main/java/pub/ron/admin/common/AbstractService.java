@@ -9,7 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import pub.ron.admin.common.query.WhereBuilder;
 
 /**
- * 常用的操作
+ * 常用的操作.
  *
  * @author ron 2021/1/1
  */
@@ -17,14 +17,11 @@ import pub.ron.admin.common.query.WhereBuilder;
 public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
     implements BaseService<T> {
 
-  /**
-   * repository
-   */
+  /** repository. */
   protected final R repository;
 
-
   /**
-   * 将实体创建到数据库中
+   * 将实体创建到数据库中.
    *
    * @param t t
    */
@@ -36,9 +33,8 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
     repository.save(t);
   }
 
-
   /**
-   * 更新操作
+   * 更新操作.
    *
    * @param t t
    */
@@ -51,7 +47,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
   }
 
   /**
-   * 通过id删除数据
+   * 通过id删除数据.
    *
    * @param id id
    */
@@ -65,10 +61,10 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
   }
 
   /**
-   * 分页查询数据
+   * 分页查询数据.
    *
    * @param pageable 分页参数
-   * @param query    查询条件
+   * @param query 查询条件
    * @return 查询结果
    */
   @Override
@@ -77,7 +73,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
   }
 
   /**
-   * 获取指定的条件
+   * 获取指定的条件.
    *
    * @param query 查询相关的数据
    * @return 条件
@@ -87,7 +83,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
   }
 
   /**
-   * 查询所有复合条件的数据
+   * 查询所有复合条件的数据.
    *
    * @param query 查询条件
    * @return 所有复合条件的数据
@@ -98,15 +94,13 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
   }
 
   /**
-   * 通过主键获取数据
+   * 通过主键获取数据.
    *
    * @param id id
    * @return 数据
    */
   @Override
   public final T findById(Long id) {
-    return repository.findById(id).orElseThrow(
-        () -> new AppException("数据不存在id：" + id)
-    );
+    return repository.findById(id).orElseThrow(() -> new AppException("数据不存在id：" + id));
   }
 }

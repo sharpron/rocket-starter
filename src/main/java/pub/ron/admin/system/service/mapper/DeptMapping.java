@@ -7,11 +7,11 @@ import java.lang.annotation.Target;
 import org.mapstruct.Mapping;
 
 /**
+ * dept mapping.
+ *
  * @author ron 2020/11/19
  */
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD})
 @Mapping(source = "deptId", target = "dept.id")
-public @interface DeptMapping {
-
-}
+public @interface DeptMapping {}

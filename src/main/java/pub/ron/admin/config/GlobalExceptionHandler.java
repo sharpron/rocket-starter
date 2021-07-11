@@ -1,7 +1,5 @@
 package pub.ron.admin.config;
 
-import pub.ron.admin.common.AppException;
-import pub.ron.admin.common.ErrorInfo;
 import java.util.Objects;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +10,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import pub.ron.admin.common.AppException;
+import pub.ron.admin.common.ErrorInfo;
 
 /**
  * Global Exception handlers.
@@ -24,7 +23,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
   /**
-   * Customize Application Exception
+   * Customize Application Exception.
    *
    * @param e e
    * @return Construct a Error from Exception's message
@@ -32,40 +31,44 @@ public class GlobalExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleApp(AppException e) {
     log.error("handle failed!", e);
-    return ResponseEntity.status(e.getStatus())
-        .body(new ErrorInfo(e.getMessage()));
+    return ResponseEntity.status(e.getStatus()).body(new ErrorInfo(e.getMessage()));
   }
 
+  /**
+   * validation exception handler.
+   *
+   * @param e e
+   * @return response
+   */
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleConstraint(MethodArgumentNotValidException e) {
     final FieldError fieldError = e.getFieldError();
     Objects.requireNonNull(fieldError);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorInfo(
-            fieldError.getField() + fieldError.getDefaultMessage()
-        ));
+        .body(new ErrorInfo(fieldError.getField() + fieldError.getDefaultMessage()));
   }
 
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleConstraint(ConstraintViolationException e) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(e.getConstraintViolations()
-            .stream().findFirst()
-            .map(violation -> new ErrorInfo(violation.getPropertyPath() + violation.getMessage()))
-            .orElseThrow(AssertionError::new));
+        .body(
+            e.getConstraintViolations().stream()
+                .findFirst()
+                .map(
+                    violation ->
+                        new ErrorInfo(violation.getPropertyPath() + violation.getMessage()))
+                .orElseThrow(AssertionError::new));
   }
 
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthorizedException e) {
-    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-        .body(new ErrorInfo(e.getMessage()));
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorInfo(e.getMessage()));
   }
 
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleOther(Throwable e) {
     log.error("handle failed!", e);
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body(new ErrorInfo("服务器内部错误"));
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorInfo("服务器内部错误"));
   }
 }

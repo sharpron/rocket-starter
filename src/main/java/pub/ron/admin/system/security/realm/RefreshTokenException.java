@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.shiro.authc.AuthenticationException;
 
 /**
+ * refresh token exception.
+ *
  * @author herong 2021/5/30
  */
 @RequiredArgsConstructor

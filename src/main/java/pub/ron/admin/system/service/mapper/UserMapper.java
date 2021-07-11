@@ -1,17 +1,14 @@
 package pub.ron.admin.system.service.mapper;
 
-import pub.ron.admin.system.dto.UserDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import pub.ron.admin.system.body.CreateUserBody;
 import pub.ron.admin.system.body.ModifyUserBody;
 import pub.ron.admin.system.domain.User;
+import pub.ron.admin.system.dto.UserDto;
 
-@Mapper(
-    componentModel = "spring",
-    unmappedTargetPolicy = ReportingPolicy.IGNORE
-)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
   @DeptMapping

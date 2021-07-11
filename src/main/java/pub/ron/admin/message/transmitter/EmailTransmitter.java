@@ -9,7 +9,7 @@ import pub.ron.admin.message.Message;
 import pub.ron.admin.message.Transmitter;
 
 /**
- * email方式发送消息
+ * email方式发送消息.
  *
  * @author herong 2021/2/9
  */

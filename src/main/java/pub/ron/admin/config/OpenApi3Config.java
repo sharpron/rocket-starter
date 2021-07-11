@@ -14,18 +14,17 @@ import org.springframework.context.annotation.Configuration;
     name = "bearerAuth",
     type = SecuritySchemeType.HTTP,
     bearerFormat = "JWT",
-    scheme = "bearer"
-)
-@OpenAPIDefinition(info = @Info(
-    title = "My API", version = "v1",
-    description = "文档描述"
-), security = @SecurityRequirement(name = "bearerAuth"))
+    scheme = "bearer")
+@OpenAPIDefinition(
+    info = @Info(title = "My API", version = "v1", description = "文档描述"),
+    security = @SecurityRequirement(name = "bearerAuth"))
 public class OpenApi3Config implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    SpringDocUtils.getConfig().replaceWithClass(
-        org.springframework.data.domain.Pageable.class,
-        org.springdoc.core.converters.models.Pageable.class);
+    SpringDocUtils.getConfig()
+        .replaceWithClass(
+            org.springframework.data.domain.Pageable.class,
+            org.springdoc.core.converters.models.Pageable.class);
   }
 }

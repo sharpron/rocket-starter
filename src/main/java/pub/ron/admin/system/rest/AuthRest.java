@@ -22,13 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pub.ron.admin.common.AppException;
 import pub.ron.admin.system.dto.LoginDto;
-import pub.ron.admin.system.security.JWTFilter;
+import pub.ron.admin.system.security.JwtFilter;
 import pub.ron.admin.system.security.principal.UserPrincipal;
 import pub.ron.admin.system.security.provider.TokenProvider;
 import pub.ron.admin.system.service.CaptchaService;
 import pub.ron.admin.system.service.CaptchaService.Captcha;
 
 /**
+ * auth rest provider.
+ *
  * @author ron 2020/11/19
  */
 @Slf4j
@@ -43,33 +45,38 @@ public class AuthRest {
 
   private final CaptchaService captchaService;
 
-
+  /**
+   * 用户登录.
+   *
+   * @param loginDto loginDto
+   * @param cacheKey cacheKey
+   * @return response
+   */
   @Operation(tags = "用户登录")
   @PostMapping("/authenticate")
-  public ResponseEntity<JWTToken> authenticate(
-      @Valid @RequestBody LoginDto loginDto,
-      @RequestHeader(CACHE_KEY) String cacheKey) {
+  public ResponseEntity<JwtToken> authenticate(
+      @Valid @RequestBody LoginDto loginDto, @RequestHeader(CACHE_KEY) String cacheKey) {
 
     captchaService.check(cacheKey, loginDto.getCaptcha());
     final Subject subject = SecurityUtils.getSubject();
 
     try {
-      subject.login(
-          new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword())
-      );
+      subject.login(new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword()));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
       throw new AppException("用户名或密码错误");
     }
 
-    final String token = tokenProvider.generateToken(
-        (UserPrincipal) subject.getPrincipal()
-    );
-    return ResponseEntity
-        .ok()
-        .header(JWTFilter.AUTHORIZATION_HEADER, JWTFilter.TOKEN_PREFIX + token)
-        .body(new JWTToken(token));
+    final String token = tokenProvider.generateToken((UserPrincipal) subject.getPrincipal());
+    return ResponseEntity.ok()
+        .header(JwtFilter.AUTHORIZATION_HEADER, JwtFilter.TOKEN_PREFIX + token)
+        .body(new JwtToken(token));
   }
 
+  /**
+   * get captcha code.
+   *
+   * @return response
+   */
   @Operation(tags = "获取验证码")
   @GetMapping("/captcha")
   public ResponseEntity<byte[]> getCaptcha() {
@@ -83,18 +90,14 @@ public class AuthRest {
 
   @Operation(tags = "退出登录")
   @GetMapping("/logout")
-  public ResponseEntity<?> logout(
-      @RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+  public ResponseEntity<?> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
     tokenProvider.clear(token);
     return ResponseEntity.noContent().build();
   }
 
-
-  /**
-   * Object to return as body in JWT Authentication.
-   */
+  /** Object to return as body in JWT Authentication. */
   @Value
-  static class JWTToken {
+  static class JwtToken {
 
     String token;
   }

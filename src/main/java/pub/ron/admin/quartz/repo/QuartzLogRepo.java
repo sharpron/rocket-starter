@@ -6,10 +6,10 @@ import org.springframework.stereotype.Repository;
 import pub.ron.admin.quartz.domain.QuartzLog;
 
 /**
+ * quartz log repository.
+ *
  * @author herong 2021/2/9
  */
 @Repository
-public interface QuartzLogRepo extends JpaRepository<QuartzLog, Long>,
-    JpaSpecificationExecutor<QuartzLog> {
-
-}
+public interface QuartzLogRepo
+    extends JpaRepository<QuartzLog, Long>, JpaSpecificationExecutor<QuartzLog> {}

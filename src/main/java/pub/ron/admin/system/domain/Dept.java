@@ -1,6 +1,5 @@
 package pub.ron.admin.system.domain;
 
-import pub.ron.admin.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
@@ -13,17 +12,20 @@ import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pub.ron.admin.common.BaseEntity;
 
 /**
+ * department.
+ *
  * @author ron 2020/11/17
  */
 @Getter
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "sys_dept", indexes = {
-    @Index(name = "idx_path", columnList = "path")
-})
+@Table(
+    name = "sys_dept",
+    indexes = {@Index(name = "idx_path", columnList = "path")})
 public class Dept extends BaseEntity {
 
   @Column(nullable = false)

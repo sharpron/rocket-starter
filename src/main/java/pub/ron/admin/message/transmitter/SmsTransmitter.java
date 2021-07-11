@@ -5,7 +5,7 @@ import pub.ron.admin.message.Message;
 import pub.ron.admin.message.Transmitter;
 
 /**
- * 短信方式发送消息
+ * 短信方式发送消息.
  *
  * @author herong 2021/2/9
  */

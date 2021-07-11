@@ -9,6 +9,8 @@ import pub.ron.admin.quartz.domain.QuartzLog;
 import pub.ron.admin.quartz.dto.QuartzLogQuery;
 
 /**
+ * quartz job service.
+ *
  * @author herong 2021/2/9
  */
 @Service

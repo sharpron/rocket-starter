@@ -13,7 +13,7 @@ import pub.ron.admin.logging.Log;
 import pub.ron.admin.logging.service.LoggingService;
 
 /**
- * 扫描{@link Log}定义的public方法，处理日志行为
+ * 扫描{@link Log}定义的public方法，处理日志行为.
  *
  * @author ron 2020/9/20
  */
@@ -26,7 +26,7 @@ public class LogAspect {
   private final LoggingService loggingService;
 
   /**
-   * 环绕增强
+   * 环绕增强.
    *
    * @param point 增强点
    * @return 方法调用结果
@@ -35,14 +35,11 @@ public class LogAspect {
   @Around("@annotation(pub.ron.admin.logging.Log)")
   public Object around(ProceedingJoinPoint point) throws Throwable {
     return loggingService.addLogForOperation(
-        point::proceed,
-        LogAspect.getLogDef(point).value(),
-        Arrays.toString(point.getArgs())
-    );
+        point::proceed, LogAspect.getLogDef(point).value(), Arrays.toString(point.getArgs()));
   }
 
   /**
-   * 从切入点获取Log注解
+   * 从切入点获取Log注解.
    *
    * @param point 切入点
    * @return 注解
