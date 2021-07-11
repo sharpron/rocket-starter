@@ -52,7 +52,7 @@ public class MessageHistory extends BaseEntity {
   private SendType sendType;
 
   /**
-   * 标记消息是否已经被收件人阅读
+   * 标记消息是否已经被收件人查看
    */
-  private boolean read;
+  private boolean viewed;
 }

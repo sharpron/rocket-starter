@@ -1,0 +1,35 @@
+# suppress inspection "SpellCheckingInspection" for whole file
+# suppress inspection "SpringBootApplicationProperties" for whole file
+#debug=true
+spring:
+  profiles:
+    active: dev
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      use-new-id-generator-mappings: true
+      default_batch_fetch_size: 50
+      batch_fetch_style: dynamic
+      temp:
+        use_jdbc_metadata_defaults: false
+      cache:
+        use_second_level_cache: false
+      id:
+        new_generator_mappings: true
+      jdbc:
+        batch_size: 100
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  cache:
+    type: redis
+
+  jmx:
+    enabled: false
+
+
+# 以下是jwt配置
+jwt:
+  header: Authorization

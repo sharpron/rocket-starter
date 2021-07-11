@@ -3,7 +3,7 @@ package pub.ron.admin.config;
 import pub.ron.admin.system.repo.RoleRepo;
 import pub.ron.admin.system.repo.UserRepo;
 import pub.ron.admin.system.security.JWTFilter;
-import pub.ron.admin.system.security.TokenProvider;
+import pub.ron.admin.system.security.provider.TokenProvider;
 import pub.ron.admin.system.security.UseOneRealmAuthenticator;
 import pub.ron.admin.system.security.realm.JwtRealm;
 import pub.ron.admin.system.security.realm.UserRealm;

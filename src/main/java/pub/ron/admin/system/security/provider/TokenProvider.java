@@ -1,4 +1,4 @@
-package pub.ron.admin.system.security;
+package pub.ron.admin.system.security.provider;
 
 import pub.ron.admin.system.security.principal.UserPrincipal;
 
@@ -11,23 +11,24 @@ public interface TokenProvider {
    * 生成token
    *
    * @param principal  用户信息
-   * @param rememberMe 是否启动记住我
    * @return token
    */
-  String generateToken(UserPrincipal principal, boolean rememberMe);
+  String generateToken(UserPrincipal principal);
+
 
   /**
-   * 验证
+   * 验证访问token
    *
    * @param token token
-   * @return 用户信息
+   * @return user principal if success
+   * @throws TokenException 可能抛出
    */
-  UserPrincipal validate(String token);
+  UserPrincipal validateToken(String token) throws TokenException;
 
   /**
    * 清除token
-   *
    * @param token token
    */
   void clear(String token);
+
 }
