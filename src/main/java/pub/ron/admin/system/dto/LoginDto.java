@@ -11,9 +11,15 @@ import lombok.Data;
 @Data
 public class LoginDto {
 
-  @NotBlank private String username;
+  @NotBlank
+  private String username;
 
-  @NotBlank private String password;
+  @NotBlank
+  private String password;
 
-  @NotBlank private String captcha;
+  @NotBlank
+  private String captchaKey;
+
+  @NotBlank
+  private String captcha;
 }

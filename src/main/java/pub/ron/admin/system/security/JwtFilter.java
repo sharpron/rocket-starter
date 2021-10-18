@@ -36,6 +36,7 @@ public class JwtFilter extends GenericFilterBean {
       ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
       throws IOException, ServletException {
     HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
+    HttpServletResponse response = (HttpServletResponse) servletResponse;
     String jwt = resolveToken(httpServletRequest);
 
     if (StringUtils.hasText(jwt)) {
@@ -43,14 +44,16 @@ public class JwtFilter extends GenericFilterBean {
         SecurityUtils.getSubject().login(new JwtToken(jwt));
         filterChain.doFilter(servletRequest, servletResponse);
       } catch (RefreshTokenException e) {
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setHeader(AUTHORIZATION_HEADER, TOKEN_PREFIX + e.getToken());
       } catch (AuthenticationException e) {
-        HttpServletResponse response = (HttpServletResponse) servletResponse;
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        OBJECT_MAPPER.writeValue(response.getOutputStream(), new ErrorInfo("jwt认证失败"));
+        OBJECT_MAPPER.writeValue(response.getOutputStream(), new ErrorInfo("JWT认证失败"));
       }
+    } else {
+      response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+      OBJECT_MAPPER.writeValue(response.getOutputStream(),
+          new ErrorInfo("请在Header指定" + AUTHORIZATION_HEADER));
     }
   }
 

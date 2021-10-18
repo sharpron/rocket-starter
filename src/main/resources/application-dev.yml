@@ -1,3 +1,4 @@
+debug: true
 spring:
   jpa:
     hibernate:
@@ -7,12 +8,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/admin_dev?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false&rewriteBatchedStatements=true&allowPublicKeyRetrieval=true
     username: root
-    password: agVyPWw+m1Z5
+    password: 123456
 
   redis:
     host: localhost
     port: 6379
-    password: Lkrn+nQzPdjea+P1IVpWaFIDdtc=
+    database: 1
 
   mail:
     host: smtp.qq.com
@@ -20,8 +21,6 @@ spring:
     password: xxxxxxxxxxx
     default-encoding: utf-8
 
-  main:
-    lazy-initialization: true
 
 # 以下是jwt配置
 jwt:
@@ -29,4 +28,11 @@ jwt:
   base64-secret: ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI=
   # token is valid 24 hours
   access-token-validity: 86400s
+
+# 微信小程序相关配置
+wx:
+  appId: ''
+  secret: ''
+  # 直接使用模板更加灵活 其中${wx.appId}和 ${wx.secret}指示上面个的两个配置， $code代表微信小程序登录产生的动态代码
+  authorize-uri-template: "https://api.weixin.qq.com/sns/jscode2session?appid=${wx.appId}&secret=${wx.secret}&js_code=$code&grant_type=authorization_code&connect_redirect=1"
 

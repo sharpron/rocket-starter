@@ -71,7 +71,7 @@ public class JwtTokenProvider implements TokenProvider {
   @Override
   public UserPrincipal validateToken(String token) throws TokenException {
     try {
-      Claims claims = jwtParser.parseClaimsJwt(token).getBody();
+      Claims claims = jwtParser.parseClaimsJws(token).getBody();
       redisTemplate.opsForValue().set(getTokenKey(token), token, accessTokenValidity);
       return parseClaims(claims);
     } catch (ExpiredJwtException e) {

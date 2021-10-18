@@ -35,11 +35,17 @@ public @interface Limit {
    */
   Type type() default Type.METHOD_NAME;
 
-  /** 限流方. */
+  /**
+   * 限流方.
+   */
   enum Type {
-    /** 由服务端决定. */
+    /**
+     * 由服务端决定.
+     */
     METHOD_NAME,
-    /** 针对客户端. */
+    /**
+     * 针对客户端.
+     */
     IP_ADDRESS
   }
 }
