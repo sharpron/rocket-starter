@@ -18,27 +18,43 @@ import pub.ron.admin.message.SendType;
 @Table(name = "message_history")
 public class MessageHistory extends BaseEntity {
 
-  /** 发送人用户名. */
+  /**
+   * 发送人用户名.
+   */
   private String sender;
 
-  /** 发送人联系方式. */
+  /**
+   * 发送人联系方式.
+   */
   private String senderContact;
 
-  /** 接受人联系方式. */
+  /**
+   * 接受人联系方式.
+   */
   private String receiverContact;
 
-  /** 接受人用户名. */
+  /**
+   * 接受人用户名.
+   */
   private String receiver;
 
-  /** 标题. */
+  /**
+   * 标题.
+   */
   private String title;
 
-  /** 内容. */
+  /**
+   * 内容.
+   */
   private String content;
 
-  /** 发送类型. */
+  /**
+   * 发送类型.
+   */
   private SendType sendType;
 
-  /** 标记消息是否已经被收件人查看. */
+  /**
+   * 标记消息是否已经被收件人查看.
+   */
   private boolean viewed;
 }

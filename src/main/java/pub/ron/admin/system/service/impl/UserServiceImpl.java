@@ -73,4 +73,5 @@ public class UserServiceImpl extends AbstractService<User, UserRepo> implements 
   private static String randomSalt() {
     return UUID.randomUUID().toString();
   }
+
 }
