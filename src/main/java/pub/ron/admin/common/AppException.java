@@ -11,13 +11,15 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class AppException extends RuntimeException {
 
-  /** 状态码. */
+  /**
+   * 状态码.
+   */
   private final HttpStatus status;
 
   /**
    * 使用指定的状态码和消息构造一个异常.
    *
-   * @param status 状态
+   * @param status  状态
    * @param message 消息
    */
   public AppException(HttpStatus status, String message) {

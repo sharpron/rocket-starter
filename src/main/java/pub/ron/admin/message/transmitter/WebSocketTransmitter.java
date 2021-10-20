@@ -30,10 +30,14 @@ public class WebSocketTransmitter implements Transmitter {
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  /** 记录活跃的session. */
+  /**
+   * 记录活跃的session.
+   */
   private final ConcurrentMap<String, Session> activeSessions = new ConcurrentHashMap<>();
 
-  /** 记录当前在线连接数. */
+  /**
+   * 记录当前在线连接数.
+   */
   private final AtomicInteger onlineCount = new AtomicInteger();
 
   /**
@@ -46,7 +50,9 @@ public class WebSocketTransmitter implements Transmitter {
     return (String) session.getUserProperties().get(WebSocketConfig.USERNAME_KEY);
   }
 
-  /** 连接建立成功调用的方法. */
+  /**
+   * 连接建立成功调用的方法.
+   */
   @OnOpen
   public void onOpen(Session session) {
     final String username = getUsername(session);
@@ -54,7 +60,9 @@ public class WebSocketTransmitter implements Transmitter {
     log.info("有新连接加入：{}，当前在线人数为：{}", session.getId(), onlineCount.incrementAndGet());
   }
 
-  /** 连接关闭调用的方法. */
+  /**
+   * 连接关闭调用的方法.
+   */
   @OnClose
   public void onClose(Session session) {
     final String username = getUsername(session);
@@ -67,7 +75,9 @@ public class WebSocketTransmitter implements Transmitter {
     log.error("消息发生错误", error);
   }
 
-  /** 服务端发送消息给客户端. */
+  /**
+   * 服务端发送消息给客户端.
+   */
   private void sendMessage(String message, Session toSession) {
     try {
       log.info("服务端给客户端[{}]发送消息{}", toSession.getId(), message);

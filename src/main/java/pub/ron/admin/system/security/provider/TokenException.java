@@ -20,8 +20,8 @@ public class TokenException extends AppException {
   /**
    * constructor.
    *
-   * @param result result
-   * @param message message
+   * @param result        result
+   * @param message       message
    * @param userPrincipal userPrincipal
    */
   public TokenException(Result result, String message, UserPrincipal userPrincipal) {
@@ -32,6 +32,6 @@ public class TokenException extends AppException {
 
   public enum Result {
     EXPIRED,
-    ILLEGAL;
+    ILLEGAL
   }
 }

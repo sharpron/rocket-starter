@@ -21,8 +21,8 @@ public class WebSocketConfig extends ServerEndpointConfig.Configurator {
   /**
    * 协议建立之前添加认证信息.
    *
-   * @param sec config
-   * @param request request
+   * @param sec      config
+   * @param request  request
    * @param response response
    */
   @Override

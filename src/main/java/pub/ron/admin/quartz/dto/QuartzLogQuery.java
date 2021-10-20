@@ -13,4 +13,7 @@ public class QuartzLogQuery {
 
   @Where(type = Where.Type.eq)
   private Long jobId;
+
+  @Where(type = Where.Type.like)
+  private Long exceptionDetail;
 }

@@ -7,9 +7,13 @@ package pub.ron.admin.message;
  */
 public enum SendType {
 
-  /** 邮箱发送. */
+  /**
+   * 邮箱发送.
+   */
   EMAIL,
 
-  /** 短信发送. */
+  /**
+   * 短信发送.
+   */
   SMS
 }

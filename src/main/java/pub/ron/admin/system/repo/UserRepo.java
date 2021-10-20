@@ -1,8 +1,6 @@
 package pub.ron.admin.system.repo;
 
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -30,7 +28,7 @@ public interface UserRepo extends BaseRepo<User> {
    *
    * @param username 用户名
    * @param password 密码
-   * @param salt 密码盐
+   * @param salt     密码盐
    */
   @Query("update User set password=?2, passwordSalt=?3 where username=?1")
   @Modifying

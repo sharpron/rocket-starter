@@ -24,17 +24,21 @@ import pub.ron.admin.logging.util.IpUtils;
 @RequiredArgsConstructor
 public class LoggingService {
 
-  /** 自动注入日志模块. */
+  /**
+   * 自动注入日志模块.
+   */
   private final LoggingRepository loggingRepository;
 
-  /** current request proxy. */
+  /**
+   * current request proxy.
+   */
   private final HttpServletRequest request;
 
   /**
    * 分页查询.
    *
    * @param pageable 分页器
-   * @param query 查询条件
+   * @param query    查询条件
    * @return 数据
    */
   public Page<Logging> findByPage(Pageable pageable, LoggingQuery query) {
@@ -44,8 +48,8 @@ public class LoggingService {
   /**
    * 为操作添加日志.
    *
-   * @param func 操作
-   * @param log 日志
+   * @param func   操作
+   * @param log    日志
    * @param params 参数
    * @return func returns
    * @throws Throwable throws on func call
@@ -62,6 +66,7 @@ public class LoggingService {
       long time = System.currentTimeMillis() - beginTime;
 
       Logging logging = new Logging();
+      logging.setParams(params);
       logging.setDescription(log);
       logging.setSpendTime(time);
 
@@ -95,7 +100,9 @@ public class LoggingService {
     }
   }
 
-  /** 接口回调. */
+  /**
+   * 接口回调.
+   */
   @FunctionalInterface
   public interface Func {
 

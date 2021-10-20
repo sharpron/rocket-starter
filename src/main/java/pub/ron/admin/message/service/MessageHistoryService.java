@@ -16,7 +16,7 @@ public interface MessageHistoryService {
    * 分页查询.
    *
    * @param pageable 分页器
-   * @param query 查询条件
+   * @param query    查询条件
    * @return 分页结果
    */
   Page<MessageHistory> findByPage(Pageable pageable, MessageHistoryQuery query);

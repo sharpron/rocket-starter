@@ -11,18 +11,28 @@ import lombok.Value;
 @Value
 public class Message {
 
-  /** 发送人联系方式. */
+  /**
+   * 发送人联系方式.
+   */
   String senderContact;
 
-  /** 接受人联系方式. */
+  /**
+   * 接受人联系方式.
+   */
   String receiverContact;
 
-  /** 标题. */
+  /**
+   * 标题.
+   */
   String title;
 
-  /** 内容. */
+  /**
+   * 内容.
+   */
   String content;
 
-  /** 发送时间. */
+  /**
+   * 发送时间.
+   */
   LocalDateTime time;
 }

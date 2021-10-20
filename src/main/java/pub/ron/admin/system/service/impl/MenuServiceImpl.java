@@ -23,8 +23,11 @@ public class MenuServiceImpl extends AbstractService<Menu, MenuRepo> implements 
 
   private final MenuMapper menuMapper;
 
-  /** 注入自己，走缓存. */
-  @Resource private MenuServiceImpl menuService;
+  /**
+   * 注入自己，走缓存.
+   */
+  @Resource
+  private MenuServiceImpl menuService;
 
   public MenuServiceImpl(MenuRepo repository, MenuMapper menuMapper) {
     super(repository);

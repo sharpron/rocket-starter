@@ -17,7 +17,9 @@ import pub.ron.admin.common.query.WhereBuilder;
 public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
     implements BaseService<T> {
 
-  /** repository. */
+  /**
+   * repository.
+   */
   protected final R repository;
 
   /**
@@ -64,7 +66,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * 分页查询数据.
    *
    * @param pageable 分页参数
-   * @param query 查询条件
+   * @param query    查询条件
    * @return 查询结果
    */
   @Override

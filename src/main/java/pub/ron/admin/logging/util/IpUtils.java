@@ -23,7 +23,7 @@ public class IpUtils {
 
   static {
     InputStream resourceAsStream = IpUtils.class.getResourceAsStream("/plugin/ip2region.db");
-
+    assert resourceAsStream != null;
     try {
       IP_2_REGION = resourceAsStream.readAllBytes();
     } catch (IOException e) {
@@ -31,17 +31,21 @@ public class IpUtils {
     }
   }
 
-  /** 常见的包含ip的http header. */
+  /**
+   * 常见的包含ip的http header.
+   */
   private static final String[] CONTAINS_IP_HEADERS = {
-    "X-Forwarded-For",
-    "Proxy-Client-IP",
-    "WL-Proxy-Client-IP",
-    "HTTP_CLIENT_IP",
-    "HTTP_X_FORWARDED_FOR"
-    };
+      "X-Forwarded-For",
+      "Proxy-Client-IP",
+      "WL-Proxy-Client-IP",
+      "HTTP_CLIENT_IP",
+      "HTTP_X_FORWARDED_FOR"};
 
-  /** 禁用构造器. */
-  private IpUtils() {}
+  /**
+   * 禁用构造器.
+   */
+  private IpUtils() {
+  }
 
   /**
    * 获取客户端ip地址.

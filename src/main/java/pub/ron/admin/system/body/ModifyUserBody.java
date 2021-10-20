@@ -16,13 +16,16 @@ public class ModifyUserBody {
 
   private Long id;
 
-  @Mobile private String mobile;
+  @Mobile
+  private String mobile;
 
-  @Email private String email;
+  @Email
+  private String email;
 
   private Boolean disabled;
 
   private List<Long> roleIds;
 
-  @NotNull private Long deptId;
+  @NotNull
+  private Long deptId;
 }

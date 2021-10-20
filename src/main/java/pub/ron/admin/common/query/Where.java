@@ -28,19 +28,33 @@ public @interface Where {
    */
   Type type() default Type.eq;
 
-  /** relation query type. */
+  /**
+   * relation query type.
+   */
   enum Type {
-    /** full like. */
+    /**
+     * full like.
+     */
     like,
-    /** equals. */
+    /**
+     * equals.
+     */
     eq,
-    /** less than. */
+    /**
+     * less than.
+     */
     lt,
-    /** greater than. */
+    /**
+     * greater than.
+     */
     gt,
-    /** less than or equals. */
+    /**
+     * less than or equals.
+     */
     le,
-    /** greater than or equals. */
+    /**
+     * greater than or equals.
+     */
     ge,
     /**
      * less than or equals bigger greater than or equals smaller.

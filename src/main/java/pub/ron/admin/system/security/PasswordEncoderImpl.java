@@ -20,7 +20,9 @@ public class PasswordEncoderImpl implements PasswordEncoder, CredentialsMatcher 
   private static final String HASH_ALGORITHM_NAME = Sha256Hash.ALGORITHM_NAME;
   private final CredentialsMatcher credentialsMatcher;
 
-  /** constructor. */
+  /**
+   * constructor.
+   */
   public PasswordEncoderImpl() {
     HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher();
     credentialsMatcher.setHashAlgorithmName(HASH_ALGORITHM_NAME);

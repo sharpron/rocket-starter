@@ -65,7 +65,9 @@ public class User extends BaseEntity {
   @Column(name = "role_id")
   private Set<Long> roleIds;
 
-  /** pre persist. */
+  /**
+   * pre persist.
+   */
   @PrePersist
   public void prePersist() {
     if (this.disabled == null) {

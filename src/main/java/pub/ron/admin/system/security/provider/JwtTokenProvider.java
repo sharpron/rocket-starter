@@ -45,9 +45,9 @@ public class JwtTokenProvider implements TokenProvider {
   /**
    * constructor.
    *
-   * @param base64Secret base64Secret
+   * @param base64Secret        base64Secret
    * @param accessTokenValidity accessTokenValidity
-   * @param redisTemplate redisTemplate
+   * @param redisTemplate       redisTemplate
    */
   public JwtTokenProvider(
       @Value("${jwt.base64-secret}") String base64Secret,

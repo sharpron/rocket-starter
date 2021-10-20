@@ -12,4 +12,5 @@ import pub.ron.admin.quartz.domain.QuartzLog;
  */
 @Repository
 public interface QuartzLogRepo
-    extends JpaRepository<QuartzLog, Long>, JpaSpecificationExecutor<QuartzLog> {}
+    extends JpaRepository<QuartzLog, Long>, JpaSpecificationExecutor<QuartzLog> {
+}

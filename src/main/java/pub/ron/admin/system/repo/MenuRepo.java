@@ -20,11 +20,9 @@ public interface MenuRepo extends BaseRepo<Menu> {
    * @param userId user id
    * @return 多个菜单
    */
-  @Query(
-      value =
-          "select * from sys_menu m left join sys_role_menu rm on m.id = rm.menu_id"
-              + " left join sys_user_role ur on rm.role_id = ur.role_id"
-              + " where ur.user_id = ?1 order by m.order_no",
+  @Query(value = "select * from sys_menu m left join sys_role_menu rm on m.id = rm.menu_id"
+      + " left join sys_user_role ur on rm.role_id = ur.role_id"
+      + " where ur.user_id = ?1 order by m.order_no",
       nativeQuery = true)
   List<Menu> findMenusByUser(Long userId);
 }

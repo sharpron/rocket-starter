@@ -40,7 +40,7 @@ public class RoleRest {
   /**
    * paged role query.
    *
-   * @param pageable pageable
+   * @param pageable  pageable
    * @param roleQuery roleQuery
    * @return response
    */
@@ -74,7 +74,7 @@ public class RoleRest {
   /**
    * modify role.
    *
-   * @param id id
+   * @param id       id
    * @param roleBody roleBody
    * @return response
    */

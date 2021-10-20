@@ -20,9 +20,8 @@ public interface RoleRepo extends BaseRepo<Role> {
    * @param userId 用户id
    * @return 部门id
    */
-  @Query(
-      value =
-          "select dept_id from sys_role_dept d inner join sys_user_role r on d.role_id=r.role_id where r.user_id=?1",
+  @Query(value = "select dept_id from sys_role_dept d inner join sys_user_role r "
+      + " on d.role_id=r.role_id where r.user_id=?1",
       nativeQuery = true)
   Set<Long> findManageDeptIds(Long userId);
 }

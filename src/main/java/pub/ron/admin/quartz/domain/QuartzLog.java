@@ -1,6 +1,7 @@
 package pub.ron.admin.quartz.domain;
 
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,10 +28,14 @@ public class QuartzLog {
 
   private boolean success;
 
+  @Column(columnDefinition = "text")
   private String exceptionDetail;
 
-  /** 执行花费时间. */
+  /**
+   * 执行花费时间.
+   */
   private Long duration;
 
-  @CreatedDate private LocalDateTime createTime;
+  @CreatedDate
+  private LocalDateTime createTime;
 }
