@@ -28,11 +28,3 @@ jwt:
   base64-secret: ZmQ0ZGI5NjQ0MDQwY2I4MjMxY2Y3ZmI3MjdhN2ZmMjNhODViOTg1ZGE0NTBjMGM4NDA5NzYxMjdjOWMwYWRmZTBlZjlhNGY3ZTg4Y2U3YTE1ODVkZDU5Y2Y3OGYwZWE1NzUzNWQ2YjFjZDc0NGMxZWU2MmQ3MjY1NzJmNTE0MzI=
   # token is valid 24 hours
   access-token-validity: 86400s
-
-# 微信小程序相关配置
-wx:
-  appId: ''
-  secret: ''
-  # 直接使用模板更加灵活 其中${wx.appId}和 ${wx.secret}指示上面个的两个配置， $code代表微信小程序登录产生的动态代码
-  authorize-uri-template: "https://api.weixin.qq.com/sns/jscode2session?appid=${wx.appId}&secret=${wx.secret}&js_code=$code&grant_type=authorization_code&connect_redirect=1"
-
