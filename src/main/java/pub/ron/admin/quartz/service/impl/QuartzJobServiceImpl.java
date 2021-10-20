@@ -29,8 +29,8 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
   /**
    * constructor.
    *
-   * @param repository quartz job repository
-   * @param quartzLogRepo quartzLogRepo
+   * @param repository       quartz job repository
+   * @param quartzLogRepo    quartzLogRepo
    * @param quartzJobManager quartzJobManager
    */
   public QuartzJobServiceImpl(
@@ -59,7 +59,7 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
 
   @Override
   public void pause(Long jobId) {
-    if (repository.setEnabled(jobId, false) > 0) {
+    if (repository.updateEnabled(jobId, false) > 0) {
       quartzJobManager.pause(jobId);
     } else {
       throw new AppException("暂停失败，任务状态异常");
@@ -68,7 +68,7 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
 
   @Override
   public void resume(Long jobId) {
-    if (repository.setEnabled(jobId, true) > 0) {
+    if (repository.updateEnabled(jobId, true) > 0) {
       quartzJobManager.resume(jobId);
     } else {
       throw new AppException("恢复失败，任务状态异常");

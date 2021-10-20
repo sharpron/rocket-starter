@@ -25,86 +25,88 @@ import pub.ron.admin.system.security.principal.UserPrincipal;
  */
 public class WhereBuilder {
 
-  /** Prevent external instantiation. */
-  private WhereBuilder() {}
+  /**
+   * Prevent external instantiation.
+   */
+  private WhereBuilder() {
+  }
 
   /**
    * 构建条件.
    *
-   * @param o 对象
+   * @param o   对象
    * @param <T> 对象的范性
    * @return 条件
    */
   public static <T> Specification<T> buildSpec(Object o) {
     if (o == null) {
-      return (Specification<T>) (root, query, criteriaBuilder) -> null;
+      return (root, query, criteriaBuilder) -> null;
     }
-    return (Specification<T>)
-        (root, query, criteriaBuilder) -> {
-          final Class<?> aClass = o.getClass();
-          return Stream.of(aClass.getDeclaredFields())
-              .peek(e -> e.setAccessible(true))
-              .filter(e -> e.isAnnotationPresent(Where.class))
-              .map(
-                  e -> {
-                    final Object fieldVal;
-                    try {
-                      fieldVal = e.get(o);
-                    } catch (IllegalAccessException ex) {
-                      throw new AssertionError(ex);
-                    }
-                    if (fieldVal == null) {
-                      return null;
-                    }
-                    final Where where = e.getAnnotation(Where.class);
-                    final String rootName = where.root().isEmpty() ? e.getName() : where.root();
+    return (root, query, criteriaBuilder) -> {
+      final Class<?> aClass = o.getClass();
+      return Stream.of(aClass.getDeclaredFields())
+          .peek(e -> e.setAccessible(true))
+          .filter(e -> e.isAnnotationPresent(Where.class))
+          .map(
+              e -> {
+                final Object fieldVal;
+                try {
+                  fieldVal = e.get(o);
+                } catch (IllegalAccessException ex) {
+                  throw new AssertionError(ex);
+                }
+                if (fieldVal == null) {
+                  return null;
+                }
+                final Where where = e.getAnnotation(Where.class);
+                final String rootName = where.root().isEmpty() ? e.getName() : where.root();
 
-                    switch (where.type()) {
-                      case like:
-                        return criteriaBuilder.like(
-                            WhereBuilder.getPath(rootName, root), "%" + fieldVal + "%");
-                      case eq:
-                        return criteriaBuilder.equal(
-                            WhereBuilder.getPath(rootName, root), fieldVal);
-                      case lt:
-                        return criteriaBuilder.lt(
-                            WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                      case gt:
-                        return criteriaBuilder.gt(
-                            WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                      case le:
-                        return criteriaBuilder.le(
-                            WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                      case ge:
-                        return criteriaBuilder.ge(
-                            WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                      case between:
-                        final List<Long> numbers = asBetween(fieldVal);
-                        return criteriaBuilder.between(
-                            WhereBuilder.getPath(rootName, root), numbers.get(0), numbers.get(1));
-                      case betweenTime:
-                        final List<Long> timestamps = asBetween(fieldVal);
-                        return criteriaBuilder.between(
-                            WhereBuilder.getPath(rootName, root),
-                            new Date(timestamps.get(0)),
-                            new Date(timestamps.get(1)));
-                      default:
-                        throw new AssertionError();
-                    }
-                  })
-              .filter(Objects::nonNull)
-              .reduce(criteriaBuilder::and)
-              .orElse(null);
-        };
+                switch (where.type()) {
+                  case like:
+                    return criteriaBuilder.like(
+                        WhereBuilder.getPath(rootName, root), "%" + fieldVal + "%");
+                  case eq:
+                    return criteriaBuilder.equal(
+                        WhereBuilder.getPath(rootName, root), fieldVal);
+                  case lt:
+                    return criteriaBuilder.lt(
+                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+                  case gt:
+                    return criteriaBuilder.gt(
+                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+                  case le:
+                    return criteriaBuilder.le(
+                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+                  case ge:
+                    return criteriaBuilder.ge(
+                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+                  case between:
+                    final List<Long> numbers = asBetween(fieldVal);
+                    return criteriaBuilder.between(
+                        WhereBuilder.getPath(rootName, root), numbers.get(0), numbers.get(1));
+                  case betweenTime:
+                    final List<Long> timestamps = asBetween(fieldVal);
+                    return criteriaBuilder.between(
+                        WhereBuilder.getPath(rootName, root),
+                        new Date(timestamps.get(0)),
+                        new Date(timestamps.get(1)));
+                  default:
+                    throw new AssertionError();
+                }
+              })
+          .filter(Objects::nonNull)
+          .reduce(criteriaBuilder::and)
+          .orElse(null);
+    };
   }
 
   /**
    * Analysis of path.
    *
    * @param rootName root name
-   * @param root root
-   * @param <Y> type of root
-   * @param <T> type of entity
+   * @param root     root
+   * @param <Y>      type of root
+   * @param <T>      type of entity
    * @return Path
    */
   @SuppressWarnings("unchecked")
@@ -120,26 +122,25 @@ public class WhereBuilder {
   /**
    * Convert parameters to numeric types.
    *
-   * @param o 对象
+   * @param o   对象
    * @param <T> entity type
    * @return Specification
    */
   public static <T> Specification<T> buildSpecWithDept(Object o) {
     final Specification<T> specification = buildSpec(o);
     final UserPrincipal userPrincipal = SubjectUtils.currentUser();
-    return (Specification<T>)
-        (root, query, builder) -> {
-          final Join<Role, Dept> deptJoin = root.join("dept");
-          final Predicate deptPredicate =
-              builder.or(
-                  builder.equal(deptJoin.get("id"), userPrincipal.getDeptId()),
-                  builder.like(deptJoin.get("path"), userPrincipal.getDeptPath() + "%"));
-          final Predicate predicate = specification.toPredicate(root, query, builder);
-          if (predicate == null) {
-            return deptPredicate;
-          }
-          return builder.and(deptPredicate, predicate);
-        };
+    return (root, query, builder) -> {
+      final Join<Role, Dept> deptJoin = root.join("dept");
+      final Predicate deptPredicate =
+          builder.or(
+              builder.equal(deptJoin.get("id"), userPrincipal.getDeptId()),
+              builder.like(deptJoin.get("path"), userPrincipal.getDeptPath() + "%"));
+      final Predicate predicate = specification.toPredicate(root, query, builder);
+      if (predicate == null) {
+        return deptPredicate;
+      }
+      return builder.and(deptPredicate, predicate);
+    };
   }
 
   /**

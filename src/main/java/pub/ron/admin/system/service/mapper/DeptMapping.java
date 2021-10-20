@@ -14,4 +14,5 @@ import org.mapstruct.Mapping;
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.METHOD})
 @Mapping(source = "deptId", target = "dept.id")
-public @interface DeptMapping {}
+public @interface DeptMapping {
+}

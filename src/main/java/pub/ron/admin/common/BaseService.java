@@ -36,7 +36,7 @@ public interface BaseService<T extends BaseEntity> {
    * 分页查询.
    *
    * @param pageable 分页参数
-   * @param query 查询条件
+   * @param query    查询条件
    * @return 结果
    */
   Page<T> findByPage(Pageable pageable, Object query);

@@ -14,30 +14,45 @@ import pub.ron.admin.logging.domain.Status;
 @Data
 public class LoggingQuery {
 
-  /** 描述. */
+  /**
+   * 描述.
+   */
   @Where(type = Type.like)
   private String description;
 
-  /** 花费时间. */
+  /**
+   * 花费时间.
+   */
   @Where(type = Type.between)
   private List<Long> spendTime;
 
-  /** 状态 成功或者失败. */
-  @Where private Status status;
+  /**
+   * 状态 成功或者失败.
+   */
+  @Where
+  private Status status;
 
-  /** 异常发生时的异常信息. */
+  /**
+   * 异常发生时的异常信息.
+   */
   @Where(type = Type.like)
   private String exception;
 
-  /** 客户端IP. */
+  /**
+   * 客户端IP.
+   */
   @Where(type = Type.like)
   private String clientIp;
 
-  /** 客户端区域. */
+  /**
+   * 客户端区域.
+   */
   @Where(type = Type.like)
   private String clientRegion;
 
-  /** 用户代理，浏览器信息等. */
+  /**
+   * 用户代理，浏览器信息等.
+   */
   @Where(type = Type.like)
   private String userAgent;
 }

@@ -11,7 +11,9 @@ import pub.ron.admin.common.validator.Password;
 @Data
 public class ModifyPassDto {
 
-  @Password private String oldPass;
+  @Password
+  private String oldPass;
 
-  @Password private String newPass;
+  @Password
+  private String newPass;
 }

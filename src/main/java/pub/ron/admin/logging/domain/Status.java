@@ -7,9 +7,13 @@ package pub.ron.admin.logging.domain;
  */
 public enum Status {
 
-  /** 成功. */
+  /**
+   * 成功.
+   */
   OK,
 
-  /** 失败. */
+  /**
+   * 失败.
+   */
   FAIL
 }

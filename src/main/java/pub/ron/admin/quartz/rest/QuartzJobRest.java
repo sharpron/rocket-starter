@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pub.ron.admin.quartz.domain.QuartzJob;
 import pub.ron.admin.quartz.dto.QuartzJobQuery;
 import pub.ron.admin.quartz.dto.QuartzLogQuery;
+import pub.ron.admin.quartz.dto.StatusType;
 import pub.ron.admin.quartz.service.QuartzJobService;
 
 /**
@@ -53,7 +54,7 @@ public class QuartzJobRest {
   /**
    * 修改定时任务状态.
    *
-   * @param jobId job id
+   * @param jobId      job id
    * @param statusType statusType
    * @return response
    */

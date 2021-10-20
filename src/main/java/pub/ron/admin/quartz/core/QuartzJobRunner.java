@@ -30,9 +30,10 @@ public class QuartzJobRunner implements ApplicationRunner {
    */
   @Override
   public void run(ApplicationArguments applicationArguments) {
-    log.info("--------------------启动定时任务---------------------");
     List<QuartzJob> quartzJobs = quartzJobRepo.findByEnabledIs(true);
-    quartzJobs.forEach(quartzJobManager::addJob);
-    log.info("--------------------定时任务启动完成---------------------");
+    if (quartzJobs.size() > 0) {
+      quartzJobs.forEach(quartzJobManager::addJob);
+      log.info("定时任务{}个已经启动完成..", quartzJobs.size());
+    }
   }
 }

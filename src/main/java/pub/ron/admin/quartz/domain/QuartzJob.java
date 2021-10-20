@@ -17,21 +17,33 @@ import pub.ron.admin.common.BaseEntity;
 @Table(name = "quartz_job")
 public class QuartzJob extends BaseEntity {
 
+  /**
+   * 名称.
+   */
   private String name;
 
+  /**
+   * spring 中对应的bean name.
+   */
   private String runnableBeanName;
 
+  /**
+   * 运行参数.
+   */
   private String params;
 
+  /**
+   * cron 表达式, 决定如何执行.
+   */
   private String cronExpression;
 
+  /**
+   * 启用和禁用状态.
+   */
   private boolean enabled;
 
-  private String personInCharge;
-
-  private String emails;
-
-  private boolean continueWhenFail;
-
+  /**
+   * 描述信息.
+   */
   private String description;
 }

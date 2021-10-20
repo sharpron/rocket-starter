@@ -20,7 +20,9 @@ public class UserPrincipal {
 
   private final Long deptId;
 
-  /** 管辖的部门id. */
+  /**
+   * 管辖的部门id.
+   */
   private final Set<Long> deptIds;
 
   private final String deptPath;

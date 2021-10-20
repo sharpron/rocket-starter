@@ -9,8 +9,11 @@ import pub.ron.admin.system.security.principal.UserPrincipal;
 @Slf4j
 public class SubjectUtils {
 
-  /** Disable the constructor. */
-  private SubjectUtils() {}
+  /**
+   * Disable the constructor.
+   */
+  private SubjectUtils() {
+  }
 
   /**
    * Get the login of the current user.

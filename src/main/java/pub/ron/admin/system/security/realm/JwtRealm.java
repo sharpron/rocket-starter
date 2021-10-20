@@ -30,7 +30,7 @@ public class JwtRealm extends AuthorizingRealm {
    * constructor.
    *
    * @param tokenProvider tokenProvider
-   * @param menuService menuService
+   * @param menuService   menuService
    */
   public JwtRealm(TokenProvider tokenProvider, MenuService menuService) {
     this.tokenProvider = tokenProvider;

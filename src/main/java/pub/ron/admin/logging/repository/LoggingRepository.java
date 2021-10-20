@@ -12,4 +12,5 @@ import pub.ron.admin.logging.domain.Logging;
  */
 @Repository
 public interface LoggingRepository
-    extends JpaRepository<Logging, Long>, JpaSpecificationExecutor<Logging> {}
+    extends JpaRepository<Logging, Long>, JpaSpecificationExecutor<Logging> {
+}

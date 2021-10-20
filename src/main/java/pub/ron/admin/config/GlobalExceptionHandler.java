@@ -23,10 +23,10 @@ import pub.ron.admin.common.ErrorInfo;
 public class GlobalExceptionHandler {
 
   /**
-   * Customize Application Exception.
+   * 自定义应用异常处理.
    *
    * @param e e
-   * @return Construct a Error from Exception's message
+   * @return Construct an Error from Exception's message
    */
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleApp(AppException e) {
@@ -49,6 +49,12 @@ public class GlobalExceptionHandler {
         .body(new ErrorInfo(fieldError.getField() + fieldError.getDefaultMessage()));
   }
 
+  /**
+   * 处理条件验证的异常.
+   *
+   * @param e 验证时异常
+   * @return response
+   */
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleConstraint(ConstraintViolationException e) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)

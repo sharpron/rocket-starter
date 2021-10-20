@@ -19,5 +19,5 @@ public interface QuartzJobRepo extends BaseRepo<QuartzJob> {
 
   @Query("update QuartzJob set enabled=?2 where id=?1 and enabled<>?2")
   @Modifying
-  int setEnabled(Long id, boolean enabled);
+  int updateEnabled(Long id, boolean enabled);
 }

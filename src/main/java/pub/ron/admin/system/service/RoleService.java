@@ -8,4 +8,5 @@ import pub.ron.admin.system.domain.Role;
  *
  * @author ron 2020/11/18
  */
-public interface RoleService extends BaseService<Role> {}
+public interface RoleService extends BaseService<Role> {
+}

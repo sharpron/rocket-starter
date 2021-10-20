@@ -14,7 +14,7 @@ public interface MessageService {
   /**
    * 发送消息.
    *
-   * @param message 消息
+   * @param message   消息
    * @param sendTypes 发送类型
    */
   void send(MessageHistory message, EnumSet<SendType> sendTypes);

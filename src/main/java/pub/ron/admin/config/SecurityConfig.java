@@ -37,7 +37,7 @@ public class SecurityConfig {
    * json web token realm for shiro.
    *
    * @param tokenProvider token provider
-   * @param menuService menu service
+   * @param menuService   menu service
    * @return realm
    */
   @Bean
@@ -48,8 +48,8 @@ public class SecurityConfig {
   /**
    * authenticate realm.
    *
-   * @param userRepo user repository
-   * @param roleRepo role repository
+   * @param userRepo           user repository
+   * @param roleRepo           role repository
    * @param credentialsMatcher credentials matcher
    * @return realm
    */

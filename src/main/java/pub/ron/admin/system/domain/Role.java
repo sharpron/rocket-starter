@@ -51,7 +51,9 @@ public class Role extends BaseEntity {
   @Column(name = "menu_id")
   private Set<Long> menuIds;
 
-  /** pre persist. */
+  /**
+   * pre persist.
+   */
   @PrePersist
   public void prePersist() {
     if (this.disabled == null) {

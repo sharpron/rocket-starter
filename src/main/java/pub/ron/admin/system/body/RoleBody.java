@@ -15,9 +15,11 @@ import lombok.Data;
 @Data
 public class RoleBody {
 
-  @NotBlank private String name;
+  @NotBlank
+  private String name;
 
-  @NotNull private Long deptId;
+  @NotNull
+  private Long deptId;
 
   private boolean disabled;
 

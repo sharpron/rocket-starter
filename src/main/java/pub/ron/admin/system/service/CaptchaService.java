@@ -19,7 +19,7 @@ public interface CaptchaService {
   /**
    * 检测验证码.
    *
-   * @param key 访问键
+   * @param key  访问键
    * @param code 输入的验证码
    */
   void check(String key, String code);

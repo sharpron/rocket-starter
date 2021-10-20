@@ -46,7 +46,7 @@ public class LocalDateTimeSerializerConfig {
             .deserializerByType(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
               @Override
               public LocalDateTime deserialize(JsonParser jsonParser,
-                                        DeserializationContext deserializationContext)
+                                               DeserializationContext deserializationContext)
                   throws IOException {
                 Long number = jsonParser.readValueAs(Long.class);
                 if (number == null) {
