@@ -4,8 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import pub.ron.admin.common.BaseEntity;
 
 /**
@@ -15,8 +15,8 @@ import pub.ron.admin.common.BaseEntity;
  */
 @Entity
 @Table(name = "logging_log")
-@Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = true)
+@Getter
+@Setter
 public class Logging extends BaseEntity {
 
   /**
