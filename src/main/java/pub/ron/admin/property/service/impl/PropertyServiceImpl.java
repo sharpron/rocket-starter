@@ -1,7 +1,6 @@
 package pub.ron.admin.property.service.impl;
 
 import java.util.Optional;
-import javax.annotation.Resource;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,9 +19,6 @@ import pub.ron.admin.property.service.PropertyService;
 @CacheConfig(cacheNames = "property")
 public class PropertyServiceImpl extends AbstractService<Property, PropertyRepo>
     implements PropertyService {
-
-  @Resource
-  private PropertyServiceImpl self;
 
   public PropertyServiceImpl(PropertyRepo repository) {
     super(repository);
@@ -64,8 +60,6 @@ public class PropertyServiceImpl extends AbstractService<Property, PropertyRepo>
     if (optional.isEmpty()) {
       throw new IllegalArgumentException("数据不存在" + id);
     }
-    // spring cache使用代理进行缓存管理，避免直接使用this.clearCache
-    self.clearCache(optional.get());
     repository.delete(optional.get());
   }
 }

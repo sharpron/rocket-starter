@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 /**
@@ -16,7 +18,8 @@ import org.springframework.data.annotation.CreatedDate;
  * @author ron 2021-05-31
  */
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "quartz_log")
 public class QuartzLog {
 

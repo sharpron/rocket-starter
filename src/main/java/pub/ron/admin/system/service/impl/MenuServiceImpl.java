@@ -2,7 +2,6 @@ package pub.ron.admin.system.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
 import pub.ron.admin.system.domain.Menu;
@@ -23,11 +22,6 @@ public class MenuServiceImpl extends AbstractService<Menu, MenuRepo> implements 
 
   private final MenuMapper menuMapper;
 
-  /**
-   * 注入自己，走缓存.
-   */
-  @Resource
-  private MenuServiceImpl menuService;
 
   public MenuServiceImpl(MenuRepo repository, MenuMapper menuMapper) {
     super(repository);
@@ -46,7 +40,7 @@ public class MenuServiceImpl extends AbstractService<Menu, MenuRepo> implements 
     final List<Menu> menusByUser =
         userPrincipal.isAdmin()
             ? repository.findAll()
-            : menuService.findMenusByUser(userPrincipal.getId());
+            : findMenusByUser(userPrincipal.getId());
 
     List<MenuDto> result = new ArrayList<>();
     genTree(menusByUser, null, result);
