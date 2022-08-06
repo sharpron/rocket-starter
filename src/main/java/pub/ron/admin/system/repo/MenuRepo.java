@@ -17,12 +17,12 @@ public interface MenuRepo extends BaseRepo<Menu> {
   /**
    * 查询用户所拥有的菜单.
    *
-   * @param userId user id
+   * @param username username
    * @return 多个菜单
    */
   @Query(value = "select * from sys_menu m left join sys_role_menu rm on m.id = rm.menu_id"
       + " left join sys_user_role ur on rm.role_id = ur.role_id"
-      + " where ur.user_id = ?1 order by m.order_no",
+      + " where ur.username = ?1 order by m.order_no",
       nativeQuery = true)
-  List<Menu> findMenusByUser(Long userId);
+  List<Menu> findMenusByUsername(String username);
 }

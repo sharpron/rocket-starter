@@ -19,6 +19,9 @@ public class CreateUserBody {
   @NotBlank(message = "用户名称不能为空")
   private String username;
 
+  @NotBlank
+  private String nickname;
+
   @Password
   private String password;
 

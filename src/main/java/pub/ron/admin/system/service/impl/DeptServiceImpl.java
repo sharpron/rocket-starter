@@ -14,8 +14,8 @@ import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.dto.DeptDto;
 import pub.ron.admin.system.dto.DeptNode;
 import pub.ron.admin.system.repo.DeptRepo;
+import pub.ron.admin.system.security.Principal;
 import pub.ron.admin.system.security.SubjectUtils;
-import pub.ron.admin.system.security.principal.UserPrincipal;
 import pub.ron.admin.system.service.DeptService;
 import pub.ron.admin.system.service.mapper.DeptMapper;
 
@@ -38,7 +38,7 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
   }
 
   private <T> List<T> findAsTree(Function<Dept, T> mapping, Function<T, List<T>> childrenGetter) {
-    final UserPrincipal principal = SubjectUtils.currentUser();
+    final Principal principal = SubjectUtils.currentUser();
     final List<Dept> childrenByPath = repository.findByPath(principal.getDeptPath());
 
     Dept root = null;

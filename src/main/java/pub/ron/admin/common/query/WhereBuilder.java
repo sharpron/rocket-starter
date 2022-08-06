@@ -15,8 +15,8 @@ import org.springframework.data.jpa.domain.Specification;
 import pub.ron.admin.common.AppException;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.domain.Role;
+import pub.ron.admin.system.security.Principal;
 import pub.ron.admin.system.security.SubjectUtils;
-import pub.ron.admin.system.security.principal.UserPrincipal;
 
 /**
  * 条件构建器.
@@ -128,13 +128,13 @@ public class WhereBuilder {
    */
   public static <T> Specification<T> buildSpecWithDept(Object o) {
     final Specification<T> specification = buildSpec(o);
-    final UserPrincipal userPrincipal = SubjectUtils.currentUser();
+    final Principal principal = SubjectUtils.currentUser();
     return (root, query, builder) -> {
       final Join<Role, Dept> deptJoin = root.join("dept");
       final Predicate deptPredicate =
           builder.or(
-              builder.equal(deptJoin.get("id"), userPrincipal.getDeptId()),
-              builder.like(deptJoin.get("path"), userPrincipal.getDeptPath() + "%"));
+              builder.equal(deptJoin.get("id"), principal.getDeptId()),
+              builder.like(deptJoin.get("path"), principal.getDeptPath() + "%"));
       final Predicate predicate = specification.toPredicate(root, query, builder);
       if (predicate == null) {
         return deptPredicate;

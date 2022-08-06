@@ -1,5 +1,6 @@
 package pub.ron.admin.system.service.impl;
 
+import java.util.Set;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
 import pub.ron.admin.system.domain.Role;
@@ -16,5 +17,10 @@ public class RoleServiceImpl extends AbstractService<Role, RoleRepo> implements 
 
   public RoleServiceImpl(RoleRepo repository) {
     super(repository);
+  }
+
+  @Override
+  public Set<Long> findManageDeptIds(Long userId) {
+    return repository.findManageDeptIds(userId);
   }
 }

@@ -2,6 +2,7 @@ package pub.ron.admin.system.body;
 
 import java.util.List;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 import pub.ron.admin.common.validator.Mobile;
@@ -15,6 +16,9 @@ import pub.ron.admin.common.validator.Mobile;
 public class ModifyUserBody {
 
   private Long id;
+
+  @NotBlank
+  private String nickname;
 
   @Mobile
   private String mobile;
