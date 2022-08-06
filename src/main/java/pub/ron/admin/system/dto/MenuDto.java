@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import pub.ron.admin.common.BaseDto;
+import pub.ron.admin.system.domain.MenuType;
 
 /**
  * menu info.
@@ -18,13 +19,13 @@ public class MenuDto extends BaseDto {
 
   private Integer orderNo;
 
-  private String link;
+  private MenuType type;
 
   private String path;
 
-  private String icon;
+  private Boolean cacheable;
 
-  private String component;
+  private String icon;
 
   private boolean hide;
 

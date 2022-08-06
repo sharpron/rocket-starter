@@ -16,6 +16,9 @@ public class UserQuery {
   private String username;
 
   @Where(type = Type.like)
+  private String nickname;
+
+  @Where(type = Type.like)
   private String mobile;
 
   @Where(type = Type.like)

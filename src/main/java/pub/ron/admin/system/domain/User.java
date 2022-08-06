@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -37,6 +38,8 @@ public class User extends BaseEntity {
 
   @Column(unique = true, columnDefinition = "char(10)", updatable = false)
   private String username;
+
+  private String nickname;
 
   @Column(columnDefinition = "char(64)")
   private String password;
@@ -74,5 +77,10 @@ public class User extends BaseEntity {
       this.disabled = Boolean.FALSE;
     }
     this.locked = Boolean.FALSE;
+  }
+
+  @Transient
+  public boolean isAdmin() {
+    return ADMIN.equals(username);
   }
 }

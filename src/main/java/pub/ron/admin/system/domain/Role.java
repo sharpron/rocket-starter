@@ -36,11 +36,6 @@ public class Role extends BaseEntity {
 
   private Boolean disabled;
 
-  @ManyToOne
-  @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-  @NotNull(message = "必须指定部门")
-  private Dept dept;
-
   @ElementCollection
   @CollectionTable(name = "sys_role_dept", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
   @Column(name = "dept_id")

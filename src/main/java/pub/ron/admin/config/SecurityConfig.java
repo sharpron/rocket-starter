@@ -1,10 +1,8 @@
 package pub.ron.admin.config;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.servlet.Filter;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
@@ -14,14 +12,11 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import pub.ron.admin.system.repo.RoleRepo;
-import pub.ron.admin.system.repo.UserRepo;
-import pub.ron.admin.system.security.JwtFilter;
-import pub.ron.admin.system.security.UseOneRealmAuthenticator;
-import pub.ron.admin.system.security.provider.TokenProvider;
-import pub.ron.admin.system.security.realm.JwtRealm;
-import pub.ron.admin.system.security.realm.UserRealm;
+import pub.ron.admin.system.security.RestFormAuthenticationFilter;
+import pub.ron.admin.system.security.UserRealm;
 import pub.ron.admin.system.service.MenuService;
+import pub.ron.admin.system.service.RoleService;
+import pub.ron.admin.system.service.UserService;
 
 /**
  * project security config.
@@ -31,39 +26,23 @@ import pub.ron.admin.system.service.MenuService;
 @Configuration
 public class SecurityConfig {
 
-  private static final String JWT_NAME = "jwt";
-
-  /**
-   * json web token realm for shiro.
-   *
-   * @param tokenProvider token provider
-   * @param menuService   menu service
-   * @return realm
-   */
-  @Bean
-  public Realm jwtRealm(TokenProvider tokenProvider, MenuService menuService) {
-    return new JwtRealm(tokenProvider, menuService);
-  }
-
   /**
    * authenticate realm.
    *
-   * @param userRepo           user repository
-   * @param roleRepo           role repository
+   * @param userService        userService
+   * @param menuService        menuService
+   * @param roleService        roleService
    * @param credentialsMatcher credentials matcher
    * @return realm
    */
   @Bean
   public Realm userRealm(
-      UserRepo userRepo, RoleRepo roleRepo, CredentialsMatcher credentialsMatcher) {
-    final UserRealm userRealm = new UserRealm(userRepo, roleRepo);
+      UserService userService, MenuService menuService,
+      RoleService roleService,
+      CredentialsMatcher credentialsMatcher) {
+    final UserRealm userRealm = new UserRealm(userService, menuService, roleService);
     userRealm.setCredentialsMatcher(credentialsMatcher);
     return userRealm;
-  }
-
-  @Bean
-  public Authenticator authenticator() {
-    return new UseOneRealmAuthenticator();
   }
 
   /**
@@ -72,25 +51,30 @@ public class SecurityConfig {
    * @param securityManager securityManager
    * @return factory
    */
+  @SuppressWarnings("SpellCheckingInspection")
   @Bean
   public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
     ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
     // 设置 securityManager
     SecurityUtils.setSecurityManager(securityManager);
     shiroFilterFactoryBean.setSecurityManager(securityManager);
-
-    // 在 Shiro过滤器链上加入 自定义过滤器JWTFilter 并取名为jwt
-    Map<String, Filter> filters = new LinkedHashMap<>();
-    filters.put(JWT_NAME, new JwtFilter());
-    shiroFilterFactoryBean.setFilters(filters);
+    shiroFilterFactoryBean.setLoginUrl(null);
+    shiroFilterFactoryBean.setSuccessUrl(null);
+    shiroFilterFactoryBean.setUnauthorizedUrl(null);
 
     // 自定义url规则
     LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
     // 所有请求都要经过 jwt过滤器
     filterChainDefinitionMap.put("/api/authenticate", "anon");
+    filterChainDefinitionMap.put("/api/is-authenticated", "anon");
     filterChainDefinitionMap.put("/api/captcha", "anon");
-    filterChainDefinitionMap.put("/api/**", "jwt");
+
+    filterChainDefinitionMap.put("/api/**", "authc");
     shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+
+    LinkedHashMap<String, Filter> filterLinkedHashMap = new LinkedHashMap<>();
+    filterLinkedHashMap.put("authc", new RestFormAuthenticationFilter());
+    shiroFilterFactoryBean.setFilters(filterLinkedHashMap);
     return shiroFilterFactoryBean;
   }
 

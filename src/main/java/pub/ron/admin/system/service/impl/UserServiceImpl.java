@@ -39,6 +39,11 @@ public class UserServiceImpl extends AbstractService<User, UserRepo> implements 
   }
 
   @Override
+  public Optional<User> findByUsername(String username) {
+    return repository.findByUsername(username);
+  }
+
+  @Override
   public void modifyPass(ModifyPassDto modifyPassDto) {
     final String username = SubjectUtils.getCurrentUsername().orElseThrow();
     User user = repository.findByUsername(username).orElseThrow(() -> new AppException("用户状态异常"));
