@@ -19,6 +19,8 @@ public class MenuDto extends BaseDto {
 
   private Integer orderNo;
 
+  private Long parentId;
+
   private MenuType type;
 
   private String path;

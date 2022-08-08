@@ -1,24 +1,27 @@
 package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.common.validator.Create;
+import pub.ron.admin.common.validator.Update;
+import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.body.RoleBody;
-import pub.ron.admin.system.domain.Role;
 import pub.ron.admin.system.dto.RoleQuery;
 import pub.ron.admin.system.service.RoleService;
 import pub.ron.admin.system.service.mapper.RoleMapper;
@@ -47,6 +50,7 @@ public class RoleRest {
   @GetMapping
   @Operation(tags = "分页查询角色")
   @RequiresPermissions("role:query")
+  @Log("查询角色")
   public ResponseEntity<?> findByPage(Pageable pageable, RoleQuery roleQuery) {
     return ResponseEntity.ok(roleService.findByPage(pageable, roleQuery).map(roleMapper::mapDto));
   }
@@ -66,7 +70,8 @@ public class RoleRest {
   @PostMapping
   @Operation(tags = "创建角色")
   @RequiresPermissions("role:create")
-  public ResponseEntity<?> create(@RequestBody @Valid RoleBody roleBody) {
+  @Log("创建角色")
+  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) RoleBody roleBody) {
     roleService.create(roleMapper.mapRole(roleBody));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -74,26 +79,24 @@ public class RoleRest {
   /**
    * modify role.
    *
-   * @param id       id
    * @param roleBody roleBody
    * @return response
    */
-  @PutMapping("{id}")
+  @PutMapping
   @Operation(tags = "修改角色")
   @RequiresPermissions("role:modify")
-  public ResponseEntity<?> modify(@PathVariable Long id, @RequestBody @Valid RoleBody roleBody) {
-
-    final Role role = roleMapper.mapRole(roleBody);
-    role.setId(id);
-    roleService.update(role);
+  @Log("修改角色")
+  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) RoleBody roleBody) {
+    roleService.update(roleMapper.mapRole(roleBody));
     return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping
   @Operation(tags = "删除角色")
   @RequiresPermissions("role:remove")
-  public ResponseEntity<?> remove(@PathVariable Long id) {
-    roleService.deleteById(id);
+  @Log("删除角色")
+  public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {
+    roleService.deleteByIds(ids);
     return ResponseEntity.ok().build();
   }
 }

@@ -1,7 +1,7 @@
 package pub.ron.admin.common;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,11 +55,12 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    */
   @Override
   public void deleteById(Long id) {
-    final Optional<T> optional = repository.findById(id);
-    if (optional.isEmpty()) {
-      throw new IllegalArgumentException("数据不存在" + id);
-    }
-    repository.delete(optional.get());
+    repository.deleteById(id);
+  }
+
+  @Override
+  public void deleteByIds(Set<Long> ids) {
+    repository.deleteAllById(ids);
   }
 
   /**

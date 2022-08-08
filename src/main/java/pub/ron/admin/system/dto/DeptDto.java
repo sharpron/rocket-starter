@@ -20,6 +20,8 @@ public class DeptDto extends BaseDto {
 
   private String name;
 
+  private Long parentId;
+
   private Integer orderNo;
 
   private List<DeptDto> children;

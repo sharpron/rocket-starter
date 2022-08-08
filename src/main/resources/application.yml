@@ -37,8 +37,3 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: true
-
-
-# 以下是jwt配置
-jwt:
-  header: Authorization

@@ -1,6 +1,7 @@
 package pub.ron.admin.common;
 
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,6 +32,13 @@ public interface BaseService<T extends BaseEntity> {
    * @param id id
    */
   void deleteById(Long id);
+
+  /**
+   * 通过id批量删除.
+   *
+   * @param ids ids
+   */
+  void deleteByIds(Set<Long> ids);
 
   /**
    * 分页查询.

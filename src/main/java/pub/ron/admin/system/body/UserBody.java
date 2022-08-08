@@ -4,21 +4,35 @@ import java.util.List;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import lombok.Data;
+import pub.ron.admin.common.validator.Create;
 import pub.ron.admin.common.validator.Mobile;
+import pub.ron.admin.common.validator.Password;
+import pub.ron.admin.common.validator.Update;
 
 /**
- * modify user body.
+ * create user body.
  *
  * @author ron 2020/11/18
  */
 @Data
-public class ModifyUserBody {
+public class UserBody {
 
+  @Null(groups = Create.class)
+  @NotNull(groups = Update.class)
   private Long id;
+
+  @NotBlank(message = "用户名称不能为空", groups = Create.class)
+  @Null(groups = Update.class)
+  private String username;
 
   @NotBlank
   private String nickname;
+
+  @Password
+  @Null(groups = Update.class)
+  private String password;
 
   @Mobile
   private String mobile;

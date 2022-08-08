@@ -8,7 +8,6 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +28,6 @@ import pub.ron.admin.common.BaseEntity;
 public class Dept extends BaseEntity {
 
   @Column(nullable = false)
-  @NotBlank(message = "部门名称不能为空")
   private String name;
 
   @Column(nullable = false)

@@ -1,5 +1,6 @@
 package pub.ron.admin.system.dto;
 
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +20,8 @@ public class RoleDto extends BaseDto {
 
   private String description;
 
-  private Long deptId;
+  private Set<Long> deptIds;
 
-  private String deptName;
+  private Set<Long> menuIds;
+
 }

@@ -3,8 +3,7 @@ package pub.ron.admin.system.service.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
-import pub.ron.admin.system.body.CreateUserBody;
-import pub.ron.admin.system.body.ModifyUserBody;
+import pub.ron.admin.system.body.UserBody;
 import pub.ron.admin.system.domain.User;
 import pub.ron.admin.system.dto.UserDto;
 
@@ -12,11 +11,7 @@ import pub.ron.admin.system.dto.UserDto;
 public interface UserMapper {
 
   @DeptMapping
-  @Mapping(target = "password", ignore = true)
-  User mapUser(CreateUserBody body);
-
-  @DeptMapping
-  User mapUser(ModifyUserBody body);
+  User mapUser(UserBody body);
 
   @Mapping(target = "deptId", source = "user.dept.id")
   @Mapping(target = "deptName", source = "user.dept.name")

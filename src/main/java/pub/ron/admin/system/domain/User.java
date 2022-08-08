@@ -14,9 +14,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
@@ -41,17 +38,15 @@ public class User extends BaseEntity {
 
   private String nickname;
 
-  @Column(columnDefinition = "char(64)")
+  @Column(columnDefinition = "char(64)", updatable = false)
   private String password;
 
-  @Column(columnDefinition = "char(36)")
+  @Column(columnDefinition = "char(36)", updatable = false)
   private String passwordSalt;
 
   @Column(columnDefinition = "char(11)")
-  @NotBlank
   private String mobile;
 
-  @Email(message = "邮箱格式错误")
   private String email;
 
   private Boolean locked;
@@ -60,7 +55,6 @@ public class User extends BaseEntity {
 
   @ManyToOne
   @JoinColumn(foreignKey = @ForeignKey(NO_CONSTRAINT))
-  @NotNull(message = "必须指定部门")
   private Dept dept;
 
   @ElementCollection

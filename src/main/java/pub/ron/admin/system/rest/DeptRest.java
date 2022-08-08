@@ -2,21 +2,36 @@ package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.common.utils.ExcelUtils;
+import pub.ron.admin.common.utils.TreeUtils;
+import pub.ron.admin.common.validator.Create;
+import pub.ron.admin.common.validator.Update;
+import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.body.DeptBody;
+import pub.ron.admin.system.domain.Dept;
+import pub.ron.admin.system.dto.DeptDto;
+import pub.ron.admin.system.security.Principal;
+import pub.ron.admin.system.security.SubjectUtils;
 import pub.ron.admin.system.service.DeptService;
 import pub.ron.admin.system.service.mapper.DeptMapper;
 
@@ -36,27 +51,75 @@ public class DeptRest {
   private final DeptMapper deptMapper;
 
   /**
-   * get dept tree.
+   * 以树的结构获取部门数据.
    *
    * @return self dept tree.
    */
   @GetMapping
-  @Operation(tags = "获取自己部门树")
-  public ResponseEntity<?> getDepartments() {
-    return ResponseEntity.ok(deptService.findAsTree());
+  @Operation(tags = "查询自己部门树")
+  @Log("部门查询")
+  public ResponseEntity<?> getSelfDepartments() {
+    List<Dept> departments = deptService.findSelfDepartments();
+    return ResponseEntity.ok(buildTree(departments));
   }
 
-  @GetMapping(params = "type=full")
-  @Operation(tags = "获取自己部门树")
-  @RequiresPermissions("department:self")
-  public ResponseEntity<?> getDepartmentsWithFullProperties() {
-    return ResponseEntity.ok(deptService.findFullAsTree());
+  /**
+   * 处理部门数据为树型.
+   *
+   * @param departments 部门数据
+   * @return 数据
+   */
+  private List<DeptDto> buildTree(List<Dept> departments) {
+    Principal principal = SubjectUtils.currentUser();
+    Long deptId = principal.getDeptId();
+    return TreeUtils.genTree(departments, (input, pid) -> {
+      // 根节点判断
+      if (pid == null && (input.getId().equals(deptId) || input.getParent() == null)) {
+        return true;
+      }
+      Dept parent = input.getParent();
+      return parent != null && Objects.equals(parent.getId(), pid);
+    }, input -> {
+      DeptDto deptDto = deptMapper.mapDto(input);
+      deptDto.setChildren(new ArrayList<>());
+      return new TreeUtils.Result<>(deptDto, input.getId(), deptDto.getChildren());
+    });
+  }
+
+  /**
+   * get dept tree.
+   *
+   * @return self dept tree.
+   */
+  @GetMapping(params = "datatype=dict")
+  @Operation(tags = "查询部门字典")
+  public ResponseEntity<?> getSelfDepartmentsAsDict() {
+    List<Dept> departments = deptService.findSelfDepartments();
+    return ResponseEntity.ok(buildTree(departments));
+  }
+
+
+  /**
+   * 下载excel格式的数据.
+   *
+   * @return 资源
+   */
+  @GetMapping("excels")
+  @Log("部门导出")
+  public ResponseEntity<Resource> getAsExcel() {
+    List<String[]> data = new ArrayList<>();
+    List<String[]> departments = deptService.findSelfDepartments()
+        .stream().map(e -> new String[] {e.getName(), String.valueOf(e.getOrderNo())})
+        .collect(Collectors.toList());
+    Resource resource = ExcelUtils.getExcelResource(new String[] {"部门名称", "序号"}, departments);
+    return ExcelUtils.buildResponse(resource);
   }
 
   @PostMapping
   @Operation(tags = "创建部门")
   @RequiresPermissions("department:create")
-  public ResponseEntity<?> create(@RequestBody @Valid DeptBody deptBody) {
+  @Log("创建部门")
+  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) DeptBody deptBody) {
     deptService.create(deptMapper.mapDept(deptBody));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -64,16 +127,18 @@ public class DeptRest {
   @PutMapping
   @Operation(tags = "修改部门")
   @RequiresPermissions("department:modify")
-  public ResponseEntity<?> modify(@RequestBody @Valid DeptBody deptBody) {
+  @Log("修改部门")
+  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) DeptBody deptBody) {
     deptService.update(deptMapper.mapDept(deptBody));
     return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping
   @Operation(tags = "删除部门")
   @RequiresPermissions("department:remove")
-  public ResponseEntity<?> remove(@PathVariable Long id) {
-    deptService.deleteById(id);
+  @Log("删除部门")
+  public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {
+    deptService.deleteByIds(ids);
     return ResponseEntity.noContent().build();
   }
 }
