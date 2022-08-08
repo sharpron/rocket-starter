@@ -1,6 +1,6 @@
 package pub.ron.admin.system.service.impl;
 
-import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.SpecCaptcha;
 import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 
   @Override
   public Captcha genCaptcha() {
-    ArithmeticCaptcha captcha = new ArithmeticCaptcha(100, 32, 2);
+    SpecCaptcha captcha = new SpecCaptcha(100, 32, 4);
     final ByteArrayOutputStream os = new ByteArrayOutputStream();
     captcha.out(os);
     final String key = UUID.randomUUID().toString();
