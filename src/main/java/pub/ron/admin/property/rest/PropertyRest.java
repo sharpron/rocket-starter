@@ -1,23 +1,31 @@
 package pub.ron.admin.property.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import javax.validation.Valid;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pub.ron.admin.common.AppException;
+import pub.ron.admin.common.utils.ExcelUtils;
+import pub.ron.admin.common.validator.Create;
+import pub.ron.admin.common.validator.Update;
+import pub.ron.admin.logging.Log;
 import pub.ron.admin.property.domain.Property;
 import pub.ron.admin.property.domain.ValueType;
 import pub.ron.admin.property.dto.PropertyCriteria;
@@ -46,8 +54,26 @@ public class PropertyRest {
   @GetMapping
   @Operation(tags = "分页查询属性")
   @RequiresPermissions("property:query")
+  @Log("查询属性")
   public ResponseEntity<?> findByPage(Pageable pageable, PropertyCriteria criteria) {
     return ResponseEntity.ok(propertyService.findByPage(pageable, criteria));
+  }
+
+  /**
+   * 下载excel格式的数据.
+   *
+   * @return 资源
+   */
+  @GetMapping("excels")
+  @RequiresPermissions("property:query")
+  @Log("导出属性")
+  public ResponseEntity<Resource> getAsExcel() {
+    List<String[]> data = propertyService.findAll(null)
+        .stream().map(e -> new String[] {e.getReferenceKey(), e.getValue(),
+            e.getValueType().getDesc(), e.getDescription()})
+        .collect(Collectors.toList());
+    Resource resource = ExcelUtils.getExcelResource(new String[] {"引用键", "配置值", "类型", "描述"}, data);
+    return ExcelUtils.buildResponse(resource);
   }
 
   /**
@@ -74,7 +100,8 @@ public class PropertyRest {
   @PostMapping
   @Operation(tags = "创建属性")
   @RequiresPermissions("property:create")
-  public ResponseEntity<?> create(@RequestBody @Valid Property property) {
+  @Log("创建属性")
+  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) Property property) {
     checkPropertyValue(property);
     propertyService.create(property);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -83,25 +110,26 @@ public class PropertyRest {
   /**
    * modify property.
    *
-   * @param id       id
    * @param property property
    * @return response
    */
-  @PutMapping("{id}")
+  @PutMapping
   @Operation(tags = "修改属性")
   @RequiresPermissions("property:modify")
-  public ResponseEntity<?> modify(@PathVariable Long id, @RequestBody @Valid Property property) {
+  @Log("修改属性")
+  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) Property property) {
     checkPropertyValue(property);
     // key属性不会被更新
     propertyService.update(property);
     return ResponseEntity.ok().build();
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping
   @Operation(tags = "删除属性")
   @RequiresPermissions("property:remove")
-  public ResponseEntity<?> remove(@PathVariable Long id) {
-    propertyService.deleteById(id);
+  @Log("删除属性")
+  public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {
+    propertyService.deleteByIds(ids);
     return ResponseEntity.ok().build();
   }
 

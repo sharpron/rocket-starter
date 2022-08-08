@@ -3,6 +3,7 @@ package pub.ron.admin.system.dto;
 import lombok.Data;
 import pub.ron.admin.common.query.Where;
 import pub.ron.admin.common.query.Where.Type;
+import pub.ron.admin.system.domain.MenuType;
 
 /**
  * role query.
@@ -10,15 +11,14 @@ import pub.ron.admin.common.query.Where.Type;
  * @author ron 2020/11/22
  */
 @Data
-public class RoleQuery {
+public class MenuQuery {
 
   @Where(type = Type.like)
-  private String name;
+  private String title;
 
-  @Where
-  private Boolean disabled;
+  @Where(type = Type.eq)
+  private MenuType type;
 
   @Where(type = Type.like)
-  private String description;
-
+  private String path;
 }

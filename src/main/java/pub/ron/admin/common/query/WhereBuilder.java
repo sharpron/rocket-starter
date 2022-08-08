@@ -65,6 +65,9 @@ public class WhereBuilder {
                   case like:
                     return criteriaBuilder.like(
                         WhereBuilder.getPath(rootName, root), "%" + fieldVal + "%");
+                  case right_like:
+                    return criteriaBuilder.like(
+                        WhereBuilder.getPath(rootName, root), fieldVal + "%");
                   case eq:
                     return criteriaBuilder.equal(
                         WhereBuilder.getPath(rootName, root), fieldVal);
@@ -90,6 +93,8 @@ public class WhereBuilder {
                         WhereBuilder.getPath(rootName, root),
                         new Date(timestamps.get(0)),
                         new Date(timestamps.get(1)));
+                  case in:
+                    return criteriaBuilder.in(WhereBuilder.getPath(rootName, root)).value(fieldVal);
                   default:
                     throw new AssertionError();
                 }
@@ -174,4 +179,5 @@ public class WhereBuilder {
     }
     throw new AppException(String.format("只支持Collection<Long>或者Long[]类型: %s", value));
   }
+
 }

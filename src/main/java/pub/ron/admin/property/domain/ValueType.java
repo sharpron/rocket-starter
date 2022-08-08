@@ -5,15 +5,27 @@ package pub.ron.admin.property.domain;
  *
  * @author ron 2021/10/21
  */
+
 public enum ValueType {
 
   /**
    * 字符串.
    */
-  STR,
+  STR("字符串"),
 
   /**
    * 数字.
    */
-  NUMBER
+  NUMBER("数字");
+
+  private final String desc;
+
+
+  ValueType(String desc) {
+    this.desc = desc;
+  }
+
+  public String getDesc() {
+    return desc;
+  }
 }

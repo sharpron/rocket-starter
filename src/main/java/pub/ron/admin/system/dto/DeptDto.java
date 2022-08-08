@@ -22,6 +22,8 @@ public class DeptDto extends BaseDto {
 
   private Long parentId;
 
+  private Boolean disabled;
+
   private Integer orderNo;
 
   private List<DeptDto> children;

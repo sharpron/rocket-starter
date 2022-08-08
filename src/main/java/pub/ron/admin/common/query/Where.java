@@ -33,9 +33,13 @@ public @interface Where {
    */
   enum Type {
     /**
-     * full like.
+     * full like. '%example%'
      */
     like,
+    /**
+     * right like. 'example %'
+     */
+    right_like,
     /**
      * equals.
      */
@@ -67,6 +71,8 @@ public @interface Where {
      *
      * <p>List&lt;Long&gt; size=2
      */
-    betweenTime
+    betweenTime,
+
+    in,
   }
 }

@@ -36,6 +36,9 @@ public class ExcelUtils {
         .body(resource);
   }
 
+  public static String formatValue(Boolean value) {
+    return Boolean.TRUE.equals(value) ? "是" : "否";
+  }
 
   /**
    * 创建excel数据.
@@ -46,14 +49,15 @@ public class ExcelUtils {
    */
   public static Resource getExcelResource(String[] header,
                                           List<String[]> data) {
-    try (XSSFWorkbook sheets = new XSSFWorkbook()) {
-      XSSFSheet sheet = sheets.createSheet();
+    try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+      XSSFSheet sheet = workbook.createSheet();
       // header
       XSSFRow headerRow = sheet.createRow(0);
+
       for (int i = 0; i < header.length; i++) {
         XSSFCell cell = headerRow.createCell(i);
         cell.setCellType(CellType.STRING);
-        cell.setCellValue(1);
+        cell.setCellValue(header[i]);
       }
 
       for (int i = 0; i < data.size(); i++) {
@@ -67,7 +71,7 @@ public class ExcelUtils {
       }
 
       ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      sheets.write(byteArrayOutputStream);
+      workbook.write(byteArrayOutputStream);
       return new ByteArrayResource(byteArrayOutputStream.toByteArray());
     } catch (IOException e) {
       throw new RuntimeException(e);

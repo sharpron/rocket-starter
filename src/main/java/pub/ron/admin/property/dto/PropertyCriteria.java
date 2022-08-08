@@ -2,7 +2,6 @@ package pub.ron.admin.property.dto;
 
 import lombok.Data;
 import pub.ron.admin.common.query.Where;
-import pub.ron.admin.property.domain.ValueType;
 
 /**
  * 属性查询条件.
@@ -13,11 +12,11 @@ import pub.ron.admin.property.domain.ValueType;
 public class PropertyCriteria {
 
   @Where(type = Where.Type.like)
-  private String key;
+  private String referenceKey;
 
   @Where(type = Where.Type.like)
   private String value;
 
-  @Where
-  private ValueType valueType;
+  @Where(type = Where.Type.like)
+  private String description;
 }

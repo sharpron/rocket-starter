@@ -1,11 +1,13 @@
 package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pub.ron.admin.common.utils.ExcelUtils;
 import pub.ron.admin.common.validator.Create;
 import pub.ron.admin.common.validator.Update;
 import pub.ron.admin.logging.Log;
@@ -65,6 +68,24 @@ public class RoleRest {
   public ResponseEntity<?> findAll() {
     return ResponseEntity.ok(
         roleService.findAll(null).stream().map(roleMapper::mapDto).collect(Collectors.toList()));
+  }
+
+  /**
+   * 下载excel格式的数据.
+   *
+   * @return 资源
+   */
+  @GetMapping("excels")
+  @RequiresPermissions("role:query")
+  @Log("角色导出")
+  public ResponseEntity<Resource> getAsExcel(RoleQuery roleQuery) {
+    List<String[]> data = roleService.findAll(roleQuery).stream()
+        .map(e -> new String[] {
+            e.getName(), e.getDescription(), ExcelUtils.formatValue(e.getDisabled())})
+        .collect(Collectors.toList());
+    Resource resource = ExcelUtils.getExcelResource(
+        new String[] {"角色名称", "描述", "是否禁用"}, data);
+    return ExcelUtils.buildResponse(resource);
   }
 
   @PostMapping

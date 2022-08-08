@@ -1,5 +1,6 @@
 package pub.ron.admin.system.dto;
 
+import java.util.Set;
 import lombok.Data;
 import pub.ron.admin.common.query.Where;
 import pub.ron.admin.common.query.Where.Type;
@@ -24,6 +25,6 @@ public class UserQuery {
   @Where(type = Type.like)
   private String email;
 
-  @Where(root = "dept.id", type = Type.eq)
-  private Long deptId;
+  @Where(root = "dept.id", type = Type.in)
+  private Set<Long> deptIds;
 }

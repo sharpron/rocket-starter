@@ -28,7 +28,7 @@ public class PropertyServiceImpl extends AbstractService<Property, PropertyRepo>
   @Override
   @Cacheable(key = "#key")
   public String getPropertyValue(String key) {
-    Property property = repository.findByKey(key);
+    Property property = repository.findByReferenceKey(key);
     return property.getValue();
   }
 

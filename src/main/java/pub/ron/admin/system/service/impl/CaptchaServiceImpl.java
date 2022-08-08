@@ -41,7 +41,7 @@ public class CaptchaServiceImpl implements CaptchaService {
     if (oldCode == null) {
       throw new AppException("验证码超时");
     }
-    if (!oldCode.equals(code)) {
+    if (!oldCode.equalsIgnoreCase(code)) {
       throw new AppException("验证码错误");
     }
   }

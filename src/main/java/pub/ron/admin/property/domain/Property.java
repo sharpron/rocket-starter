@@ -23,12 +23,12 @@ import pub.ron.admin.common.BaseEntity;
 @NoArgsConstructor
 @Table(
     name = "sys_property",
-    indexes = {@Index(name = "idx_key", columnList = "key")})
+    indexes = {@Index(name = "idx_key", columnList = "referenceKey")})
 public class Property extends BaseEntity {
 
   @NotBlank(message = "引用名称")
   @Column(updatable = false)
-  private String key;
+  private String referenceKey;
 
   /**
    * 值.

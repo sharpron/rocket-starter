@@ -30,6 +30,7 @@ import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.body.DeptBody;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.dto.DeptDto;
+import pub.ron.admin.system.dto.DeptQuery;
 import pub.ron.admin.system.security.Principal;
 import pub.ron.admin.system.security.SubjectUtils;
 import pub.ron.admin.system.service.DeptService;
@@ -53,14 +54,34 @@ public class DeptRest {
   /**
    * 以树的结构获取部门数据.
    *
+   * @param deptQuery 部门查询
    * @return self dept tree.
    */
   @GetMapping
   @Operation(tags = "查询自己部门树")
+  @RequiresPermissions("department:query")
   @Log("部门查询")
-  public ResponseEntity<?> getSelfDepartments() {
-    List<Dept> departments = deptService.findSelfDepartments();
+  public ResponseEntity<?> getSelfDepartments(DeptQuery deptQuery) {
+    List<Dept> departments = deptService.findSelfDepartments(deptQuery);
     return ResponseEntity.ok(buildTree(departments));
+  }
+
+  /**
+   * 下载excel格式的数据.
+   *
+   * @param deptQuery 部门查询
+   * @return 资源
+   */
+  @GetMapping("excels")
+  @RequiresPermissions("department:query")
+  @Log("部门导出")
+  public ResponseEntity<Resource> getAsExcel(DeptQuery deptQuery) {
+    List<String[]> data = new ArrayList<>();
+    List<String[]> departments = deptService.findSelfDepartments(deptQuery)
+        .stream().map(e -> new String[] {e.getName(), String.valueOf(e.getOrderNo())})
+        .collect(Collectors.toList());
+    Resource resource = ExcelUtils.getExcelResource(new String[] {"部门名称", "序号"}, departments);
+    return ExcelUtils.buildResponse(resource);
   }
 
   /**
@@ -89,30 +110,14 @@ public class DeptRest {
   /**
    * get dept tree.
    *
+   * @param deptQuery 部门查询
    * @return self dept tree.
    */
   @GetMapping(params = "datatype=dict")
   @Operation(tags = "查询部门字典")
-  public ResponseEntity<?> getSelfDepartmentsAsDict() {
-    List<Dept> departments = deptService.findSelfDepartments();
+  public ResponseEntity<?> getSelfDepartmentsAsDict(DeptQuery deptQuery) {
+    List<Dept> departments = deptService.findSelfDepartments(deptQuery);
     return ResponseEntity.ok(buildTree(departments));
-  }
-
-
-  /**
-   * 下载excel格式的数据.
-   *
-   * @return 资源
-   */
-  @GetMapping("excels")
-  @Log("部门导出")
-  public ResponseEntity<Resource> getAsExcel() {
-    List<String[]> data = new ArrayList<>();
-    List<String[]> departments = deptService.findSelfDepartments()
-        .stream().map(e -> new String[] {e.getName(), String.valueOf(e.getOrderNo())})
-        .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"部门名称", "序号"}, departments);
-    return ExcelUtils.buildResponse(resource);
   }
 
   @PostMapping

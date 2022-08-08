@@ -18,5 +18,5 @@ public interface PropertyRepo extends BaseRepo<Property> {
    * @param key key
    * @return 属性
    */
-  Property findByKey(String key);
+  Property findByReferenceKey(String key);
 }

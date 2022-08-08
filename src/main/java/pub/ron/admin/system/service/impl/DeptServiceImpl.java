@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
 import pub.ron.admin.system.domain.Dept;
+import pub.ron.admin.system.dto.DeptQuery;
 import pub.ron.admin.system.repo.DeptRepo;
 import pub.ron.admin.system.security.Principal;
 import pub.ron.admin.system.security.SubjectUtils;
@@ -52,8 +53,9 @@ public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements 
   }
 
   @Override
-  public List<Dept> findSelfDepartments() {
+  public List<Dept> findSelfDepartments(DeptQuery deptQuery) {
     final Principal principal = SubjectUtils.currentUser();
-    return repository.findByPath(principal.getDeptPath());
+    deptQuery.setPath(principal.getDeptPath());
+    return findAll(deptQuery);
   }
 }
