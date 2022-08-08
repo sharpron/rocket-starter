@@ -1,32 +1,35 @@
 package pub.ron.admin.system.body;
 
-import java.util.List;
 import java.util.Set;
+import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Null;
 import lombok.Data;
+import pub.ron.admin.common.validator.Create;
+import pub.ron.admin.common.validator.Update;
 
 /**
- * role body.
+ * 角色操作数据.
  *
- * @author ron 2020/11/22
+ * @author ron 2022/8/8
  */
 @Data
 public class RoleBody {
 
-  @NotBlank
+  @Null(groups = Create.class)
+  @NotNull(groups = Update.class)
+  private Long id;
+
+  @Column(length = 20)
+  @NotBlank(message = "角色名称不能为空")
   private String name;
 
-  @NotNull
-  private Long deptId;
-
-  private boolean disabled;
-
-  @Size(max = 255)
   private String description;
 
-  private List<Long> menus;
+  private Boolean disabled;
 
   private Set<Long> deptIds;
+
+  private Set<Long> menuIds;
 }
