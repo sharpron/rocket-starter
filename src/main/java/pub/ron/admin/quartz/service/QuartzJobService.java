@@ -18,7 +18,7 @@ public interface QuartzJobService extends BaseService<QuartzJob> {
 
   Page<QuartzLog> findLogsByPage(Pageable pageable, QuartzLogQuery query);
 
-  void pause(Long jobId);
+  void toggleEnabled(Long jobId);
 
-  void resume(Long jobId);
+  void execute(Long jobId);
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -65,9 +66,10 @@ public class RoleRest {
    */
   @GetMapping(params = "type=dict")
   @Operation(tags = "查询所有角色")
-  public ResponseEntity<?> findAll() {
+  public ResponseEntity<?> findAll(RoleQuery roleQuery) {
     return ResponseEntity.ok(
-        roleService.findAll(null).stream().map(roleMapper::mapDto).collect(Collectors.toList()));
+        roleService.findAll(roleQuery).stream().map(roleMapper::mapDto)
+            .collect(Collectors.toList()));
   }
 
   /**
@@ -92,7 +94,8 @@ public class RoleRest {
   @Operation(tags = "创建角色")
   @RequiresPermissions("role:create")
   @Log("创建角色")
-  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) RoleBody roleBody) {
+  public ResponseEntity<?> create(
+      @RequestBody @Validated({Default.class, Create.class}) RoleBody roleBody) {
     roleService.create(roleMapper.mapRole(roleBody));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -107,7 +110,8 @@ public class RoleRest {
   @Operation(tags = "修改角色")
   @RequiresPermissions("role:modify")
   @Log("修改角色")
-  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) RoleBody roleBody) {
+  public ResponseEntity<?> modify(
+      @RequestBody @Validated({Default.class, Update.class}) RoleBody roleBody) {
     roleService.update(roleMapper.mapRole(roleBody));
     return ResponseEntity.ok().build();
   }

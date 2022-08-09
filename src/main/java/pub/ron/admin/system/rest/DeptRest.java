@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -124,7 +125,8 @@ public class DeptRest {
   @Operation(tags = "创建部门")
   @RequiresPermissions("department:create")
   @Log("创建部门")
-  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) DeptBody deptBody) {
+  public ResponseEntity<?> create(
+      @RequestBody @Validated({Default.class, Create.class}) DeptBody deptBody) {
     deptService.create(deptMapper.mapDept(deptBody));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -133,7 +135,8 @@ public class DeptRest {
   @Operation(tags = "修改部门")
   @RequiresPermissions("department:modify")
   @Log("修改部门")
-  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) DeptBody deptBody) {
+  public ResponseEntity<?> modify(
+      @RequestBody @Validated({Default.class, Update.class}) DeptBody deptBody) {
     deptService.update(deptMapper.mapDept(deptBody));
     return ResponseEntity.ok().build();
   }

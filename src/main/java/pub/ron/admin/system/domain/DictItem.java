@@ -2,6 +2,7 @@ package pub.ron.admin.system.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Index;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,7 @@ import pub.ron.admin.common.BaseEntity;
 public class DictItem extends BaseEntity {
 
   /**
-   * 引用名称.
+   * 名称.
    */
   private String name;
 
@@ -27,6 +28,11 @@ public class DictItem extends BaseEntity {
    * 引用的值.
    */
   private String value;
+
+  /**
+   * 是否禁用.
+   */
+  private Boolean disabled;
 
   /**
    * 关联的字典.
@@ -39,8 +45,14 @@ public class DictItem extends BaseEntity {
   private Integer orderNo;
 
   /**
-   * 字典描述.
+   * 设置变量.
    */
-  private String description;
+  @PrePersist
+  public void prePersist() {
+    if (this.disabled == null) {
+      this.disabled = false;
+    }
+  }
+
 
 }

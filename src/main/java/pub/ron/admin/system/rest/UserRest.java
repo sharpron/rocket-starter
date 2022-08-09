@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
+import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -80,7 +81,8 @@ public class UserRest {
   @Operation(tags = "创建用户")
   @RequiresPermissions("user:create")
   @Log("创建用户")
-  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) UserBody userBody) {
+  public ResponseEntity<?> create(
+      @RequestBody @Validated({Default.class, Create.class}) UserBody userBody) {
     userService.create(userMapper.mapUser(userBody));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -89,7 +91,8 @@ public class UserRest {
   @Operation(tags = "修改用户")
   @RequiresPermissions("user:modify")
   @Log("修改用户")
-  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) UserBody userBody) {
+  public ResponseEntity<?> modify(
+      @RequestBody @Validated({Default.class, Update.class}) UserBody userBody) {
     userService.update(userMapper.mapUser(userBody));
     return ResponseEntity.ok().build();
   }

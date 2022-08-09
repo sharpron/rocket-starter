@@ -12,9 +12,6 @@ public class QuartzJobQuery {
   @Where(type = Where.Type.like)
   private String name;
 
-  @Where(type = Where.Type.like)
-  private String runnableBeanName;
-
   @Where(type = Where.Type.eq)
   private Boolean enabled;
 

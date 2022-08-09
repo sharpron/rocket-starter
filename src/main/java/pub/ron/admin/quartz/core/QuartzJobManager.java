@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -58,6 +59,25 @@ public class QuartzJobManager {
     } catch (Exception e) {
       log.error("创建定时任务失败", e);
       throw new AppException("创建定时任务失败");
+    }
+  }
+
+  /**
+   * 立即执行job.
+   *
+   * @param quartzJob /
+   */
+  public void executeJobNow(QuartzJob quartzJob) {
+    try {
+      TriggerKey triggerKey = TriggerKey.triggerKey(JOB_NAME + quartzJob.getId());
+      CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
+      JobDataMap dataMap = new JobDataMap();
+      dataMap.put(JobRunner.JOB_KEY, quartzJob);
+      JobKey jobKey = JobKey.jobKey(JOB_NAME + quartzJob.getId());
+      scheduler.triggerJob(jobKey, dataMap);
+    } catch (Exception e) {
+      log.error("定时任务执行失败", e);
+      throw new AppException("定时任务执行失败");
     }
   }
 

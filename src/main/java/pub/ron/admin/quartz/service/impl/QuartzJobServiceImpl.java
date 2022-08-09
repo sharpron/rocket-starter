@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
-import pub.ron.admin.common.AppException;
 import pub.ron.admin.common.query.WhereBuilder;
 import pub.ron.admin.quartz.core.QuartzJobManager;
 import pub.ron.admin.quartz.domain.QuartzJob;
@@ -46,6 +45,17 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
   }
 
   @Override
+  public void toggleEnabled(Long jobId) {
+    QuartzJob quartzJob = repository.getById(jobId);
+    if (quartzJob.isEnabled()) {
+      quartzJobManager.pause(jobId);
+    } else {
+      quartzJobManager.resume(jobId);
+    }
+    repository.updateEnabled(jobId, !quartzJob.isEnabled());
+  }
+
+  @Override
   public void create(QuartzJob quartzJob) {
     super.create(quartzJob);
     quartzJobManager.addJob(quartzJob);
@@ -57,22 +67,10 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
     quartzJobManager.updateCron(quartzJob);
   }
 
-  @Override
-  public void pause(Long jobId) {
-    if (repository.updateEnabled(jobId, false) > 0) {
-      quartzJobManager.pause(jobId);
-    } else {
-      throw new AppException("暂停失败，任务状态异常");
-    }
-  }
 
   @Override
-  public void resume(Long jobId) {
-    if (repository.updateEnabled(jobId, true) > 0) {
-      quartzJobManager.resume(jobId);
-    } else {
-      throw new AppException("恢复失败，任务状态异常");
-    }
+  public void execute(Long jobId) {
+    repository.findById(jobId).ifPresent(quartzJobManager::executeJobNow);
   }
 
   @Override

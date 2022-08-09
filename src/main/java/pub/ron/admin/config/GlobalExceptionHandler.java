@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     Objects.requireNonNull(fieldError);
 
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(new ErrorInfo(fieldError.getField() + fieldError.getDefaultMessage()));
+        .body(new ErrorInfo(fieldError.getField() + " " + fieldError.getDefaultMessage()));
   }
 
   /**
@@ -63,7 +63,8 @@ public class GlobalExceptionHandler {
                 .findFirst()
                 .map(
                     violation ->
-                        new ErrorInfo(violation.getPropertyPath() + violation.getMessage()))
+                        new ErrorInfo(String.format("%s %s", violation.getPropertyPath(),
+                            violation.getMessage())))
                 .orElseThrow(AssertionError::new));
   }
 

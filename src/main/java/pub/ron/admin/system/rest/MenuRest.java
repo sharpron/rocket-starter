@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
@@ -106,8 +107,8 @@ public class MenuRest {
    */
   @GetMapping(params = "datatype=dict")
   @Operation(tags = "查询所有菜单以树的格式")
-  public ResponseEntity<?> findMenusAsDict() {
-    final List<Menu> menus = menuService.findAll(null);
+  public ResponseEntity<?> findMenusAsDict(MenuQuery menuQuery) {
+    final List<Menu> menus = menuService.findAll(menuQuery);
     return ResponseEntity.ok(genTreeWithSmall(menus));
   }
 
@@ -136,7 +137,8 @@ public class MenuRest {
   @Operation(tags = "创建菜单")
   @RequiresPermissions("menu:create")
   @Log("创建菜单")
-  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) MenuBody menuBody) {
+  public ResponseEntity<?> create(
+      @RequestBody @Validated({Default.class, Create.class}) MenuBody menuBody) {
     menuService.create(beforeSave(menuMapper.mapMenu(menuBody)));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
@@ -148,7 +150,7 @@ public class MenuRest {
     if (menu.getType() == MenuType.BUTTON) {
       menu.setHide(true);
     }
-    if (menu.getType() != MenuType.CATEGORY || menu.getType() != MenuType.BUTTON) {
+    if (menu.getType() == MenuType.CATEGORY || menu.getType() == MenuType.BUTTON) {
       menu.setPath(null);
     }
     return menu;
@@ -158,7 +160,8 @@ public class MenuRest {
   @Operation(tags = "修改菜单")
   @RequiresPermissions("menu:modify")
   @Log("修改菜单")
-  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) MenuBody menuBody) {
+  public ResponseEntity<?> modify(
+      @RequestBody @Validated({Default.class, Update.class}) MenuBody menuBody) {
     menuService.update(beforeSave(menuMapper.mapMenu(menuBody)));
     return ResponseEntity.ok().build();
   }

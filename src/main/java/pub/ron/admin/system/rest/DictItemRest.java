@@ -26,83 +26,85 @@ import pub.ron.admin.common.utils.ExcelUtils;
 import pub.ron.admin.common.validator.Create;
 import pub.ron.admin.common.validator.Update;
 import pub.ron.admin.logging.Log;
-import pub.ron.admin.system.body.DictBody;
-import pub.ron.admin.system.dto.DictQuery;
-import pub.ron.admin.system.service.DictService;
-import pub.ron.admin.system.service.mapper.DictMapper;
+import pub.ron.admin.system.body.DictItemBody;
+import pub.ron.admin.system.dto.DictItemQuery;
+import pub.ron.admin.system.service.DictItemService;
+import pub.ron.admin.system.service.mapper.DictItemMapper;
 
 /**
  * 字典操作api.
  *
- * @author ron 2022/8/8
+ * @author ron 2022/8/9
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/dictionaries")
-@Tag(name = "字典管理")
+@RequestMapping("/api/dictionary-items")
+@Tag(name = "字典项管理")
 @RequiredArgsConstructor
-public class DictRest {
+public class DictItemRest {
 
-  private final DictService dictService;
-  private final DictMapper dictMapper;
+  private final DictItemService dictItemService;
+  private final DictItemMapper dictItemMapper;
 
 
   /**
-   * find dict data.
+   * find dict item.
    *
    * @return self dept tree.
    */
   @GetMapping
-  @Operation(tags = "查询字典")
+  @Operation(tags = "查询字典项")
   @RequiresPermissions("dictionary:query")
-  @Log("查询字典")
-  public ResponseEntity<?> findDictionaries(Pageable pageable, DictQuery dictQuery) {
-    return ResponseEntity.ok(dictService.findByPage(pageable, dictQuery));
+  @Log("查询字典项")
+  public ResponseEntity<?> findDictionaries(Pageable pageable, DictItemQuery dictItemQuery) {
+    return ResponseEntity.ok(dictItemService.findByPage(pageable, dictItemQuery));
   }
 
 
   /**
    * 下载excel格式的数据.
    *
+   * @param dictItemQuery the query criteria
    * @return 资源
    */
   @GetMapping("excels")
   @RequiresPermissions("dictionary:query")
-  @Log("字典导出")
-  public ResponseEntity<Resource> getAsExcel(DictQuery dictQuery) {
-    List<String[]> data = dictService.findAll(dictQuery).stream()
-        .map(e -> new String[] {e.getName(), e.getDescription()})
+  @Log("字典项导出")
+  public ResponseEntity<Resource> getAsExcel(DictItemQuery dictItemQuery) {
+    List<String[]> data = dictItemService.findAll(dictItemQuery).stream()
+        .map(e -> new String[] {e.getName(), e.getValue(), String.valueOf(e.getOrderNo()),
+            ExcelUtils.formatValue(e.getDisabled())})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"字典名称", "描述"}, data);
+    Resource resource = ExcelUtils.getExcelResource(new String[] {"名称", "值", "序号", "是否禁用"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
   @PostMapping
-  @Operation(tags = "创建字典")
+  @Operation(tags = "创建字典项")
   @RequiresPermissions("dictionary:create")
-  @Log("创建字典")
+  @Log("创建字典项")
   public ResponseEntity<?> create(
-      @RequestBody @Validated({Default.class, Create.class}) DictBody dictBody) {
-    dictService.create(dictMapper.mapDict(dictBody));
+      @RequestBody @Validated({Default.class, Create.class}) DictItemBody dictBody) {
+    dictItemService.create(dictItemMapper.mapDict(dictBody));
     return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
   @PutMapping
-  @Operation(tags = "修改字典")
+  @Operation(tags = "修改字典项")
   @RequiresPermissions("dictionary:modify")
-  @Log("修改字典")
+  @Log("修改字典项")
   public ResponseEntity<?> modify(
-      @RequestBody @Validated({Default.class, Update.class}) DictBody dictBody) {
-    dictService.update(dictMapper.mapDict(dictBody));
+      @RequestBody @Validated({Default.class, Update.class}) DictItemBody dictBody) {
+    dictItemService.update(dictItemMapper.mapDict(dictBody));
     return ResponseEntity.ok().build();
   }
 
   @DeleteMapping
-  @Operation(tags = "删除字典")
+  @Operation(tags = "删除字典项")
   @RequiresPermissions("dictionary:remove")
-  @Log("删除字典")
+  @Log("删除字典项")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {
-    dictService.deleteByIds(ids);
+    dictItemService.deleteByIds(ids);
     return ResponseEntity.noContent().build();
   }
 }

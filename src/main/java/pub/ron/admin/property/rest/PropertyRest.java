@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -62,13 +63,14 @@ public class PropertyRest {
   /**
    * 下载excel格式的数据.
    *
+   * @param criteria criteria
    * @return 资源
    */
   @GetMapping("excels")
   @RequiresPermissions("property:query")
   @Log("导出属性")
-  public ResponseEntity<Resource> getAsExcel() {
-    List<String[]> data = propertyService.findAll(null)
+  public ResponseEntity<Resource> getAsExcel(PropertyCriteria criteria) {
+    List<String[]> data = propertyService.findAll(criteria)
         .stream().map(e -> new String[] {e.getReferenceKey(), e.getValue(),
             e.getValueType().getDesc(), e.getDescription()})
         .collect(Collectors.toList());
@@ -101,7 +103,8 @@ public class PropertyRest {
   @Operation(tags = "创建属性")
   @RequiresPermissions("property:create")
   @Log("创建属性")
-  public ResponseEntity<?> create(@RequestBody @Validated(Create.class) Property property) {
+  public ResponseEntity<?> create(
+      @RequestBody @Validated({Default.class, Create.class}) Property property) {
     checkPropertyValue(property);
     propertyService.create(property);
     return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -117,7 +120,8 @@ public class PropertyRest {
   @Operation(tags = "修改属性")
   @RequiresPermissions("property:modify")
   @Log("修改属性")
-  public ResponseEntity<?> modify(@RequestBody @Validated(Update.class) Property property) {
+  public ResponseEntity<?> modify(
+      @RequestBody @Validated({Default.class, Update.class}) Property property) {
     checkPropertyValue(property);
     // key属性不会被更新
     propertyService.update(property);
