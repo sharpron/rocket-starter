@@ -14,13 +14,10 @@ import pub.ron.admin.common.query.WhereBuilder;
  * @author ron 2021/1/1
  */
 @RequiredArgsConstructor
-public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
+public abstract class AbstractService<T extends BaseEntity>
     implements BaseService<T> {
 
-  /**
-   * repository.
-   */
-  protected final R repository;
+  protected abstract BaseRepo<T> getBaseRepo();
 
   /**
    * 将实体创建到数据库中.
@@ -28,11 +25,21 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param t t
    */
   @Override
-  public void create(T t) {
+  public final void create(T t) {
     if (t.getId() != null) {
       throw new IllegalArgumentException("创建时不能指定id");
     }
-    repository.save(t);
+    beforeCreate(t);
+    getBaseRepo().save(t);
+    afterCreate(t);
+  }
+
+  protected void beforeCreate(T t) {
+
+  }
+
+  protected void afterCreate(T t) {
+
   }
 
   /**
@@ -41,12 +48,23 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param t t
    */
   @Override
-  public void update(T t) {
+  public final void update(T t) {
     if (t.getId() == null) {
       throw new IllegalArgumentException("修改时必须指定id");
     }
-    repository.save(t);
+    beforeUpdate(t);
+    getBaseRepo().save(t);
+    afterUpdate(t);
   }
+
+  protected void beforeUpdate(T t) {
+
+  }
+
+  protected void afterUpdate(T t) {
+
+  }
+
 
   /**
    * 通过id删除数据.
@@ -54,13 +72,31 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param id id
    */
   @Override
-  public void deleteById(Long id) {
-    repository.deleteById(id);
+  public final void deleteById(Long id) {
+    getBaseRepo().findById(id).ifPresent(t -> {
+      beforeDelete(t);
+      getBaseRepo().delete(t);
+      afterDelete(t);
+    });
+  }
+
+  protected void beforeDelete(T t) {
+
+  }
+
+  protected void afterDelete(T t) {
+
   }
 
   @Override
-  public void deleteByIds(Set<Long> ids) {
-    repository.deleteAllById(ids);
+  public final void deleteByIds(Set<Long> ids) {
+    BaseRepo<T> baseRepo = getBaseRepo();
+    List<T> entities = baseRepo.findAllById(ids);
+    for (T entity : entities) {
+      beforeDelete(entity);
+      baseRepo.delete(entity);
+      afterDelete(entity);
+    }
   }
 
   /**
@@ -72,7 +108,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    */
   @Override
   public final Page<T> findByPage(Pageable pageable, Object query) {
-    return repository.findAll(getSpecification(query), pageable);
+    return getBaseRepo().findAll(getSpecification(query), pageable);
   }
 
   /**
@@ -81,7 +117,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    * @param query 查询相关的数据
    * @return 条件
    */
-  protected Specification<T> getSpecification(Object query) {
+  private Specification<T> getSpecification(Object query) {
     return WhereBuilder.buildSpec(query);
   }
 
@@ -93,7 +129,7 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    */
   @Override
   public final List<T> findAll(Object query) {
-    return repository.findAll(getSpecification(query));
+    return getBaseRepo().findAll(getSpecification(query));
   }
 
   /**
@@ -104,6 +140,6 @@ public class AbstractService<T extends BaseEntity, R extends BaseRepo<T>>
    */
   @Override
   public final T findById(Long id) {
-    return repository.findById(id).orElseThrow(() -> new AppException("数据不存在id：" + id));
+    return getBaseRepo().findById(id).orElseThrow(() -> new AppException("数据不存在id：" + id));
   }
 }

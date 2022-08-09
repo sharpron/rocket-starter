@@ -1,9 +1,11 @@
 package pub.ron.admin.quartz.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
+import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.common.query.WhereBuilder;
 import pub.ron.admin.quartz.core.QuartzJobManager;
 import pub.ron.admin.quartz.domain.QuartzJob;
@@ -19,25 +21,14 @@ import pub.ron.admin.quartz.service.QuartzJobService;
  * @author herong 2021/2/9
  */
 @Service
-public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRepo>
+@RequiredArgsConstructor
+public class QuartzJobServiceImpl extends AbstractService<QuartzJob>
     implements QuartzJobService {
+
+  private final QuartzJobRepo repository;
 
   private final QuartzLogRepo quartzLogRepo;
   private final QuartzJobManager quartzJobManager;
-
-  /**
-   * constructor.
-   *
-   * @param repository       quartz job repository
-   * @param quartzLogRepo    quartzLogRepo
-   * @param quartzJobManager quartzJobManager
-   */
-  public QuartzJobServiceImpl(
-      QuartzJobRepo repository, QuartzLogRepo quartzLogRepo, QuartzJobManager quartzJobManager) {
-    super(repository);
-    this.quartzLogRepo = quartzLogRepo;
-    this.quartzJobManager = quartzJobManager;
-  }
 
   @Override
   public Page<QuartzLog> findLogsByPage(Pageable pageable, QuartzLogQuery query) {
@@ -56,14 +47,17 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
   }
 
   @Override
-  public void create(QuartzJob quartzJob) {
-    super.create(quartzJob);
+  protected BaseRepo<QuartzJob> getBaseRepo() {
+    return repository;
+  }
+
+  @Override
+  protected void afterCreate(QuartzJob quartzJob) {
     quartzJobManager.addJob(quartzJob);
   }
 
   @Override
-  public void update(QuartzJob quartzJob) {
-    super.update(quartzJob);
+  protected void afterUpdate(QuartzJob quartzJob) {
     quartzJobManager.updateCron(quartzJob);
   }
 
@@ -74,8 +68,7 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob, QuartzJobRe
   }
 
   @Override
-  public void deleteById(Long id) {
-    super.deleteById(id);
-    quartzJobManager.delete(id);
+  protected void afterDelete(QuartzJob quartzJob) {
+    quartzJobManager.delete(quartzJob.getId());
   }
 }

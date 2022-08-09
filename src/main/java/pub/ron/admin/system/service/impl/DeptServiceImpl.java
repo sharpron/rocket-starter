@@ -1,9 +1,11 @@
 package pub.ron.admin.system.service.impl;
 
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
+import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.dto.DeptQuery;
 import pub.ron.admin.system.repo.DeptRepo;
@@ -18,38 +20,39 @@ import pub.ron.admin.system.service.DeptService;
  */
 @Service
 @Slf4j
-public class DeptServiceImpl extends AbstractService<Dept, DeptRepo> implements DeptService {
+@RequiredArgsConstructor
+public class DeptServiceImpl extends AbstractService<Dept> implements DeptService {
 
   private static final String DEPT_PATH_SEPARATOR = "/";
 
-  public DeptServiceImpl(DeptRepo deptRepo) {
-    super(deptRepo);
-  }
+  private final DeptRepo deptRepo;
 
 
   @Override
-  public void create(Dept dept) {
-    updatePath(dept);
-    super.create(dept);
+  protected BaseRepo<Dept> getBaseRepo() {
+    return deptRepo;
   }
 
   @Override
-  public void update(Dept dept) {
+  protected void beforeCreate(Dept dept) {
     updatePath(dept);
-    super.update(dept);
+  }
+
+  @Override
+  protected void beforeUpdate(Dept dept) {
+    updatePath(dept);
   }
 
   private void updatePath(Dept dept) {
     final Long parentId = dept.getParent().getId();
-    final String path = repository.getPath(parentId) + parentId + DEPT_PATH_SEPARATOR;
+    final String path = deptRepo.getPath(parentId) + parentId + DEPT_PATH_SEPARATOR;
     dept.setPath(path);
   }
 
   @Override
-  public void deleteById(Long id) {
-    final String path = repository.getPath(id);
-    final List<Dept> children = repository.findByPath(path);
-    repository.deleteAll(children);
+  protected void beforeDelete(Dept dept) {
+    final List<Dept> children = deptRepo.findByPath(dept.getPath());
+    deptRepo.deleteAll(children);
   }
 
   @Override

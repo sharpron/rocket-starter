@@ -2,10 +2,12 @@ package pub.ron.admin.system.service.impl;
 
 import java.util.Optional;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
 import pub.ron.admin.common.AppException;
+import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.system.domain.User;
 import pub.ron.admin.system.dto.ModifyPassDto;
 import pub.ron.admin.system.repo.UserRepo;
@@ -20,33 +22,35 @@ import pub.ron.admin.system.service.UserService;
  */
 @Service
 @Slf4j
-public class UserServiceImpl extends AbstractService<User, UserRepo> implements UserService {
+@RequiredArgsConstructor
+public class UserServiceImpl extends AbstractService<User> implements UserService {
 
+  private final UserRepo userRepo;
   private final PasswordEncoder passwordEncoder;
 
-  public UserServiceImpl(UserRepo repository, PasswordEncoder passwordEncoder) {
-    super(repository);
-    this.passwordEncoder = passwordEncoder;
+
+  @Override
+  protected BaseRepo<User> getBaseRepo() {
+    return userRepo;
   }
 
   @Override
-  public void create(User user) {
+  protected void beforeCreate(User user) {
     final String salt = randomSalt();
     final String encryptPass = passwordEncoder.encoded(user.getPassword(), salt);
     user.setPasswordSalt(salt);
     user.setPassword(encryptPass);
-    super.create(user);
   }
 
   @Override
   public Optional<User> findByUsername(String username) {
-    return repository.findByUsername(username);
+    return userRepo.findByUsername(username);
   }
 
   @Override
   public void modifyPass(ModifyPassDto modifyPassDto) {
     final String username = SubjectUtils.getCurrentUsername().orElseThrow();
-    User user = repository.findByUsername(username).orElseThrow(() -> new AppException("用户状态异常"));
+    User user = userRepo.findByUsername(username).orElseThrow(() -> new AppException("用户状态异常"));
 
     final String encoded =
         passwordEncoder.encoded(modifyPassDto.getOldPass(), user.getPasswordSalt());
@@ -60,20 +64,16 @@ public class UserServiceImpl extends AbstractService<User, UserRepo> implements 
   public void forceModifyPass(String username, String password) {
     final String salt = randomSalt();
     final String encryptPass = passwordEncoder.encoded(password, salt);
-    repository.updatePass(username, encryptPass, salt);
+    userRepo.updatePass(username, encryptPass, salt);
   }
 
   @Override
-  public void deleteById(Long id) {
-    final Optional<User> optionalUser = repository.findById(id);
-    optionalUser.ifPresent(
-        user -> {
-          if (User.ADMIN.equals(user.getUsername())) {
-            throw new AppException("不能删除超级管理员");
-          }
-          repository.deleteById(id);
-        });
+  protected void beforeDelete(User user) {
+    if (User.ADMIN.equals(user.getUsername())) {
+      throw new AppException("不能删除超级管理员");
+    }
   }
+
 
   private static String randomSalt() {
     return UUID.randomUUID().toString();

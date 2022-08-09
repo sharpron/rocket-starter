@@ -1,8 +1,10 @@
 package pub.ron.admin.system.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
+import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.system.domain.DictItem;
 import pub.ron.admin.system.repo.DictItemRepo;
 import pub.ron.admin.system.service.DictItemService;
@@ -14,12 +16,15 @@ import pub.ron.admin.system.service.DictItemService;
  */
 @Service
 @Slf4j
-public class DictItemServiceImpl extends AbstractService<DictItem, DictItemRepo>
+@RequiredArgsConstructor
+public class DictItemServiceImpl extends AbstractService<DictItem>
     implements DictItemService {
 
+  private final DictItemRepo dictItemRepo;
 
-  public DictItemServiceImpl(DictItemRepo repository) {
-    super(repository);
+
+  @Override
+  protected BaseRepo<DictItem> getBaseRepo() {
+    return dictItemRepo;
   }
-
 }
