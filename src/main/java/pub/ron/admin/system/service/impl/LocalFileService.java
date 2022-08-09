@@ -37,15 +37,16 @@ public class LocalFileService implements FileService {
   @Override
   public StorageResult storage(MultipartFile file) {
     try {
+      String rawFileName = file.getOriginalFilename();
       InputStream inputStream = file.getInputStream();
       String relativePath = generateRelativePath();
       Path path = ensurePathExists(relativePath);
 
-      String newFileName = generateNewFileName(file.getName());
+      String newFileName = generateNewFileName(rawFileName);
       Path filePath = path.resolve(newFileName);
       Files.copy(inputStream, filePath);
 
-      return new StorageResult(file.getName(), relativePath + filePath);
+      return new StorageResult(rawFileName, relativePath + filePath);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
