@@ -1,9 +1,9 @@
 package pub.ron.admin.system.service.impl;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.UUID;
@@ -38,22 +38,40 @@ public class LocalFileService implements FileService {
   public StorageResult storage(MultipartFile file) {
     try {
       InputStream inputStream = file.getInputStream();
-      String path = generatePath(file.getName());
-      Files.copy(inputStream, Paths.get(uploadDirectory, path));
-      return new StorageResult(file.getName(), path);
+      String relativePath = generateRelativePath();
+      Path path = ensurePathExists(relativePath);
+
+      String newFileName = generateNewFileName(file.getName());
+      Path filePath = path.resolve(newFileName);
+      Files.copy(inputStream, filePath);
+
+      return new StorageResult(file.getName(), relativePath + filePath);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private static String generatePath(String fileName) {
-    String uuid = UUID.randomUUID().toString();
-    LocalDate now = LocalDate.now();
+  private Path ensurePathExists(String relativePath) {
+    Path path = Paths.get(uploadDirectory, relativePath);
+    if (!Files.exists(path)) {
+      try {
+        return Files.createDirectory(path);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return path;
+  }
 
+  private static String generateNewFileName(String fileName) {
     String extension = FilenameUtils.getExtension(fileName);
+    String uuid = UUID.randomUUID().toString();
+    return uuid + '.' + extension;
+  }
 
-    return now.getYear() + File.separator + now.getMonthValue() + File.separator
-        + now.getDayOfMonth() + File.separator + uuid + '.' + extension;
+  private static String generateRelativePath() {
+    LocalDate now = LocalDate.now();
+    return String.format("%d/%d/%d/", now.getYear(), now.getMonthValue(), now.getDayOfMonth());
   }
 
   @Override
@@ -68,5 +86,9 @@ public class LocalFileService implements FileService {
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public static void main(String[] args) throws IOException {
+    Files.createDirectory(Paths.get("./files/"));
   }
 }
