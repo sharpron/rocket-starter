@@ -55,7 +55,7 @@ public class LocalFileService implements FileService {
     Path path = Paths.get(uploadDirectory, relativePath);
     if (!Files.exists(path)) {
       try {
-        return Files.createDirectory(path);
+        return Files.createDirectories(path);
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
