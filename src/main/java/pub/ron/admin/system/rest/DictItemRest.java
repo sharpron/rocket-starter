@@ -28,7 +28,6 @@ import pub.ron.admin.common.validator.Update;
 import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.body.DictItemBody;
 import pub.ron.admin.system.domain.DictItem;
-import pub.ron.admin.system.dto.DictItemDictQuery;
 import pub.ron.admin.system.dto.DictItemQuery;
 import pub.ron.admin.system.dto.DictItemSmallDto;
 import pub.ron.admin.system.service.DictItemService;
@@ -67,13 +66,13 @@ public class DictItemRest {
   /**
    * 字典格式的数据.
    *
-   * @param dictItemDictQuery the query criteria
+   * @param dictName the query criteria
    * @return 资源
    */
   @GetMapping(params = "datatype=dict")
   public ResponseEntity<List<DictItemSmallDto>> getDictItemsAsDict(
-      @Validated DictItemDictQuery dictItemDictQuery) {
-    List<DictItem> dictItems = dictItemService.findAll(dictItemDictQuery);
+      @RequestParam String dictName) {
+    List<DictItem> dictItems = dictItemService.findByDictName(dictName);
     return ResponseEntity.ok(dictItemMapper.mapSmalls(dictItems));
   }
 
