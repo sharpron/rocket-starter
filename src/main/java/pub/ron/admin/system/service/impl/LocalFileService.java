@@ -29,7 +29,7 @@ public class LocalFileService implements FileService {
   private final String uploadDirectory;
 
   @Autowired
-  public LocalFileService(@Value("upload-directory") String uploadDirectory) {
+  public LocalFileService(@Value("${upload-directory}") String uploadDirectory) {
     this.uploadDirectory = uploadDirectory;
   }
 
