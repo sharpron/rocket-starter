@@ -46,7 +46,7 @@ public class LocalFileService implements FileService {
       Path filePath = path.resolve(newFileName);
       Files.copy(inputStream, filePath);
 
-      return new StorageResult(rawFileName, relativePath + filePath);
+      return new StorageResult(rawFileName, relativePath + newFileName);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

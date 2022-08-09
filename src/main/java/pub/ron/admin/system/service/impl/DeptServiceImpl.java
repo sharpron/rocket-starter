@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AbstractService;
 import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.system.domain.Dept;
+import pub.ron.admin.system.domain.User;
 import pub.ron.admin.system.dto.DeptQuery;
 import pub.ron.admin.system.repo.DeptRepo;
 import pub.ron.admin.system.security.Principal;
@@ -34,19 +35,22 @@ public class DeptServiceImpl extends AbstractService<Dept> implements DeptServic
   }
 
   @Override
-  protected void beforeCreate(Dept dept) {
-    updatePath(dept);
+  protected void afterCreate(Dept dept) {
+    dept.setPath(generatePath(dept));
   }
 
   @Override
   protected void beforeUpdate(Dept dept) {
-    updatePath(dept);
+    dept.setPath(generatePath(dept));
   }
 
-  private void updatePath(Dept dept) {
-    final Long parentId = dept.getParent().getId();
-    final String path = deptRepo.getPath(parentId) + parentId + DEPT_PATH_SEPARATOR;
-    dept.setPath(path);
+  private String generatePath(Dept dept) {
+    Dept parent = dept.getParent();
+
+    String parentPath = parent == null ? DEPT_PATH_SEPARATOR :
+        deptRepo.getPath(parent.getId());
+
+    return parentPath + dept.getId() + DEPT_PATH_SEPARATOR;
   }
 
   @Override
@@ -58,6 +62,9 @@ public class DeptServiceImpl extends AbstractService<Dept> implements DeptServic
   @Override
   public List<Dept> findSelfDepartments(DeptQuery deptQuery) {
     final Principal principal = SubjectUtils.currentUser();
+    if (User.ADMIN.equals(principal.getUsername())) {
+      return findAll(deptQuery);
+    }
     deptQuery.setPath(principal.getDeptPath());
     return findAll(deptQuery);
   }

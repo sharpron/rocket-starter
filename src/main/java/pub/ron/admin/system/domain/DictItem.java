@@ -5,6 +5,7 @@ import javax.persistence.Index;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pub.ron.admin.common.BaseEntity;
 
@@ -16,6 +17,7 @@ import pub.ron.admin.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "sys_dict_item", indexes = @Index(name = "idx_dict_id", columnList = "dictId"))
 public class DictItem extends BaseEntity {
 
@@ -52,6 +54,10 @@ public class DictItem extends BaseEntity {
     if (this.disabled == null) {
       this.disabled = false;
     }
+  }
+
+  public DictItem(Long id) {
+    super(id);
   }
 
 

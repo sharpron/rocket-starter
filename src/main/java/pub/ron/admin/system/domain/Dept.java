@@ -40,7 +40,7 @@ public class Dept extends BaseEntity {
   @JoinColumn(foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
   private Dept parent;
 
-  @Column(nullable = false)
+  @Column
   private String path;
 
   public Dept(Long id) {
