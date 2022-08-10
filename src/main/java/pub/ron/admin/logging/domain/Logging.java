@@ -27,6 +27,7 @@ public class Logging extends BaseEntity {
   /**
    * 执行参数.
    */
+  @Column(columnDefinition = "text")
   private String params;
 
   /**
