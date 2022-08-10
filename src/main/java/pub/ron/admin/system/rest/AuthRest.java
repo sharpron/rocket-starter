@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pub.ron.admin.common.AppException;
+import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.dto.CaptchaDto;
 import pub.ron.admin.system.dto.LoginDto;
 import pub.ron.admin.system.security.SubjectUtils;
@@ -49,6 +50,7 @@ public class AuthRest {
    */
   @Operation(tags = "用户登录")
   @PostMapping("/authenticate")
+  @Log("用户登录")
   public ResponseEntity<?> authenticate(
       @Valid @RequestBody LoginDto loginDto) {
 
@@ -102,6 +104,7 @@ public class AuthRest {
 
   @Operation(tags = "退出登录")
   @DeleteMapping("/tokens")
+  @Log("退出登录")
   public ResponseEntity<?> logout() {
     SecurityUtils.getSubject().logout();
     return ResponseEntity.noContent().build();

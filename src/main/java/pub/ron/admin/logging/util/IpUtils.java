@@ -6,10 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.lionsoul.ip2region.DataBlock;
-import org.lionsoul.ip2region.DbConfig;
-import org.lionsoul.ip2region.DbMakerConfigException;
-import org.lionsoul.ip2region.DbSearcher;
+import org.lionsoul.ip2region.xdb.Searcher;
 
 /**
  * ip地址工具.
@@ -22,14 +19,24 @@ public class IpUtils {
   private static final byte[] IP_2_REGION;
 
   static {
-    InputStream resourceAsStream = IpUtils.class.getResourceAsStream("/plugin/ip2region.db");
-    assert resourceAsStream != null;
-    try {
+    try (InputStream resourceAsStream = IpUtils.class
+        .getResourceAsStream("/plugin/ip2region.xdb")) {
+      if (resourceAsStream == null) {
+        throw new RuntimeException("/plugin/ip2region.xdb 不存在");
+      }
       IP_2_REGION = resourceAsStream.readAllBytes();
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
+
+  private static final ThreadLocal<Searcher> THREAD_LOCAL = ThreadLocal.withInitial(() -> {
+    try {
+      return Searcher.newWithBuffer(IP_2_REGION);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  });
 
   /**
    * 常见的包含ip的http header.
@@ -95,11 +102,9 @@ public class IpUtils {
    */
   public static String ip2Region(String ip) {
     try {
-      DataBlock dataBlock = new DbSearcher(new DbConfig(), IP_2_REGION).memorySearch(ip);
-      return dataBlock.getRegion();
-    } catch (DbMakerConfigException | IOException e) {
-      log.warn(e.getMessage());
-      return null;
+      return THREAD_LOCAL.get().search(ip);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 }
