@@ -1,6 +1,6 @@
 package pub.ron.admin.system.body;
 
-import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -42,7 +42,7 @@ public class UserBody {
 
   private Boolean disabled;
 
-  private List<Long> roleIds;
+  private Set<Long> roleIds;
 
   @NotNull
   private Long deptId;
