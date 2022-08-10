@@ -50,4 +50,17 @@ public class DictItemMapper {
   public List<DictItemSmallDto> mapSmalls(List<DictItem> dictItems) {
     return dictItems.stream().map(this::mapSmall).collect(Collectors.toList());
   }
+
+  /**
+   * 通过id映射字典项.
+   *
+   * @param id id
+   * @return 字典项
+   */
+  public DictItem mapWithId(Long id) {
+    if (id == null) {
+      return null;
+    }
+    return new DictItem(id);
+  }
 }
