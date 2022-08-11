@@ -25,7 +25,7 @@ public class JacksonConfig {
   private static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern(
       "yyyy-MM-dd");
   private static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(
-      "yyyy-MM-dd hh:mm:ss");
+      "yyyy-MM-dd HH:mm");
 
 
   /**
