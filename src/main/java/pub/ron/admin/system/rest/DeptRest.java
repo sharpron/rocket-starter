@@ -77,11 +77,10 @@ public class DeptRest {
   @RequiresPermissions("department:query")
   @Log("部门导出")
   public ResponseEntity<Resource> getAsExcel(DeptQuery deptQuery) {
-    List<String[]> data = new ArrayList<>();
     List<String[]> departments = deptService.findSelfDepartments(deptQuery)
-        .stream().map(e -> new String[] {e.getName(), String.valueOf(e.getOrderNo())})
+        .stream().map(e -> new String[]{e.getName(), String.valueOf(e.getOrderNo())})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"部门名称", "序号"}, departments);
+    Resource resource = ExcelUtils.getExcelResource(new String[]{"部门名称", "序号"}, departments);
     return ExcelUtils.buildResponse(resource);
   }
 

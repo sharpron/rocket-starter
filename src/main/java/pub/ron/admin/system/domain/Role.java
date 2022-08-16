@@ -1,12 +1,13 @@
 package pub.ron.admin.system.domain;
 
 import java.util.Set;
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.Getter;
@@ -31,15 +32,19 @@ public class Role extends BaseEntity {
 
   private Boolean disabled;
 
-  @ElementCollection
-  @CollectionTable(name = "sys_role_dept", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-  @Column(name = "dept_id")
-  private Set<Long> deptIds;
+  @ManyToMany
+  @JoinTable(name = "sys_role_dept",
+      joinColumns = @JoinColumn(name = "role_id"),
+      inverseJoinColumns = @JoinColumn(name = "dept_id"),
+      foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+  private Set<Dept> departments;
 
-  @ElementCollection
-  @CollectionTable(name = "sys_role_menu", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-  @Column(name = "menu_id")
-  private Set<Long> menuIds;
+  @ManyToMany
+  @JoinTable(name = "sys_role_menu",
+      joinColumns = @JoinColumn(name = "role_id"),
+      inverseJoinColumns = @JoinColumn(name = "menu_id"),
+      foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+  private Set<Menu> menus;
 
   /**
    * pre persist.

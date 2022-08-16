@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 /**
  * base service.
@@ -56,6 +57,16 @@ public interface BaseService<T extends BaseEntity> {
    * @return 结果
    */
   List<T> findAll(Object query);
+
+
+  /**
+   * 查询所有.
+   *
+   * @param query 查询条件
+   * @param sort  排序
+   * @return 结果
+   */
+  List<T> findAll(Object query, Sort sort);
 
   /**
    * 通过id进行查找.

@@ -15,12 +15,6 @@ public class TreeUtils {
 
   }
 
-  @Value
-  public static class Input<I, O> {
-    I input;
-    List<O> children;
-  }
-
   /**
    * 生成树状数据.
    *
@@ -46,7 +40,6 @@ public class TreeUtils {
                                      List<O> outputs) {
     for (I input : inputs) {
       if (matcher.match(input, parentId)) {
-        List<O> children = new ArrayList<>();
         Result<O> result = converter.convert(input);
         outputs.add(result.output);
         genTree(inputs, result.parentId, matcher, converter, result.children);
@@ -54,18 +47,43 @@ public class TreeUtils {
     }
   }
 
+  /**
+   * 检查是否是某个对象的子对象.
+   *
+   * @param <I> 类型
+   */
   public interface Matcher<I> {
+
     boolean match(I input, Object pid);
   }
 
+  /**
+   * 结果.
+   *
+   * @param <O> 结果类型.
+   */
   @Value
   public static class Result<O> {
+
     O output;
     Object parentId;
     List<O> children;
   }
 
+  /**
+   * 转换器.
+   *
+   * @param <I> 输入类型
+   * @param <O> 输出类型
+   */
   public interface Converter<I, O> {
+
+    /**
+     * 转换结果.
+     *
+     * @param input 输入
+     * @return 结果
+     */
     Result<O> convert(I input);
   }
 

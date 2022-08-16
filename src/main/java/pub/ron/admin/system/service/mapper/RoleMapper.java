@@ -1,10 +1,21 @@
 package pub.ron.admin.system.service.mapper;
 
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import pub.ron.admin.common.BaseEntity;
 import pub.ron.admin.system.body.RoleBody;
+import pub.ron.admin.system.domain.Dept;
+import pub.ron.admin.system.domain.Menu;
+import pub.ron.admin.system.domain.MenuType;
 import pub.ron.admin.system.domain.Role;
 import pub.ron.admin.system.dto.RoleDto;
 
+/**
+ * 角色映射.
+ *
+ * @author ron 2022/8/12
+ */
 @Component
 public class RoleMapper {
 
@@ -20,8 +31,20 @@ public class RoleMapper {
     roleDto.setName(role.getName());
     roleDto.setDisabled(role.getDisabled());
     roleDto.setDescription(role.getDescription());
-    roleDto.setDeptIds(role.getDeptIds());
-    roleDto.setMenuIds(role.getMenuIds());
+
+    Set<Dept> departments = role.getDepartments();
+    roleDto.setDeptIds(departments.stream()
+        .map(BaseEntity::getId)
+        .collect(Collectors.toSet()));
+    roleDto.setDeptNames(departments.stream()
+        .map(Dept::getName)
+        .collect(Collectors.toSet()));
+
+    Set<Menu> menus = role.getMenus();
+    roleDto.setMenuIds(menus.stream().map(BaseEntity::getId).collect(Collectors.toSet()));
+    roleDto.setMenuTitles(
+        menus.stream().filter(e -> e.getType() != MenuType.CATEGORY).map(Menu::getTitle)
+            .collect(Collectors.toSet()));
     roleDto.setId(role.getId());
     roleDto.setCreateBy(role.getCreateBy());
     roleDto.setCreateTime(role.getCreateTime());
@@ -42,8 +65,13 @@ public class RoleMapper {
     role.setName(roleBody.getName());
     role.setDescription(roleBody.getDescription());
     role.setDisabled(roleBody.getDisabled());
-    role.setDeptIds(roleBody.getDeptIds());
-    role.setMenuIds(roleBody.getMenuIds());
+    role.setDepartments(roleBody.getDeptIds()
+        .stream().map(Dept::new).collect(Collectors.toSet()));
+    role.setMenus(roleBody.getMenuIds().stream().map(e -> {
+      Menu menu = new Menu();
+      menu.setId(e);
+      return menu;
+    }).collect(Collectors.toSet()));
     role.setId(roleBody.getId());
     return role;
   }

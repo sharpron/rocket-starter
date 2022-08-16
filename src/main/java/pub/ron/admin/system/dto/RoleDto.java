@@ -23,7 +23,9 @@ public class RoleDto extends BaseDto {
   private String description;
 
   private Set<Long> deptIds;
+  private Set<String> deptNames;
 
   private Set<Long> menuIds;
+  private Set<String> menuTitles;
 
 }

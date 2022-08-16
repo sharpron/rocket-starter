@@ -1,9 +1,11 @@
 package pub.ron.admin.common.query;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -89,10 +91,11 @@ public class WhereBuilder {
                         WhereBuilder.getPath(rootName, root), numbers.get(0), numbers.get(1));
                   case betweenTime:
                     final List<Long> timestamps = asBetween(fieldVal);
+                    ZoneId zoneId = ZoneId.systemDefault();
                     return criteriaBuilder.between(
                         WhereBuilder.getPath(rootName, root),
-                        new Date(timestamps.get(0)),
-                        new Date(timestamps.get(1)));
+                        LocalDate.ofInstant(Instant.ofEpochMilli(timestamps.get(0)), zoneId),
+                        LocalDate.ofInstant(Instant.ofEpochMilli(timestamps.get(1)), zoneId));
                   case in:
                     return criteriaBuilder.in(WhereBuilder.getPath(rootName, root)).value(fieldVal);
                   default:

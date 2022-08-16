@@ -5,6 +5,7 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import pub.ron.admin.common.query.WhereBuilder;
 
@@ -130,6 +131,11 @@ public abstract class AbstractService<T extends BaseEntity>
   @Override
   public final List<T> findAll(Object query) {
     return getBaseRepo().findAll(getSpecification(query));
+  }
+
+  @Override
+  public List<T> findAll(Object query, Sort sort) {
+    return getBaseRepo().findAll(getSpecification(query), sort);
   }
 
   /**

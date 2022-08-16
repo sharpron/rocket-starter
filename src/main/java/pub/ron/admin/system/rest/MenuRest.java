@@ -2,6 +2,7 @@ package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -61,8 +63,12 @@ public class MenuRest {
   @Operation(tags = "查询所有菜单以树的格式")
   public ResponseEntity<?> getSelfMenus() {
     final Principal userPrincipal = SubjectUtils.currentUser();
-    final List<Menu> menusByUser = menuService.findMenusByUsername(userPrincipal.getUsername());
-    return ResponseEntity.ok(genTree(menusByUser));
+    final List<Menu> menusByUser = menuService
+        .findMenusByUsername(userPrincipal.getUsername());
+    List<Menu> menus = menusByUser.stream()
+        .sorted(Comparator.comparingInt(Menu::getOrderNo))
+        .collect(Collectors.toList());
+    return ResponseEntity.ok(genTree(menus));
   }
 
   /**
@@ -76,7 +82,8 @@ public class MenuRest {
   @RequiresPermissions("menu:query")
   @Log("查询菜单")
   public ResponseEntity<?> findMenus(MenuQuery menuQuery) {
-    final List<Menu> menus = menuService.findAll(menuQuery);
+    Sort orderNo = Sort.by("orderNo");
+    final List<Menu> menus = menuService.findAll(menuQuery, orderNo);
     return ResponseEntity.ok(genTree(menus));
   }
 
@@ -89,14 +96,15 @@ public class MenuRest {
   @RequiresPermissions("menu:query")
   @Log("菜单导出")
   public ResponseEntity<Resource> getAsExcel(MenuQuery menuQuery) {
-    List<String[]> data = menuService.findAll(menuQuery).stream()
-        .map(e -> new String[] {
+    Sort orderNo = Sort.by("orderNo");
+    List<String[]> data = menuService.findAll(menuQuery, orderNo).stream()
+        .map(e -> new String[]{
             e.getTitle(), e.getIcon(), String.valueOf(e.getOrderNo()), String.valueOf(e.getType()),
             e.getPath(), ExcelUtils.formatValue(e.getCacheable()),
             ExcelUtils.formatValue(e.isHide())})
         .collect(Collectors.toList());
     Resource resource = ExcelUtils.getExcelResource(
-        new String[] {"标题", "图标", "序号", "类型", "路径", "是否缓存", "是否隐藏"}, data);
+        new String[]{"标题", "图标", "序号", "类型", "路径", "是否缓存", "是否隐藏"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
