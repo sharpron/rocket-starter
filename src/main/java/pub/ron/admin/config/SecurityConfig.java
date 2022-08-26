@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import pub.ron.admin.system.security.RestFormAuthenticationFilter;
+import pub.ron.admin.system.security.UserLocker;
 import pub.ron.admin.system.security.UserRealm;
 import pub.ron.admin.system.service.MenuService;
 import pub.ron.admin.system.service.RoleService;
@@ -39,8 +40,9 @@ public class SecurityConfig {
   public Realm userRealm(
       UserService userService, MenuService menuService,
       RoleService roleService,
+      UserLocker userLocker,
       CredentialsMatcher credentialsMatcher) {
-    final UserRealm userRealm = new UserRealm(userService, menuService, roleService);
+    final UserRealm userRealm = new UserRealm(userService, menuService, roleService, userLocker);
     userRealm.setCredentialsMatcher(credentialsMatcher);
     return userRealm;
   }

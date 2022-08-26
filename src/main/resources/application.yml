@@ -1,6 +1,7 @@
 # suppress inspection "SpellCheckingInspection" for whole file
 # suppress inspection "SpringBootApplicationProperties" for whole file
 #debug=true
+
 spring:
   profiles:
     active: dev
@@ -37,3 +38,6 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: true
+  mvc:
+    async:
+      request-timeout: -1

@@ -7,7 +7,6 @@ import pub.ron.admin.common.BaseEntity;
 import pub.ron.admin.system.body.RoleBody;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.domain.Menu;
-import pub.ron.admin.system.domain.MenuType;
 import pub.ron.admin.system.domain.Role;
 import pub.ron.admin.system.dto.RoleDto;
 
@@ -36,15 +35,10 @@ public class RoleMapper {
     roleDto.setDeptIds(departments.stream()
         .map(BaseEntity::getId)
         .collect(Collectors.toSet()));
-    roleDto.setDeptNames(departments.stream()
-        .map(Dept::getName)
-        .collect(Collectors.toSet()));
 
     Set<Menu> menus = role.getMenus();
     roleDto.setMenuIds(menus.stream().map(BaseEntity::getId).collect(Collectors.toSet()));
-    roleDto.setMenuTitles(
-        menus.stream().filter(e -> e.getType() != MenuType.CATEGORY).map(Menu::getTitle)
-            .collect(Collectors.toSet()));
+
     roleDto.setId(role.getId());
     roleDto.setCreateBy(role.getCreateBy());
     roleDto.setCreateTime(role.getCreateTime());

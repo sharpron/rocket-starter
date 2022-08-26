@@ -29,7 +29,9 @@ import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.body.UserBody;
 import pub.ron.admin.system.dto.ForceModifyPassDto;
 import pub.ron.admin.system.dto.ModifyPassDto;
+import pub.ron.admin.system.dto.UserDto;
 import pub.ron.admin.system.dto.UserQuery;
+import pub.ron.admin.system.security.UserLocker;
 import pub.ron.admin.system.service.UserService;
 import pub.ron.admin.system.service.mapper.UserMapper;
 
@@ -48,13 +50,26 @@ public class UserRest {
 
   private final UserMapper userMapper;
 
+  private final UserLocker userLocker;
+
+  /**
+   * 分页查询用户.
+   *
+   * @param pageable  分页参数
+   * @param userQuery 查询条件
+   * @return 数据
+   */
   @GetMapping
   @Operation(tags = "分页查询用户")
   @RequiresPermissions("user:query")
   @Log("查询用户")
   public ResponseEntity<?> findByPage(Pageable pageable, UserQuery userQuery) {
     return ResponseEntity.ok(
-        userService.findByPage(pageable, userQuery).map(userMapper::mapUserDto));
+        userService.findByPage(pageable, userQuery).map(user -> {
+          UserDto userDto = userMapper.mapUserDto(user);
+          userDto.setLocked(userLocker.isLocked(userDto.getUsername()));
+          return userDto;
+        }));
   }
 
   /**
@@ -69,7 +84,7 @@ public class UserRest {
     List<String[]> data = userService.findAll(userQuery).stream()
         .map(e -> new String[] {
             e.getUsername(), e.getNickname(), e.getMobile(),
-            e.getEmail(), ExcelUtils.formatValue(e.getLocked()),
+            e.getEmail(), ExcelUtils.formatValue(userLocker.isLocked(e.getUsername())),
             ExcelUtils.formatValue(e.getDisabled()), e.getDept().getName()})
         .collect(Collectors.toList());
     Resource resource = ExcelUtils.getExcelResource(
@@ -112,6 +127,15 @@ public class UserRest {
   public ResponseEntity<?> modifyPass(@RequestBody @Valid ForceModifyPassDto modifyPassDto) {
     userService.forceModifyPass(modifyPassDto.getUsername(), modifyPassDto.getNewPass());
     return ResponseEntity.ok().build();
+  }
+
+  @DeleteMapping("/locked")
+  @Operation(tags = "管理员解锁指定用户")
+  @RequiresPermissions("user:locked")
+  @Log("管理员解锁指定用户")
+  public ResponseEntity<?> unlock(@RequestParam String username) {
+    userLocker.unlock(username);
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   @DeleteMapping

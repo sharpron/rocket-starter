@@ -71,9 +71,9 @@ public class DictRest {
   @Log("字典导出")
   public ResponseEntity<Resource> getAsExcel(DictQuery dictQuery) {
     List<String[]> data = dictService.findAll(dictQuery).stream()
-        .map(e -> new String[]{e.getName(), e.getDescription()})
+        .map(e -> new String[] {e.getName(), e.getDescription()})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[]{"字典名称", "描述"}, data);
+    Resource resource = ExcelUtils.getExcelResource(new String[] {"字典名称", "描述"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 

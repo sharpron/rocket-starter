@@ -3,15 +3,14 @@ package pub.ron.admin.logging.service;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import javax.servlet.http.HttpServletRequest;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import pub.ron.admin.common.query.WhereBuilder;
+import pub.ron.admin.common.AbstractService;
+import pub.ron.admin.common.BaseRepo;
 import pub.ron.admin.logging.domain.Logging;
 import pub.ron.admin.logging.domain.Status;
-import pub.ron.admin.logging.dto.LoggingQuery;
 import pub.ron.admin.logging.repository.LoggingRepository;
 import pub.ron.admin.logging.util.IpUtils;
 
@@ -22,7 +21,7 @@ import pub.ron.admin.logging.util.IpUtils;
  */
 @Service
 @RequiredArgsConstructor
-public class LoggingService {
+public class LoggingService extends AbstractService<Logging> {
 
   /**
    * 自动注入日志模块.
@@ -33,17 +32,6 @@ public class LoggingService {
    * current request proxy.
    */
   private final HttpServletRequest request;
-
-  /**
-   * 分页查询.
-   *
-   * @param pageable 分页器
-   * @param query    查询条件
-   * @return 数据
-   */
-  public Page<Logging> findByPage(Pageable pageable, LoggingQuery query) {
-    return loggingRepository.findAll(WhereBuilder.buildSpec(query), pageable);
-  }
 
   /**
    * 为操作添加日志.
@@ -98,6 +86,21 @@ public class LoggingService {
       e.printStackTrace(pw);
       return stringWriter.toString();
     }
+  }
+
+  /**
+   * 通过状态删除日志.
+   *
+   * @param status 状态
+   */
+  @Transactional
+  public void clear(Status status) {
+    loggingRepository.deleteByStatus(status);
+  }
+
+  @Override
+  protected BaseRepo<Logging> getBaseRepo() {
+    return loggingRepository;
   }
 
   /**

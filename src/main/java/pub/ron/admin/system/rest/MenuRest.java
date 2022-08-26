@@ -1,10 +1,8 @@
 package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.groups.Default;
@@ -34,7 +32,6 @@ import pub.ron.admin.system.domain.Menu;
 import pub.ron.admin.system.domain.MenuType;
 import pub.ron.admin.system.dto.MenuDto;
 import pub.ron.admin.system.dto.MenuQuery;
-import pub.ron.admin.system.dto.MenuSmallDto;
 import pub.ron.admin.system.security.Principal;
 import pub.ron.admin.system.security.SubjectUtils;
 import pub.ron.admin.system.service.MenuService;
@@ -98,13 +95,13 @@ public class MenuRest {
   public ResponseEntity<Resource> getAsExcel(MenuQuery menuQuery) {
     Sort orderNo = Sort.by("orderNo");
     List<String[]> data = menuService.findAll(menuQuery, orderNo).stream()
-        .map(e -> new String[]{
+        .map(e -> new String[] {
             e.getTitle(), e.getIcon(), String.valueOf(e.getOrderNo()), String.valueOf(e.getType()),
             e.getPath(), ExcelUtils.formatValue(e.getCacheable()),
             ExcelUtils.formatValue(e.isHide())})
         .collect(Collectors.toList());
     Resource resource = ExcelUtils.getExcelResource(
-        new String[]{"标题", "图标", "序号", "类型", "路径", "是否缓存", "是否隐藏"}, data);
+        new String[] {"标题", "图标", "序号", "类型", "路径", "是否缓存", "是否隐藏"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
@@ -117,28 +114,12 @@ public class MenuRest {
   @Operation(tags = "查询所有菜单以树的格式")
   public ResponseEntity<?> findMenusAsDict(MenuQuery menuQuery) {
     final List<Menu> menus = menuService.findAll(menuQuery);
-    return ResponseEntity.ok(genTreeWithSmall(menus));
+    return ResponseEntity.ok(TreeUtils.buildTree(menuMapper.mapSmallDto(menus)));
   }
-
-  private List<MenuSmallDto> genTreeWithSmall(List<Menu> inputs) {
-    return TreeUtils.genTree(inputs,
-        (input, pid) -> Objects.equals(input.getParentId(), pid),
-        (input) -> {
-          MenuSmallDto menuDto = menuMapper.mapSmallDto(input);
-          menuDto.setChildren(new ArrayList<>());
-          return new TreeUtils.Result<>(menuDto, menuDto.getId(), menuDto.getChildren());
-        });
-  }
-
 
   private List<MenuDto> genTree(List<Menu> inputs) {
-    return TreeUtils.genTree(inputs,
-        (input, pid) -> Objects.equals(input.getParentId(), pid),
-        input -> {
-          MenuDto menuDto = menuMapper.mapDto(input);
-          menuDto.setChildren(new ArrayList<>());
-          return new TreeUtils.Result<>(menuDto, menuDto.getId(), menuDto.getChildren());
-        });
+    List<MenuDto> menus = menuMapper.mapDto(inputs);
+    return TreeUtils.buildTree(menus);
   }
 
   @PostMapping

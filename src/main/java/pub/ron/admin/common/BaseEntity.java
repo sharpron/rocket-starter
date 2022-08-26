@@ -30,6 +30,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public abstract class BaseEntity {
 
+  public static final String ID = "id";
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -1,12 +1,14 @@
 package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.time.Duration;
 import java.util.Base64;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
@@ -23,9 +25,9 @@ import pub.ron.admin.logging.Log;
 import pub.ron.admin.system.dto.CaptchaDto;
 import pub.ron.admin.system.dto.LoginDto;
 import pub.ron.admin.system.security.SubjectUtils;
+import pub.ron.admin.system.security.UserLocker;
 import pub.ron.admin.system.service.CaptchaService;
 import pub.ron.admin.system.service.CaptchaService.Captcha;
-import pub.ron.admin.system.service.UserService;
 
 /**
  * auth rest provider.
@@ -38,9 +40,10 @@ import pub.ron.admin.system.service.UserService;
 @RequiredArgsConstructor
 public class AuthRest {
 
+  private static final String AUTH_TRY_TIMES = "user:try-times:";
+  private static final int MAX_TRY_TIMES = 5;
   private final CaptchaService captchaService;
-
-  private final UserService userService;
+  private final UserLocker userLocker;
 
   /**
    * 用户登录.
@@ -61,7 +64,18 @@ public class AuthRest {
       subject.login(new UsernamePasswordToken(loginDto.getUsername(),
           loginDto.getPassword(), Boolean.TRUE.equals(loginDto.getRememberMe())));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
-      throw new AppException("用户名或密码错误");
+      if (userLocker.checkLockedWhenFail(loginDto.getUsername())) {
+        throw new AppException(String.format("登录失败已经超过%d次，账户已被锁定", userLocker.getMaxTryTimes()));
+      } else {
+        throw new AppException("用户名或密码错误");
+      }
+    } catch (LockedAccountException e) {
+      Duration lockDuration = userLocker.getLockDuration();
+      String duration = lockDuration.toString().replace("PT", "")
+          .replace("H", "小时")
+          .replace("M", "分钟")
+          .replace("S", "秒");
+      throw new AppException(String.format("账户已被锁定, 请%s后再试", duration));
     }
     return ResponseEntity.ok(SubjectUtils.currentUser());
   }

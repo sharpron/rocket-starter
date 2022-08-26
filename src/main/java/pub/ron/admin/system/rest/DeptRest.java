@@ -2,9 +2,7 @@ package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.groups.Default;
@@ -32,8 +30,6 @@ import pub.ron.admin.system.body.DeptBody;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.dto.DeptDto;
 import pub.ron.admin.system.dto.DeptQuery;
-import pub.ron.admin.system.security.Principal;
-import pub.ron.admin.system.security.SubjectUtils;
 import pub.ron.admin.system.service.DeptService;
 import pub.ron.admin.system.service.mapper.DeptMapper;
 
@@ -78,9 +74,9 @@ public class DeptRest {
   @Log("部门导出")
   public ResponseEntity<Resource> getAsExcel(DeptQuery deptQuery) {
     List<String[]> departments = deptService.findSelfDepartments(deptQuery)
-        .stream().map(e -> new String[]{e.getName(), String.valueOf(e.getOrderNo())})
+        .stream().map(e -> new String[] {e.getName(), String.valueOf(e.getOrderNo())})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[]{"部门名称", "序号"}, departments);
+    Resource resource = ExcelUtils.getExcelResource(new String[] {"部门名称", "序号"}, departments);
     return ExcelUtils.buildResponse(resource);
   }
 
@@ -91,20 +87,7 @@ public class DeptRest {
    * @return 数据
    */
   private List<DeptDto> buildTree(List<Dept> departments) {
-    Principal principal = SubjectUtils.currentUser();
-    Long deptId = principal.getDeptId();
-    return TreeUtils.genTree(departments, (input, pid) -> {
-      // 根节点判断
-      if (pid == null && (input.getId().equals(deptId) || input.getParent() == null)) {
-        return true;
-      }
-      Dept parent = input.getParent();
-      return parent != null && Objects.equals(parent.getId(), pid);
-    }, input -> {
-      DeptDto deptDto = deptMapper.mapDto(input);
-      deptDto.setChildren(new ArrayList<>());
-      return new TreeUtils.Result<>(deptDto, input.getId(), deptDto.getChildren());
-    });
+    return TreeUtils.buildTree(deptMapper.mapDto(departments));
   }
 
   /**

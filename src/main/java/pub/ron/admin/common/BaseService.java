@@ -51,6 +51,15 @@ public interface BaseService<T extends BaseEntity> {
   Page<T> findByPage(Pageable pageable, Object query);
 
   /**
+   * 通过lastId进行分页查询.
+   *
+   * @param lastId lastId
+   * @param query  查询条件
+   * @return 查询结果
+   */
+  Page<T> findByPage(Long lastId, int size, Object query);
+
+  /**
    * 查询所有.
    *
    * @param query 查询条件

@@ -1,13 +1,12 @@
 package pub.ron.admin.system.service.impl;
 
-import com.wf.captcha.SpecCaptcha;
-import java.io.ByteArrayOutputStream;
 import java.time.Duration;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import pub.ron.admin.common.AppException;
+import pub.ron.admin.common.utils.CaptchaUtils;
 import pub.ron.admin.system.service.CaptchaService;
 
 /**
@@ -27,12 +26,11 @@ public class CaptchaServiceImpl implements CaptchaService {
 
   @Override
   public Captcha genCaptcha() {
-    SpecCaptcha captcha = new SpecCaptcha(100, 32, 4);
-    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-    captcha.out(os);
+    String captchaText = CaptchaUtils.generateText();
+    byte[] bytes = CaptchaUtils.generateImage(captchaText);
     final String key = UUID.randomUUID().toString();
-    redisTemplate.opsForValue().set(CAPTCHA_CACHE_KEY + key, captcha.text(), EXPIRE);
-    return new Captcha(key, os.toByteArray());
+    redisTemplate.opsForValue().set(CAPTCHA_CACHE_KEY + key, captchaText, EXPIRE);
+    return new Captcha(key, bytes);
   }
 
   @Override

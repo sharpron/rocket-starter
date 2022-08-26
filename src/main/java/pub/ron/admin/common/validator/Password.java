@@ -17,7 +17,8 @@ import javax.validation.constraints.Pattern;
 @NotBlank
 @Pattern(
     regexp =
-        "^(?![0-9]+$)(?![^0-9]+$)(?![a-zA-Z]+$)(?![^a-zA-Z]+$)(?![a-zA-Z0-9]+$)[a-zA-Z0-9\\S]{8,}$",
+        "^(?!\\d+$)(?!\\D+$)(?![a-zA-Z]+$)(?![^a-zA-Z]+$)(?![a-zA-Z\\d]+$)[a-zA-Z\\d\\S]{8,}$",
     message = "字母数字及特殊字符，且以字母开头，8位以上[二级等保要求]")
 public @interface Password {
+
 }

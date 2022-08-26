@@ -1,6 +1,8 @@
 package pub.ron.admin.system.service.mapper;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import pub.ron.admin.system.body.MenuBody;
 import pub.ron.admin.system.domain.Menu;
@@ -33,7 +35,12 @@ public class MenuMapper {
     menuDto.setCreateTime(menu.getCreateTime());
     menuDto.setModifyBy(menu.getModifyBy());
     menuDto.setModifyTime(menu.getModifyTime());
+    menuDto.setChildren(new ArrayList<>());
     return menuDto;
+  }
+
+  public List<MenuDto> mapDto(List<Menu> menus) {
+    return menus.stream().map(this::mapDto).collect(Collectors.toList());
   }
 
   /**
@@ -45,9 +52,14 @@ public class MenuMapper {
   public MenuSmallDto mapSmallDto(Menu menu) {
     MenuSmallDto menuSmallDto = new MenuSmallDto();
     menuSmallDto.setId(menu.getId());
+    menuSmallDto.setParentId(menu.getParentId());
     menuSmallDto.setTitle(menu.getTitle());
     menuSmallDto.setChildren(new ArrayList<>());
     return menuSmallDto;
+  }
+
+  public List<MenuSmallDto> mapSmallDto(List<Menu> menu) {
+    return menu.stream().map(this::mapSmallDto).collect(Collectors.toList());
   }
 
   /**

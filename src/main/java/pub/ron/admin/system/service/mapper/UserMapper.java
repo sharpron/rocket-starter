@@ -6,6 +6,11 @@ import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.domain.User;
 import pub.ron.admin.system.dto.UserDto;
 
+/**
+ * user mapper.
+ *
+ * @author ron 2022/8/6
+ */
 @Component
 public class UserMapper {
 
@@ -41,10 +46,15 @@ public class UserMapper {
     userDto.setDeptId(user.getDept().getId());
     userDto.setDeptName(user.getDept().getName());
     userDto.setUsername(user.getUsername());
+    userDto.setNickname(user.getNickname());
     userDto.setMobile(user.getMobile());
     userDto.setEmail(user.getEmail());
     userDto.setDisabled(user.getDisabled());
+    userDto.setId(user.getId());
+    userDto.setCreateBy(user.getCreateBy());
     userDto.setCreateTime(user.getCreateTime());
+    userDto.setModifyBy(user.getModifyBy());
+    userDto.setModifyTime(user.getModifyTime());
     return userDto;
   }
 }

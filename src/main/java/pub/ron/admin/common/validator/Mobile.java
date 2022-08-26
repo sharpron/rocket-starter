@@ -16,7 +16,7 @@ import javax.validation.constraints.Pattern;
 @Target(ElementType.FIELD)
 @NotBlank
 @Pattern(regexp =
-    "^((13[0-9])|(14[014-9])|(15[0-3,5-9])|(16[2567])|(17[0-8])|(18[0-9])|(19[0-3,5-9]))\\\\d{8}$",
+    "^((13\\d)|(14[014-9])|(15[0-3,5-9])|(16[2567])|(17[0-8])|(18\\d)|(19[0-3,5-9]))\\\\d{8}$",
     message = "手机号码格式错误")
 public @interface Mobile {
 }

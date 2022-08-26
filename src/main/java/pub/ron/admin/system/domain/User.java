@@ -49,8 +49,6 @@ public class User extends BaseEntity {
 
   private String email;
 
-  private Boolean locked;
-
   private Boolean disabled;
 
   @ManyToOne
@@ -70,7 +68,6 @@ public class User extends BaseEntity {
     if (this.disabled == null) {
       this.disabled = Boolean.FALSE;
     }
-    this.locked = Boolean.FALSE;
   }
 
   @Transient

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <springProfile name="dev">
+    <appender name="Console"
+      class="ch.qos.logback.core.ConsoleAppender">
+      <withJansi>true</withJansi>
+      <layout class="ch.qos.logback.classic.PatternLayout">
+        <Pattern>
+          %d{ISO8601} [%thread] %magenta(%-5level) %green([%-50.50class]) >>> %cyan(%msg) %n
+        </Pattern>
+      </layout>
+    </appender>
+    <root level="info">
+      <appender-ref ref="Console"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <property name="LOGS" value="./logs"/>
+    <appender name="RollingFile"
+      class="ch.qos.logback.core.rolling.RollingFileAppender">
+      <file>${LOGS}/app.log</file>
+      <encoder
+        class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+        <Pattern>%d{ISO8601} [%thread] %-5level [%-50.50class] >>> %msg %n</Pattern>
+      </encoder>
+
+      <rollingPolicy
+        class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <!-- rollover daily and when the file reaches 10 MegaBytes -->
+        <fileNamePattern>${LOGS}/archived/app-%d{yyyy-MM-dd}.%i.log
+        </fileNamePattern>
+        <timeBasedFileNamingAndTriggeringPolicy
+          class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+          <maxFileSize>10MB</maxFileSize>
+        </timeBasedFileNamingAndTriggeringPolicy>
+      </rollingPolicy>
+    </appender>
+    <!-- LOG everything at INFO level -->
+    <root level="info">
+      <appender-ref ref="RollingFile"/>
+    </root>
+  </springProfile>
+
+</configuration>

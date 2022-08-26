@@ -15,6 +15,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
 import pub.ron.admin.common.AppException;
+import pub.ron.admin.common.BaseEntity;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.domain.Role;
 import pub.ron.admin.system.security.Principal;
@@ -87,8 +88,19 @@ public class WhereBuilder {
                         WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
                   case between:
                     final List<Long> numbers = asBetween(fieldVal);
-                    return criteriaBuilder.between(
-                        WhereBuilder.getPath(rootName, root), numbers.get(0), numbers.get(1));
+                    Long min = numbers.get(0);
+                    Long max = numbers.get(1);
+                    if (min != null && max != null) {
+                      return criteriaBuilder.between(
+                          WhereBuilder.getPath(rootName, root), min, max);
+                    }
+                    if (min != null) {
+                      return criteriaBuilder.ge(WhereBuilder.getPath(rootName, root), min);
+                    }
+                    if (max != null) {
+                      return criteriaBuilder.le(WhereBuilder.getPath(rootName, root), max);
+                    }
+                    return null;
                   case betweenTime:
                     final List<Long> timestamps = asBetween(fieldVal);
                     ZoneId zoneId = ZoneId.systemDefault();
@@ -141,7 +153,7 @@ public class WhereBuilder {
       final Join<Role, Dept> deptJoin = root.join("dept");
       final Predicate deptPredicate =
           builder.or(
-              builder.equal(deptJoin.get("id"), principal.getDeptId()),
+              builder.equal(deptJoin.get(BaseEntity.ID), principal.getDeptId()),
               builder.like(deptJoin.get("path"), principal.getDeptPath() + "%"));
       final Predicate predicate = specification.toPredicate(root, query, builder);
       if (predicate == null) {

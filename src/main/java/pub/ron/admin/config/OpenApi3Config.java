@@ -9,6 +9,11 @@ import org.springdoc.core.SpringDocUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Open API config.
+ *
+ * @author ron
+ */
 @Configuration
 @SecurityScheme(
     name = "bearerAuth",

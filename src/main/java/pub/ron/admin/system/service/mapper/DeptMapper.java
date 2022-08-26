@@ -1,6 +1,8 @@
 package pub.ron.admin.system.service.mapper;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import pub.ron.admin.system.body.DeptBody;
 import pub.ron.admin.system.domain.Dept;
@@ -29,6 +31,10 @@ public class DeptMapper {
     deptDto.setModifyBy(dept.getModifyBy());
     deptDto.setModifyTime(dept.getModifyTime());
     return deptDto;
+  }
+
+  public List<DeptDto> mapDto(List<Dept> dept) {
+    return dept.stream().map(this::mapDto).collect(Collectors.toList());
   }
 
 

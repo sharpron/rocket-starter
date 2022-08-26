@@ -1,9 +1,11 @@
 package pub.ron.admin.system.dto;
 
 import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import pub.ron.admin.common.BaseDto;
+import pub.ron.admin.common.utils.TreeUtils.Node;
 import pub.ron.admin.system.domain.MenuType;
 
 /**
@@ -13,7 +15,7 @@ import pub.ron.admin.system.domain.MenuType;
  */
 @Getter
 @Setter
-public class MenuDto extends BaseDto {
+public class MenuDto extends BaseDto implements Node<MenuDto> {
 
   private String title;
 
@@ -34,4 +36,15 @@ public class MenuDto extends BaseDto {
   private String perm;
 
   private List<MenuDto> children;
+
+  @Override
+  public boolean childrenOf(MenuDto parent) {
+    return Objects.equals(parentId, parent.getId());
+  }
+
+  @Override
+  public void addChildren(MenuDto menuDto) {
+    children.add(menuDto);
+  }
+
 }

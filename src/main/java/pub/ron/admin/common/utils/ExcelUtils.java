@@ -1,17 +1,16 @@
 package pub.ron.admin.common.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.util.stream.Collectors;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 /**
  * excel 常用工具.
@@ -19,6 +18,8 @@ import org.springframework.http.ResponseEntity;
  * @author ron 2022/8/6
  */
 public class ExcelUtils {
+
+  private static final String LINE_SEPARATOR = "\n";
 
   private ExcelUtils() {
 
@@ -36,8 +37,17 @@ public class ExcelUtils {
         .body(resource);
   }
 
-  public static String formatValue(Boolean value) {
-    return Boolean.TRUE.equals(value) ? "是" : "否";
+  /**
+   * 构建响应.
+   *
+   * @param header      header
+   * @param dataFetcher dataFetcher
+   * @return 结果
+   */
+  public static ResponseEntity<StreamingResponseBody> buildResponse(
+      String[] header, DataFetcher dataFetcher) {
+    return ResponseEntity.ok()
+        .body(buildResponseBody(header, dataFetcher));
   }
 
   /**
@@ -49,33 +59,53 @@ public class ExcelUtils {
    */
   public static Resource getExcelResource(String[] header,
                                           List<String[]> data) {
-    try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-      XSSFSheet sheet = workbook.createSheet();
-      // header
-      XSSFRow headerRow = sheet.createRow(0);
+    String headerLine = StringUtils.arrayToCommaDelimitedString(header);
+    String dataLines = data.stream()
+        .map(e -> Arrays.stream(e).map(ExcelUtils::handleCsvValue).toArray())
+        .map(StringUtils::arrayToCommaDelimitedString)
+        .collect(Collectors.joining(LINE_SEPARATOR));
 
-      for (int i = 0; i < header.length; i++) {
-        XSSFCell cell = headerRow.createCell(i);
-        cell.setCellType(CellType.STRING);
-        cell.setCellValue(header[i]);
-      }
-
-      for (int i = 0; i < data.size(); i++) {
-        XSSFRow row = sheet.createRow(i + 1);
-        String[] rowData = data.get(i);
-        for (int j = 0; j < rowData.length; j++) {
-          String cellValue = rowData[j];
-          XSSFCell cell = row.createCell(j);
-          cell.setCellValue(cellValue);
-        }
-      }
-
-      ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-      workbook.write(byteArrayOutputStream);
-      return new ByteArrayResource(byteArrayOutputStream.toByteArray());
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    String lines = (headerLine + LINE_SEPARATOR + dataLines);
+    return new ByteArrayResource(lines.getBytes(StandardCharsets.UTF_8));
   }
 
+  public static String formatValue(Boolean value) {
+    return Boolean.TRUE.equals(value) ? "是" : "否";
+  }
+
+
+  /**
+   * 数据分页查询器.
+   */
+  @FunctionalInterface
+  public interface DataFetcher {
+
+    Page<String[]> fetch(Long lastId);
+  }
+
+  private static StreamingResponseBody buildResponseBody(String[] header, DataFetcher dataFetcher) {
+    return outputStream -> {
+      outputStream.write(
+          StringUtils.arrayToCommaDelimitedString(header).getBytes(StandardCharsets.UTF_8));
+      Long lastId = null;
+      while (true) {
+        outputStream.write(LINE_SEPARATOR.getBytes(StandardCharsets.UTF_8));
+        Page<String[]> page = dataFetcher.fetch(lastId);
+        List<String[]> content = page.getContent();
+        if (content.isEmpty()) {
+          break;
+        }
+        String rows = page.stream()
+            .map(e -> StringUtils.arrayToCommaDelimitedString(
+                Arrays.stream(e).skip(1).map(ExcelUtils::handleCsvValue).toArray()))
+            .collect(Collectors.joining(LINE_SEPARATOR));
+        outputStream.write(rows.getBytes(StandardCharsets.UTF_8));
+        lastId = Long.valueOf(page.getContent().get(page.getContent().size() - 1)[0]);
+      }
+    };
+  }
+
+  private static String handleCsvValue(String cellValue) {
+    return cellValue == null ? "" : "\"" + cellValue + "\"";
+  }
 }

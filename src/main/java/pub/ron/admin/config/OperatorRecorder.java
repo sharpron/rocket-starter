@@ -18,6 +18,6 @@ public class OperatorRecorder implements AuditorAware<String> {
    */
   @Override
   public Optional<String> getCurrentAuditor() {
-    return SubjectUtils.getCurrentUsername().or(() -> Optional.of("admin"));
+    return SubjectUtils.getCurrentUsername().or(() -> Optional.of("System"));
   }
 }

@@ -1,15 +1,19 @@
 package pub.ron.admin.system.dto;
 
-import java.time.LocalDateTime;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import pub.ron.admin.common.BaseDto;
 
 /**
  * user dto.
  *
  * @author ron 2020/12/12
  */
-@Data
-public class UserDto {
+@Getter
+@Setter
+@ToString
+public class UserDto extends BaseDto {
 
   private Long id;
 
@@ -19,11 +23,13 @@ public class UserDto {
 
   private String username;
 
+  private String nickname;
+
   private String mobile;
 
   private String email;
 
   private boolean disabled;
 
-  private LocalDateTime createTime;
+  private boolean locked;
 }

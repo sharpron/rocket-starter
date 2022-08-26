@@ -37,6 +37,8 @@ public class UserRealm extends AuthorizingRealm {
 
   private final RoleService roleService;
 
+  private final UserLocker userLocker;
+
   @Override
   public boolean supports(AuthenticationToken token) {
     return token instanceof UsernamePasswordToken;
@@ -55,18 +57,20 @@ public class UserRealm extends AuthorizingRealm {
   protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token)
       throws AuthenticationException {
 
-    final User user =
-        userService
-            .findByUsername((String) token.getPrincipal())
-            .orElseThrow(UnknownAccountException::new);
+    String username = (String) token.getPrincipal();
+
+    if (userLocker.isLocked(username)) {
+      throw new LockedAccountException();
+    }
+
+    final User user = userService
+        .findByUsername(username)
+        .orElseThrow(UnknownAccountException::new);
 
     if (Boolean.TRUE.equals(user.getDisabled())) {
       throw new DisabledAccountException();
     }
 
-    if (Boolean.TRUE.equals(user.getLocked())) {
-      throw new LockedAccountException();
-    }
     // 查询管理部门
     Set<Long> manageDeptIds = roleService.findManageDeptIds(user.getId());
     Set<String> permissions = menuService.findMenusByUsername(user.getUsername()).stream()

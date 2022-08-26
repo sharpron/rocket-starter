@@ -2,10 +2,13 @@ package pub.ron.admin.common;
 
 import java.util.List;
 import java.util.Set;
+import javax.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import pub.ron.admin.common.query.WhereBuilder;
 
@@ -110,6 +113,23 @@ public abstract class AbstractService<T extends BaseEntity>
   @Override
   public final Page<T> findByPage(Pageable pageable, Object query) {
     return getBaseRepo().findAll(getSpecification(query), pageable);
+  }
+
+  @Override
+  public final Page<T> findByPage(Long lastId, int size, Object criteria) {
+    return getBaseRepo().findAll((Specification<T>) (root, query, criteriaBuilder) -> {
+      Specification<T> specification = getSpecification(criteria);
+      Predicate predicate = specification.toPredicate(root, query, criteriaBuilder);
+      if (lastId == null) {
+        return predicate;
+      }
+
+      Predicate pagePredicate = criteriaBuilder.gt(root.get(BaseEntity.ID), lastId);
+      if (predicate == null) {
+        return pagePredicate;
+      }
+      return criteriaBuilder.and(predicate, pagePredicate);
+    }, PageRequest.of(0, size, Direction.DESC, BaseEntity.ID));
   }
 
   /**

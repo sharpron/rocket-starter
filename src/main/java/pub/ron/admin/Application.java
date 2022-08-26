@@ -3,6 +3,8 @@ package pub.ron.admin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import pub.ron.admin.common.EnhancedSimpleJpaRepository;
 
 /**
  * application entry point.
@@ -11,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
  */
 @SpringBootApplication
 @EnableJpaAuditing
+@EnableJpaRepositories(repositoryBaseClass = EnhancedSimpleJpaRepository.class)
 public class Application {
 
   public static void main(String[] args) {
