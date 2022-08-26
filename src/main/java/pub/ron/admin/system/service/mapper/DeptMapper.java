@@ -8,6 +8,11 @@ import pub.ron.admin.system.body.DeptBody;
 import pub.ron.admin.system.domain.Dept;
 import pub.ron.admin.system.dto.DeptDto;
 
+/**
+ * 部门映射.
+ *
+ * @author ron 2022/8/12
+ */
 @Component
 public class DeptMapper {
 

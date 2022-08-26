@@ -40,8 +40,6 @@ import pub.ron.admin.system.service.CaptchaService.Captcha;
 @RequiredArgsConstructor
 public class AuthRest {
 
-  private static final String AUTH_TRY_TIMES = "user:try-times:";
-  private static final int MAX_TRY_TIMES = 5;
   private final CaptchaService captchaService;
   private final UserLocker userLocker;
 

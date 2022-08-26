@@ -7,6 +7,11 @@ import pub.ron.admin.system.body.DictItemBody;
 import pub.ron.admin.system.domain.DictItem;
 import pub.ron.admin.system.dto.DictItemSmallDto;
 
+/**
+ * 字典项映射.
+ *
+ * @author ron 2022/8/12
+ */
 @Component
 public class DictItemMapper {
 

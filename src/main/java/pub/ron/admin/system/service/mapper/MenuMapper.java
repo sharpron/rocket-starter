@@ -9,6 +9,11 @@ import pub.ron.admin.system.domain.Menu;
 import pub.ron.admin.system.dto.MenuDto;
 import pub.ron.admin.system.dto.MenuSmallDto;
 
+/**
+ * 菜单映射.
+ *
+ * @author ron 2022/8/12
+ */
 @Component
 public class MenuMapper {
 

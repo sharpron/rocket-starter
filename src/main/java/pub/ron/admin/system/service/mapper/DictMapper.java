@@ -5,6 +5,11 @@ import pub.ron.admin.system.body.DictBody;
 import pub.ron.admin.system.domain.Dict;
 
 
+/**
+ * 字典映射.
+ *
+ * @author ron 2022/8/12
+ */
 @Component
 public class DictMapper {
 

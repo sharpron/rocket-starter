@@ -46,8 +46,8 @@ public class TreeUtilsTest {
     Menu system = new Menu(1L, null, "系统管理");
     Menu menu = new Menu(10L, 1L, "菜单管理");
     Menu log = new Menu(11L, 1L, "日志管理");
-    Menu menuADD = new Menu(100L, 10L, "菜单新增");
-    return Arrays.asList(system, menu, log, menuADD);
+    Menu menuAdd = new Menu(100L, 10L, "菜单新增");
+    return Arrays.asList(system, menu, log, menuAdd);
   }
 
   private static List<Menu> expectedData() {
