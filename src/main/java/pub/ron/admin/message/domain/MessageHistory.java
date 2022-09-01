@@ -1,11 +1,15 @@
 package pub.ron.admin.message.domain;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import pub.ron.admin.common.BaseEntity;
-import pub.ron.admin.message.SendType;
 
 /**
  * message history.
@@ -15,7 +19,7 @@ import pub.ron.admin.message.SendType;
 @Getter
 @Setter
 @Entity
-@Table(name = "message_history")
+@Table(name = "message_history", indexes = @Index(name = "idx_receiver", columnList = "receiver"))
 public class MessageHistory extends BaseEntity {
 
   /**
@@ -24,37 +28,29 @@ public class MessageHistory extends BaseEntity {
   private String sender;
 
   /**
-   * 发送人联系方式.
-   */
-  private String senderContact;
-
-  /**
-   * 接受人联系方式.
-   */
-  private String receiverContact;
-
-  /**
    * 接受人用户名.
    */
   private String receiver;
 
   /**
-   * 标题.
+   * 消息类型.
    */
-  private String title;
+  private MessageType type;
 
   /**
-   * 内容.
+   * 发送内容.
    */
   private String content;
 
   /**
-   * 发送类型.
+   * 发送时间.
    */
-  private SendType sendType;
+  private LocalDateTime sendTime;
 
   /**
-   * 标记消息是否已经被收件人查看.
+   * 查看情况.
    */
-  private boolean viewed;
+  @ElementCollection
+  @CollectionTable(name = "message_history_read")
+  private Set<ReadInfo> reads;
 }

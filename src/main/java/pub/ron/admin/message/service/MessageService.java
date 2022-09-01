@@ -1,8 +1,7 @@
 package pub.ron.admin.message.service;
 
-import java.util.EnumSet;
-import pub.ron.admin.message.SendType;
-import pub.ron.admin.message.domain.MessageHistory;
+import pub.ron.admin.message.body.ChatMessage;
+import pub.ron.admin.message.body.PublishMessage;
 
 /**
  * message service.
@@ -12,10 +11,16 @@ import pub.ron.admin.message.domain.MessageHistory;
 public interface MessageService {
 
   /**
-   * 发送消息.
+   * 发布消息给所有人.
    *
-   * @param message   消息
-   * @param sendTypes 发送类型
+   * @param publishMessage 发布消息
    */
-  void send(MessageHistory message, EnumSet<SendType> sendTypes);
+  void publishMessage(PublishMessage publishMessage);
+
+  /**
+   * 发送消息给某人.
+   *
+   * @param chatMessage 聊天消息
+   */
+  void sendMessage(ChatMessage chatMessage);
 }

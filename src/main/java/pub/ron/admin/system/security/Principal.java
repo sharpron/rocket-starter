@@ -12,7 +12,7 @@ import pub.ron.admin.system.domain.User;
  */
 @Builder
 @Value
-public class Principal {
+public class Principal implements java.security.Principal {
   Long userId;
   String username;
   Long deptId;
@@ -31,5 +31,10 @@ public class Principal {
 
   public boolean isAdmin() {
     return username.equals(User.ADMIN);
+  }
+
+  @Override
+  public String getName() {
+    return username;
   }
 }

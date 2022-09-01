@@ -21,10 +21,4 @@ spring:
     port: 6379
     database: 1
 
-  mail:
-    host: smtp.qq.com
-    username: test@qq.com
-    password: xxxxxxxxxxx
-    default-encoding: utf-8
-
 upload-directory: './files'

@@ -1,44 +1,28 @@
 package pub.ron.admin.message.service;
 
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import pub.ron.admin.common.BaseService;
 import pub.ron.admin.message.domain.MessageHistory;
-import pub.ron.admin.message.dto.MessageHistoryQuery;
 
 /**
  * message history.
  *
  * @author herong 2021/2/9
  */
-public interface MessageHistoryService {
+public interface MessageHistoryService extends BaseService<MessageHistory>, MessageService {
 
   /**
-   * 分页查询.
+   * 更新读取状态.
    *
-   * @param pageable 分页器
-   * @param query    查询条件
-   * @return 分页结果
+   * @param ids ids
    */
-  Page<MessageHistory> findByPage(Pageable pageable, MessageHistoryQuery query);
+  void updateRead(Set<Long> ids);
 
-  /**
-   * 添加发送消息的历史记录.
-   *
-   * @param history 历史记录
-   */
-  void addHistory(MessageHistory history);
+  void readAll();
 
-  /**
-   * 清空某个人的消息历史.
-   *
-   * @param username 用户名
-   */
-  void deleteByUsername(String username);
+  Long getUnreadCount();
 
-  /**
-   * 清空某个人的消息.
-   *
-   * @param id id
-   */
-  void deleteById(Long id);
+  Page<MessageHistory> findSelfByPage(Pageable pageable);
 }
