@@ -1,5 +1,6 @@
 package pub.ron.admin.system.security;
 
+import java.io.Serializable;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
@@ -12,23 +13,15 @@ import pub.ron.admin.system.domain.User;
  */
 @Builder
 @Value
-public class Principal implements java.security.Principal {
+public class Principal implements java.security.Principal, Serializable {
+
   Long userId;
   String username;
   Long deptId;
   String deptPath;
   Set<String> perms;
   Set<Long> manageDeptIds;
-
-  static PrincipalBuilder from(Principal principal) {
-    return new PrincipalBuilder()
-        .userId(principal.getUserId())
-        .username(principal.getUsername())
-        .deptId(principal.getUserId())
-        .perms(principal.getPerms())
-        .manageDeptIds(principal.getManageDeptIds());
-  }
-
+  
   public boolean isAdmin() {
     return username.equals(User.ADMIN);
   }

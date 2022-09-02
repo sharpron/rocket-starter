@@ -59,8 +59,7 @@ public class AuthRest {
     final Subject subject = SecurityUtils.getSubject();
 
     try {
-      subject.login(new UsernamePasswordToken(loginDto.getUsername(),
-          loginDto.getPassword(), Boolean.TRUE.equals(loginDto.getRememberMe())));
+      subject.login(new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword()));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
       if (userLocker.checkLockedWhenFail(loginDto.getUsername())) {
         throw new AppException(String.format("登录失败已经超过%d次，账户已被锁定", userLocker.getMaxTryTimes()));

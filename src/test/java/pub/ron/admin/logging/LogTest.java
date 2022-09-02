@@ -1,12 +1,14 @@
 package pub.ron.admin.logging;
 
 import javax.annotation.Resource;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import pub.ron.admin.common.AppException;
 
 /**
  * 日志测试.
@@ -26,7 +28,8 @@ public class LogTest {
   public void testLogAnnotation() {
     makeMockRequest();
     logExample.causeVisitLog("参数内容");
-    logExample.causeErrorLog();
+
+    Assertions.assertThrows(AppException.class, () -> logExample.causeErrorLog());
   }
 
   /**
