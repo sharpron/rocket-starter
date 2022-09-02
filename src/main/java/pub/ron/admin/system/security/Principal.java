@@ -17,11 +17,15 @@ public class Principal implements java.security.Principal, Serializable {
 
   Long userId;
   String username;
+  String nickname;
+  String mobile;
+  String email;
   Long deptId;
+  String deptName;
   String deptPath;
   Set<String> perms;
   Set<Long> manageDeptIds;
-  
+
   public boolean isAdmin() {
     return username.equals(User.ADMIN);
   }

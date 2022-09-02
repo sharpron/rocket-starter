@@ -2,6 +2,7 @@ package pub.ron.admin.system.service;
 
 import java.util.Optional;
 import pub.ron.admin.common.BaseService;
+import pub.ron.admin.system.body.UserBaseBody;
 import pub.ron.admin.system.domain.User;
 import pub.ron.admin.system.dto.ModifyPassDto;
 
@@ -17,4 +18,6 @@ public interface UserService extends BaseService<User> {
   void modifyPass(ModifyPassDto modifyPassDto);
 
   void forceModifyPass(String username, String password);
+
+  void modifyUserBase(UserBaseBody userBaseBody);
 }

@@ -78,9 +78,14 @@ public class UserRealm extends AuthorizingRealm {
         .filter(Objects::nonNull)
         .collect(Collectors.toSet());
 
-    Principal principal = Principal.builder().username(user.getUsername())
+    Principal principal = Principal.builder()
+        .username(user.getUsername())
+        .nickname(user.getNickname())
+        .mobile(user.getMobile())
+        .email(user.getEmail())
         .userId(user.getId())
         .deptId(user.getDept().getId())
+        .deptName(user.getDept().getName())
         .deptPath(user.getDept().getPath())
         .manageDeptIds(manageDeptIds)
         .perms(permissions)

@@ -2,18 +2,19 @@ package pub.ron.admin.system.security;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.mgt.DefaultSecurityManager;
-import org.apache.shiro.mgt.SecurityManager;
-import org.apache.shiro.mgt.SessionsSecurityManager;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.session.mgt.DefaultSessionManager;
-import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
 import org.springframework.http.HttpStatus;
 import pub.ron.admin.common.AppException;
 
+/**
+ * Subject Utils.
+ *
+ * @author ron 2022/8/8
+ */
 @Slf4j
 public class SubjectUtils {
 
@@ -52,21 +53,14 @@ public class SubjectUtils {
    * @param principal principal
    */
   public static void updatePrincipal(Subject subject, Principal principal) {
-//    String realName = subject.getPrincipals().getRealmNames().iterator().next();
-//    SimplePrincipalCollection simplePrincipalCollection =
-//        new SimplePrincipalCollection(principal, realName);
-//    subject.runAs(simplePrincipalCollection);
-//    225333000012
-//    829407EAF933410FAB11947472589CB7
-
-    //225333000013
-    SessionsSecurityManager securityManager =
-        (DefaultSecurityManager) SecurityUtils.getSecurityManager();
-    DefaultSessionManager d= (DefaultSessionManager) securityManager.getSessionManager();
-    SessionDAO sessionDAO = d.getSessionDAO();
-//    sessionDAO.getActiveSessions()
-
     Session session = subject.getSession();
-    session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, principal);
+    PrincipalCollection pc = (PrincipalCollection) session.getAttribute(
+        DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+
+    if (!pc.isEmpty()) {
+      String realName = pc.getRealmNames().iterator().next();
+      SimplePrincipalCollection collection = new SimplePrincipalCollection(principal, realName);
+      session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, collection);
+    }
   }
 }

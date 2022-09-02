@@ -37,7 +37,7 @@ public class QuartzJobServiceImpl extends AbstractService<QuartzJob>
 
   @Override
   public void toggleEnabled(Long jobId) {
-    QuartzJob quartzJob = repository.getById(jobId);
+    QuartzJob quartzJob = repository.findById(jobId).orElseThrow();
     if (quartzJob.isEnabled()) {
       quartzJobManager.pause(jobId);
     } else {

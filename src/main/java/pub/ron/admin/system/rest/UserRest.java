@@ -26,6 +26,7 @@ import pub.ron.admin.common.utils.ExcelUtils;
 import pub.ron.admin.common.validator.Create;
 import pub.ron.admin.common.validator.Update;
 import pub.ron.admin.logging.Log;
+import pub.ron.admin.system.body.UserBaseBody;
 import pub.ron.admin.system.body.UserBody;
 import pub.ron.admin.system.dto.ForceModifyPassDto;
 import pub.ron.admin.system.dto.ModifyPassDto;
@@ -82,13 +83,13 @@ public class UserRest {
   @Log("用户导出")
   public ResponseEntity<Resource> getAsExcel(UserQuery userQuery) {
     List<String[]> data = userService.findAll(userQuery).stream()
-        .map(e -> new String[] {
+        .map(e -> new String[]{
             e.getUsername(), e.getNickname(), e.getMobile(),
             e.getEmail(), ExcelUtils.formatValue(userLocker.isLocked(e.getUsername())),
             ExcelUtils.formatValue(e.getDisabled()), e.getDept().getName()})
         .collect(Collectors.toList());
     Resource resource = ExcelUtils.getExcelResource(
-        new String[] {"用户名", "昵称", "手机号", "邮箱", "是否锁定", "是否禁用", "所在部门"}, data);
+        new String[]{"用户名", "昵称", "手机号", "邮箱", "是否锁定", "是否禁用", "所在部门"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
@@ -109,6 +110,14 @@ public class UserRest {
   public ResponseEntity<?> modify(
       @RequestBody @Validated({Default.class, Update.class}) UserBody userBody) {
     userService.update(userMapper.mapUser(userBody));
+    return ResponseEntity.ok().build();
+  }
+
+  @PutMapping("/me")
+  @Operation(tags = "用户修改自己信息")
+  @Log("用户修改自己信息")
+  public ResponseEntity<?> modifySelfInfo(@RequestBody @Valid UserBaseBody userBaseBody) {
+    userService.modifyUserBase(userBaseBody);
     return ResponseEntity.ok().build();
   }
 

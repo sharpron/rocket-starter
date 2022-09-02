@@ -14,6 +14,9 @@ import pub.ron.admin.logging.domain.Status;
 @Data
 public class LoggingQuery {
 
+  @Where
+  private String createBy;
+
   /**
    * 描述.
    */

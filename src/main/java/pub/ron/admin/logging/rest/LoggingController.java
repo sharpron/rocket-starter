@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ import pub.ron.admin.logging.Log;
 import pub.ron.admin.logging.domain.Status;
 import pub.ron.admin.logging.dto.LoggingQuery;
 import pub.ron.admin.logging.service.LoggingService;
+import pub.ron.admin.system.security.SubjectUtils;
 
 /**
  * controller for logging.
@@ -31,6 +33,14 @@ import pub.ron.admin.logging.service.LoggingService;
 public class LoggingController {
 
   private final LoggingService loggingService;
+
+  @GetMapping("me")
+  @Operation(tags = "分页查询本人日志")
+  @RequiresAuthentication
+  public ResponseEntity<?> findSelfByPage(Pageable pageable, LoggingQuery query) {
+    query.setCreateBy(SubjectUtils.currentUser().getUsername());
+    return ResponseEntity.ok(loggingService.findByPage(pageable, query));
+  }
 
   @GetMapping
   @Operation(tags = "分页查询日志")
@@ -50,8 +60,8 @@ public class LoggingController {
   @Log("日志导出")
   public ResponseEntity<StreamingResponseBody> getAsExcel(LoggingQuery query) {
     return ExcelUtils.buildResponse(
-        new String[] {"操作描述", "参数", "间隔(ms)", "操作员", "时间", "客户端IP", "客户端位置", "浏览器", "异常信息"},
-        lastId -> loggingService.findByPage(lastId, 1000, query).map(e -> new String[] {
+        new String[]{"操作描述", "参数", "间隔(ms)", "操作员", "时间", "客户端IP", "客户端位置", "浏览器", "异常信息"},
+        lastId -> loggingService.findByPage(lastId, 1000, query).map(e -> new String[]{
             String.valueOf(e.getId()), e.getDescription(), e.getParams(),
             String.valueOf(e.getSpendTime()), e.getCreateBy(),
             e.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
