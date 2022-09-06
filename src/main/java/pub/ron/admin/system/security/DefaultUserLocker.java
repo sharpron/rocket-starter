@@ -7,7 +7,6 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import pub.ron.admin.system.security.UserLocker;
 
 /**
  * 用户锁定管理.
@@ -27,10 +26,11 @@ public class DefaultUserLocker implements UserLocker {
 
   @Override
   public boolean isLocked(String username) {
-    Long fails = redisTemplate.opsForValue()
-        .increment(AUTH_FAILS_PREFIX + username, 0);
-    assert fails != null;
-    return fails >= MAX_TRY_TIMES;
+    String fails = redisTemplate.opsForValue().get(AUTH_FAILS_PREFIX + username);
+    if (fails == null) {
+      return false;
+    }
+    return Integer.parseInt(fails) >= MAX_TRY_TIMES;
   }
 
   @Override
