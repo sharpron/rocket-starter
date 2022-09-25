@@ -2,6 +2,7 @@ package pub.ron.admin.system.domain;
 
 import static javax.persistence.ConstraintMode.NO_CONSTRAINT;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -43,6 +44,11 @@ public class User extends BaseEntity {
 
   @Column(columnDefinition = "char(36)", updatable = false)
   private String passwordSalt;
+
+  /**
+   * 密码过期时间.
+   */
+  private LocalDateTime passwordExpireAt;
 
   @Column(columnDefinition = "char(11)")
   private String mobile;

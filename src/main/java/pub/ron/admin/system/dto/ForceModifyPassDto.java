@@ -1,5 +1,7 @@
 package pub.ron.admin.system.dto;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import lombok.Data;
 import pub.ron.admin.common.validator.Password;
 
@@ -11,9 +13,10 @@ import pub.ron.admin.common.validator.Password;
 @Data
 public class ForceModifyPassDto {
 
-  @Password
-  private String username;
+  @NotNull
+  private Long userId;
 
+  @NotBlank
   @Password
   private String newPass;
 }

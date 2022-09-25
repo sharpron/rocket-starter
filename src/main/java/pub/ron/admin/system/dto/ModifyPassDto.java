@@ -1,5 +1,6 @@
 package pub.ron.admin.system.dto;
 
+import javax.validation.constraints.NotBlank;
 import lombok.Data;
 import pub.ron.admin.common.validator.Password;
 
@@ -11,9 +12,11 @@ import pub.ron.admin.common.validator.Password;
 @Data
 public class ModifyPassDto {
 
+  @NotBlank
   @Password
   private String oldPass;
 
+  @NotBlank
   @Password
   private String newPass;
 }

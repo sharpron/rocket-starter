@@ -2,13 +2,12 @@ package pub.ron.admin.system.security;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.subject.support.DefaultSubjectContext;
-import org.springframework.http.HttpStatus;
-import pub.ron.admin.common.AppException;
 
 /**
  * Subject Utils.
@@ -38,7 +37,7 @@ public class SubjectUtils {
   }
 
   public static Principal currentUser() {
-    return getCurrentUser().orElseThrow(() -> new AppException(HttpStatus.UNAUTHORIZED, "当前用户未登录"));
+    return getCurrentUser().orElseThrow(() -> new UnauthenticatedException("当前用户未登录"));
   }
 
   public static Optional<Principal> getCurrentUser() {

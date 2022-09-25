@@ -134,7 +134,7 @@ public class UserRest {
   @RequiresPermissions("user:password:modify")
   @Log("修改用户密码")
   public ResponseEntity<?> modifyPass(@RequestBody @Valid ForceModifyPassDto modifyPassDto) {
-    userService.forceModifyPass(modifyPassDto.getUsername(), modifyPassDto.getNewPass());
+    userService.forceModifyPass(modifyPassDto.getUserId(), modifyPassDto.getNewPass());
     return ResponseEntity.ok().build();
   }
 

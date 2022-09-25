@@ -34,9 +34,11 @@ public class UserBody {
   @Null(groups = Update.class)
   private String password;
 
+  @NotBlank
   @Mobile
   private String mobile;
 
+  @NotBlank
   @Email
   private String email;
 

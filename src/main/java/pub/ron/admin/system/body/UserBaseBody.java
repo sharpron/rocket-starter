@@ -17,9 +17,11 @@ public class UserBaseBody {
   @NotBlank
   private String nickname;
 
+  @NotBlank
   @Mobile
   private String mobile;
 
+  @NotBlank
   @Email
   private String email;
 

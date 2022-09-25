@@ -1,7 +1,6 @@
 package pub.ron.admin.common;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 /**
  * 应用异常 所有可处理的异常应该继承它.
@@ -12,27 +11,28 @@ import org.springframework.http.HttpStatus;
 public class AppException extends RuntimeException {
 
   /**
-   * 状态码.
+   * 错误信息.
    */
-  private final HttpStatus status;
+  private final ErrorInfo errorInfo;
 
   /**
-   * 使用指定的状态码和消息构造一个异常.
+   * 使用指定的错误码和消息构造一个异常.
    *
-   * @param status  状态
+   * @param code    错误码
    * @param message 消息
    */
-  public AppException(HttpStatus status, String message) {
+  public AppException(int code, String message) {
     super(message);
-    this.status = status;
+    this.errorInfo = new ErrorInfo(code, message);
   }
 
   /**
-   * 使用默认的状态码和消息构建异常.
+   * 使用默认的错误码和消息构建异常.
    *
    * @param message 消息
    */
   public AppException(String message) {
-    this(HttpStatus.BAD_REQUEST, message);
+    super(message);
+    this.errorInfo = new ErrorInfo(message);
   }
 }

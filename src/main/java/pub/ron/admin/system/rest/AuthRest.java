@@ -1,12 +1,13 @@
 package pub.ron.admin.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
-import java.time.Duration;
 import java.util.Base64;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -22,12 +23,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pub.ron.admin.common.AppException;
 import pub.ron.admin.logging.Log;
+import pub.ron.admin.system.dto.AuthResultDto;
+import pub.ron.admin.system.dto.AuthResultDto.Status;
 import pub.ron.admin.system.dto.CaptchaDto;
 import pub.ron.admin.system.dto.LoginDto;
 import pub.ron.admin.system.security.SubjectUtils;
 import pub.ron.admin.system.security.UserLocker;
 import pub.ron.admin.system.service.CaptchaService;
 import pub.ron.admin.system.service.CaptchaService.Captcha;
+import pub.ron.admin.system.service.UserService;
 
 /**
  * auth rest provider.
@@ -43,6 +47,8 @@ public class AuthRest {
   private final CaptchaService captchaService;
   private final UserLocker userLocker;
 
+  private final UserService userService;
+
   /**
    * 用户登录.
    *
@@ -52,7 +58,7 @@ public class AuthRest {
   @Operation(tags = "用户登录")
   @PostMapping("/authenticate")
   @Log("用户登录")
-  public ResponseEntity<?> authenticate(
+  public ResponseEntity<AuthResultDto> authenticate(
       @Valid @RequestBody LoginDto loginDto) {
 
     captchaService.check(loginDto.getCaptchaKey(), loginDto.getCaptcha());
@@ -62,19 +68,24 @@ public class AuthRest {
       subject.login(new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword()));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
       if (userLocker.checkLockedWhenFail(loginDto.getUsername())) {
-        throw new AppException(String.format("登录失败已经超过%d次，账户已被锁定", userLocker.getMaxTryTimes()));
+        throw new AppException("登录失败次数过多，请稍候再试");
       } else {
         throw new AppException("用户名或密码错误");
       }
     } catch (LockedAccountException e) {
-      Duration lockDuration = userLocker.getLockDuration();
-      String duration = lockDuration.toString().replace("PT", "")
-          .replace("H", "小时")
-          .replace("M", "分钟")
-          .replace("S", "秒");
-      throw new AppException(String.format("账户已被锁定, 请%s后再试", duration));
+      throw new AppException("登录失败次数过多，请稍候再试");
+    } catch (ExpiredCredentialsException e) {
+      if (StringUtils.isBlank(loginDto.getNewPassword())) {
+        // 通知客户端需要携带新密码进行修改
+        return ResponseEntity.ok(AuthResultDto.other(Status.PASSWORD_EXPIRE));
+      }
+      // 修改密码
+      Long userId = Long.valueOf(e.getMessage());
+      userService.forceModifyPass(userId, loginDto.getNewPassword());
+      // 通知前端使用新密码重新登录
+      return ResponseEntity.ok(AuthResultDto.other(Status.MODIFY_EXPIRE_SUCCESS));
     }
-    return ResponseEntity.ok(SubjectUtils.currentUser());
+    return ResponseEntity.ok(AuthResultDto.ok(SubjectUtils.currentUser()));
   }
 
   @GetMapping("is-authenticated")

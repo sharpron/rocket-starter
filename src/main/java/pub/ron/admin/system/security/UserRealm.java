@@ -8,6 +8,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.DisabledAccountException;
+import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -39,6 +40,8 @@ public class UserRealm extends AuthorizingRealm {
 
   private final UserLocker userLocker;
 
+  private final PasswordExpireHandler passwordExpireHandler;
+
   @Override
   public boolean supports(AuthenticationToken token) {
     return token instanceof UsernamePasswordToken;
@@ -69,6 +72,10 @@ public class UserRealm extends AuthorizingRealm {
 
     if (Boolean.TRUE.equals(user.getDisabled())) {
       throw new DisabledAccountException();
+    }
+
+    if (passwordExpireHandler.isExpired(user)) {
+      throw new ExpiredCredentialsException(String.valueOf(user.getId()));
     }
 
     // 查询管理部门

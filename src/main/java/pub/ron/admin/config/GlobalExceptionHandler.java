@@ -3,6 +3,7 @@ package pub.ron.admin.config;
 import java.util.Objects;
 import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleApp(AppException e) {
     log.error("handle failed!", e);
-    return ResponseEntity.status(e.getStatus()).body(new ErrorInfo(e.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorInfo(e.getMessage()));
   }
 
   /**
@@ -68,14 +69,27 @@ public class GlobalExceptionHandler {
                 .orElseThrow(AssertionError::new));
   }
 
+
+  @ExceptionHandler
+  public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthenticatedException e) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorInfo(e.getMessage()));
+  }
+
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthorizedException e) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorInfo(e.getMessage()));
   }
 
+  /**
+   * 处理未处理的异常.
+   *
+   * @param e 异常
+   * @return 结果
+   */
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleOther(Throwable e) {
     log.error("handle failed!", e);
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorInfo("服务器内部错误"));
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body(new ErrorInfo("服务器内部错误"));
   }
 }

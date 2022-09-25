@@ -22,3 +22,12 @@ spring:
     database: 1
 
 upload-directory: './files'
+
+security:
+  lock:
+    enabled: true
+    max-try-times: 5
+    lock-duration: 30m
+  password-expire:
+    enabled: true
+    lifetime-duration: 90d

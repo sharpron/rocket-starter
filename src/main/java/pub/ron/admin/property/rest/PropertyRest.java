@@ -88,7 +88,7 @@ public class PropertyRest {
         && StringUtils.isNotBlank(property.getValue())) {
       boolean isNumber = property.getValue().matches("\\d+");
       if (!isNumber) {
-        throw new AppException(HttpStatus.BAD_REQUEST, "值与类型不兼容");
+        throw new AppException("值与类型不兼容");
       }
     }
   }

@@ -17,7 +17,7 @@ public interface UserService extends BaseService<User> {
 
   void modifyPass(ModifyPassDto modifyPassDto);
 
-  void forceModifyPass(String username, String password);
+  void forceModifyPass(Long userId, String password);
 
   void modifyUserBase(UserBaseBody userBaseBody);
 }

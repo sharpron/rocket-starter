@@ -12,6 +12,7 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import pub.ron.admin.system.security.PasswordExpireHandler;
 import pub.ron.admin.system.security.RestFormAuthenticationFilter;
 import pub.ron.admin.system.security.UserLocker;
 import pub.ron.admin.system.security.UserRealm;
@@ -41,8 +42,10 @@ public class SecurityConfig {
       UserService userService, MenuService menuService,
       RoleService roleService,
       UserLocker userLocker,
-      CredentialsMatcher credentialsMatcher) {
-    final UserRealm userRealm = new UserRealm(userService, menuService, roleService, userLocker);
+      CredentialsMatcher credentialsMatcher,
+      PasswordExpireHandler passwordExpireHandler) {
+    final UserRealm userRealm = new UserRealm(userService,
+        menuService, roleService, userLocker, passwordExpireHandler);
     userRealm.setCredentialsMatcher(credentialsMatcher);
     return userRealm;
   }

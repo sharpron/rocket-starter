@@ -10,5 +10,27 @@ import lombok.Value;
 @Value
 public class ErrorInfo {
 
+  /**
+   * 默认错误编码.
+   */
+  private static final int DEFAULT_CODE = -1;
+
+  /**
+   * 自定义错误编码.
+   */
+  int code;
+
+  /**
+   * 自定义错误消息.
+   */
   String message;
+
+  public ErrorInfo(String message) {
+    this(DEFAULT_CODE, message);
+  }
+
+  public ErrorInfo(int code, String message) {
+    this.code = code;
+    this.message = message;
+  }
 }

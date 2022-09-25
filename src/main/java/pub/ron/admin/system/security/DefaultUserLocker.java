@@ -7,6 +7,7 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
+import pub.ron.admin.system.security.properties.LockProperties;
 
 /**
  * 用户锁定管理.
@@ -18,10 +19,10 @@ import org.springframework.stereotype.Component;
 public class DefaultUserLocker implements UserLocker {
 
   private static final String AUTH_FAILS_PREFIX = "user:auth-fails:";
-  private static final int MAX_TRY_TIMES = 5;
 
-  private static final Duration LOCK_DURATION = Duration.ofHours(1);
   private final StringRedisTemplate redisTemplate;
+
+  private final LockProperties lockProperties;
 
 
   @Override
@@ -30,7 +31,7 @@ public class DefaultUserLocker implements UserLocker {
     if (fails == null) {
       return false;
     }
-    return Integer.parseInt(fails) >= MAX_TRY_TIMES;
+    return Integer.parseInt(fails) >= lockProperties.getMaxTryTimes();
   }
 
   @Override
@@ -42,23 +43,23 @@ public class DefaultUserLocker implements UserLocker {
       public <K, V> Object execute(RedisOperations<K, V> operations) throws DataAccessException {
         redisTemplate.multi();
         redisTemplate.opsForValue().increment(key);
-        redisTemplate.expire(key, LOCK_DURATION);
+        redisTemplate.expire(key, lockProperties.getLockDuration());
         return redisTemplate.exec().get(0);
       }
     });
     assert incrementResult != null;
     int fails = ((Number) incrementResult).intValue();
-    return fails >= MAX_TRY_TIMES;
+    return fails >= lockProperties.getMaxTryTimes();
   }
 
   @Override
   public int getMaxTryTimes() {
-    return MAX_TRY_TIMES;
+    return lockProperties.getMaxTryTimes();
   }
 
   @Override
   public Duration getLockDuration() {
-    return LOCK_DURATION;
+    return lockProperties.getLockDuration();
   }
 
   @Override
