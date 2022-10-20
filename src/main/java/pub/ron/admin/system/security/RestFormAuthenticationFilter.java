@@ -6,6 +6,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
+import org.springframework.http.MediaType;
 
 /**
  * 处理失败响应消息.
@@ -28,7 +29,9 @@ public class RestFormAuthenticationFilter extends FormAuthenticationFilter {
     } else {
       HttpServletResponse httpServletResponse = (HttpServletResponse) response;
       httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-      OBJECT_MAPPER.writeValue(httpServletResponse.getOutputStream(), Map.of("message", "会话超时"));
+      httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+      OBJECT_MAPPER.writeValue(httpServletResponse.getOutputStream(),
+          Map.of("message", "会话超时"));
       return false;
     }
   }
