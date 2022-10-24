@@ -9,8 +9,8 @@
     <version>2.6.2</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
-  <groupId>pub.ron</groupId>
-  <artifactId>admin</artifactId>
+  <groupId>rocket</groupId>
+  <artifactId>starter</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>admin</name>
   <description>admin platform for Spring Boot</description>
