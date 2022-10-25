@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -13,10 +14,11 @@ import rocket.starter.common.BaseEntity;
  *
  * @author ron 2020/9/19
  */
-@Entity
-@Table(name = "logging_log")
 @Getter
 @Setter
+@Entity
+@ToString(callSuper = true)
+@Table(name = "logging_log")
 public class Logging extends BaseEntity {
 
   /**

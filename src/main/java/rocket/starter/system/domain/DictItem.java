@@ -7,6 +7,7 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -17,6 +18,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @NoArgsConstructor
 @Table(name = "sys_dict_item", indexes = @Index(name = "idx_dict_id", columnList = "dictId"))
 public class DictItem extends BaseEntity {

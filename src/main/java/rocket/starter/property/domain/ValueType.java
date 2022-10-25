@@ -11,7 +11,6 @@ public enum ValueType {
   /**
    * 字符串.
    */
-  @SuppressWarnings("unused")
   STR("字符串"),
 
   /**

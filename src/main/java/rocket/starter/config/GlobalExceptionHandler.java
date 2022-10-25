@@ -1,7 +1,6 @@
 package rocket.starter.config;
 
 import java.util.Objects;
-import javax.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
@@ -49,26 +48,6 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
         .body(new ErrorInfo(fieldError.getField() + " " + fieldError.getDefaultMessage()));
   }
-
-  /**
-   * 处理条件验证的异常.
-   *
-   * @param e 验证时异常
-   * @return response
-   */
-  @ExceptionHandler
-  public ResponseEntity<ErrorInfo> handleConstraint(ConstraintViolationException e) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body(
-            e.getConstraintViolations().stream()
-                .findFirst()
-                .map(
-                    violation ->
-                        new ErrorInfo(String.format("%s %s", violation.getPropertyPath(),
-                            violation.getMessage())))
-                .orElseThrow(AssertionError::new));
-  }
-
 
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthenticatedException e) {

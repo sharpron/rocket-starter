@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 import rocket.starter.common.BaseEntity;
 
@@ -28,6 +29,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @Table(name = "sys_user")
 @DynamicUpdate
 public class User extends BaseEntity {

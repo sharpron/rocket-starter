@@ -6,6 +6,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -16,6 +17,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @Table(name = "sys_menu")
 public class Menu extends BaseEntity {
 

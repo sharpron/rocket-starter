@@ -29,6 +29,13 @@ public @interface Where {
   Type type() default Type.eq;
 
   /**
+   * 是否忽略空值，如果是则不处理空值，否则使用添加“is null”作为条件.
+   *
+   * @return 是否忽略空值
+   */
+  boolean ignoreNull() default true;
+
+  /**
    * relation query type.
    */
   enum Type {
@@ -37,9 +44,14 @@ public @interface Where {
      */
     like,
     /**
-     * right like. 'example %'
+     * right like. 'example%'
      */
     right_like,
+
+    /**
+     * left like. '%example'
+     */
+    left_like,
     /**
      * equals.
      */
@@ -61,18 +73,21 @@ public @interface Where {
      */
     ge,
     /**
-     * less than or equals bigger greater than or equals smaller.
+     * Closed interval, 包含开始位置和结束位置.
      *
      * <p>List&lt;Long&gt; size=2
      */
     between,
     /**
-     * only time, Epoch milliseconds.
+     * only time, Epoch milliseconds. 包含开始位置和结束位置.
      *
      * <p>List&lt;Long&gt; size=2
      */
     betweenTime,
 
+    /**
+     * In equivalent to SQL.
+     */
     in,
   }
 }

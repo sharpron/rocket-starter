@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -14,6 +15,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @Table(name = "quartz_job")
 public class QuartzJob extends BaseEntity {
 

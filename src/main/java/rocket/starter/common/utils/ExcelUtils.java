@@ -32,8 +32,7 @@ public class ExcelUtils {
    * @return 结果
    */
   public static ResponseEntity<Resource> buildResponse(Resource resource) {
-    return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType("application/octet-stream"))
+    return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/octet-stream"))
         .body(resource);
   }
 
@@ -44,10 +43,9 @@ public class ExcelUtils {
    * @param dataFetcher dataFetcher
    * @return 结果
    */
-  public static ResponseEntity<StreamingResponseBody> buildResponse(
-      String[] header, DataFetcher dataFetcher) {
-    return ResponseEntity.ok()
-        .body(buildResponseBody(header, dataFetcher));
+  public static ResponseEntity<StreamingResponseBody> buildResponse(String[] header,
+                                                                    DataFetcher dataFetcher) {
+    return ResponseEntity.ok().body(buildResponseBody(header, dataFetcher));
   }
 
   /**
@@ -57,13 +55,12 @@ public class ExcelUtils {
    * @param data   数据
    * @return excel
    */
-  public static Resource getExcelResource(String[] header,
-                                          List<String[]> data) {
+  public static Resource getExcelResource(String[] header, List<String[]> data) {
     String headerLine = StringUtils.arrayToCommaDelimitedString(header);
-    String dataLines = data.stream()
-        .map(e -> Arrays.stream(e).map(ExcelUtils::handleCsvValue).toArray())
-        .map(StringUtils::arrayToCommaDelimitedString)
-        .collect(Collectors.joining(LINE_SEPARATOR));
+    String dataLines =
+        data.stream().map(e -> Arrays.stream(e).map(ExcelUtils::handleCsvValue).toArray())
+            .map(StringUtils::arrayToCommaDelimitedString)
+            .collect(Collectors.joining(LINE_SEPARATOR));
 
     String lines = (headerLine + LINE_SEPARATOR + dataLines);
     return new ByteArrayResource(lines.getBytes(StandardCharsets.UTF_8));
@@ -89,14 +86,15 @@ public class ExcelUtils {
           StringUtils.arrayToCommaDelimitedString(header).getBytes(StandardCharsets.UTF_8));
       Long lastId = null;
       while (true) {
-        outputStream.write(LINE_SEPARATOR.getBytes(StandardCharsets.UTF_8));
+
         Page<String[]> page = dataFetcher.fetch(lastId);
         List<String[]> content = page.getContent();
         if (content.isEmpty()) {
           break;
         }
-        String rows = page.stream()
-            .map(e -> StringUtils.arrayToCommaDelimitedString(
+
+        outputStream.write(LINE_SEPARATOR.getBytes(StandardCharsets.UTF_8));
+        String rows = page.stream().map(e -> StringUtils.arrayToCommaDelimitedString(
                 Arrays.stream(e).skip(1).map(ExcelUtils::handleCsvValue).toArray()))
             .collect(Collectors.joining(LINE_SEPARATOR));
         outputStream.write(rows.getBytes(StandardCharsets.UTF_8));

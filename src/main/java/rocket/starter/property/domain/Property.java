@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -20,6 +21,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @NoArgsConstructor
 @Table(
     name = "sys_property",
@@ -33,6 +35,7 @@ public class Property extends BaseEntity {
   /**
    * 值.
    */
+  @Size(max = 255)
   private String value;
 
   /**
@@ -45,7 +48,7 @@ public class Property extends BaseEntity {
    * 描述.
    */
   @NotBlank
-  @Size
+  @Size(max = 255)
   private String description;
 
 }

@@ -9,7 +9,6 @@ import java.io.IOException;
  *
  * @author herong 2021/2/9
  */
-@SuppressWarnings("unused")
 public class JsonUtils {
 
   private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

@@ -9,7 +9,6 @@ public enum MenuType {
 
   CATEGORY,
   MENU,
-  @SuppressWarnings("unused")
   LINK,
   BUTTON
 }

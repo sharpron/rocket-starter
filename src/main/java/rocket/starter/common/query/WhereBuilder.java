@@ -1,19 +1,23 @@
 package rocket.starter.common.query;
 
+import java.lang.reflect.Field;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.ReflectionUtils;
 import rocket.starter.common.AppException;
 import rocket.starter.common.BaseEntity;
 import rocket.starter.system.domain.Dept;
@@ -43,81 +47,101 @@ public class WhereBuilder {
    */
   public static <T> Specification<T> buildSpec(Object o) {
     if (o == null) {
-      return (root, query, criteriaBuilder) -> null;
+      return null;
     }
+
     return (root, query, criteriaBuilder) -> {
       final Class<?> aClass = o.getClass();
       return Stream.of(aClass.getDeclaredFields())
-          .peek(e -> e.setAccessible(true))
           .filter(e -> e.isAnnotationPresent(Where.class))
-          .map(
-              e -> {
-                final Object fieldVal;
-                try {
-                  fieldVal = e.get(o);
-                } catch (IllegalAccessException ex) {
-                  throw new AssertionError(ex);
-                }
-                if (fieldVal == null) {
-                  return null;
-                }
-                final Where where = e.getAnnotation(Where.class);
-                final String rootName = where.root().isEmpty() ? e.getName() : where.root();
-
-                switch (where.type()) {
-                  case like:
-                    return criteriaBuilder.like(
-                        WhereBuilder.getPath(rootName, root), "%" + fieldVal + "%");
-                  case right_like:
-                    return criteriaBuilder.like(
-                        WhereBuilder.getPath(rootName, root), fieldVal + "%");
-                  case eq:
-                    return criteriaBuilder.equal(
-                        WhereBuilder.getPath(rootName, root), fieldVal);
-                  case lt:
-                    return criteriaBuilder.lt(
-                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                  case gt:
-                    return criteriaBuilder.gt(
-                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                  case le:
-                    return criteriaBuilder.le(
-                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                  case ge:
-                    return criteriaBuilder.ge(
-                        WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
-                  case between:
-                    final List<Long> numbers = asBetween(fieldVal);
-                    Long min = numbers.get(0);
-                    Long max = numbers.get(1);
-                    if (min != null && max != null) {
-                      return criteriaBuilder.between(
-                          WhereBuilder.getPath(rootName, root), min, max);
-                    }
-                    if (min != null) {
-                      return criteriaBuilder.ge(WhereBuilder.getPath(rootName, root), min);
-                    }
-                    if (max != null) {
-                      return criteriaBuilder.le(WhereBuilder.getPath(rootName, root), max);
-                    }
-                    return null;
-                  case betweenTime:
-                    final List<Long> timestamps = asBetween(fieldVal);
-                    ZoneId zoneId = ZoneId.systemDefault();
-                    return criteriaBuilder.between(
-                        WhereBuilder.getPath(rootName, root),
-                        LocalDate.ofInstant(Instant.ofEpochMilli(timestamps.get(0)), zoneId),
-                        LocalDate.ofInstant(Instant.ofEpochMilli(timestamps.get(1)), zoneId));
-                  case in:
-                    return criteriaBuilder.in(WhereBuilder.getPath(rootName, root)).value(fieldVal);
-                  default:
-                    throw new AssertionError();
-                }
-              })
+          .map(e -> buildPredicate(e, o, criteriaBuilder, root))
           .filter(Objects::nonNull)
           .reduce(criteriaBuilder::and)
           .orElse(null);
     };
+  }
+
+  private static <T> Predicate buildPredicate(Field e, Object targetObject,
+      CriteriaBuilder criteriaBuilder, Root<T> root) {
+    final Where where = e.getAnnotation(Where.class);
+    final String rootName = where.root().isEmpty() ? e.getName() : where.root();
+    e.setAccessible(true);
+    Object fieldVal = ReflectionUtils.getField(e, targetObject);
+    if (fieldVal == null) {
+      return where.ignoreNull() ? null :
+          criteriaBuilder.isNull(WhereBuilder.getPath(rootName, root));
+    }
+
+    switch (where.type()) {
+      case like:
+        return criteriaBuilder.like(WhereBuilder.getPath(rootName, root), "%" + fieldVal + "%");
+      case right_like:
+        return criteriaBuilder.like(WhereBuilder.getPath(rootName, root), fieldVal + "%");
+      case left_like:
+        return criteriaBuilder.like(WhereBuilder.getPath(rootName, root), "%" + fieldVal);
+      case eq:
+        return criteriaBuilder.equal(WhereBuilder.getPath(rootName, root), fieldVal);
+      case lt:
+        return criteriaBuilder.lt(WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+      case gt:
+        return criteriaBuilder.gt(WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+      case le:
+        return criteriaBuilder.le(WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+      case ge:
+        return criteriaBuilder.ge(WhereBuilder.getPath(rootName, root), asNumber(fieldVal));
+      case between:
+        return rangePredicate(fieldVal, criteriaBuilder, rootName, root, value -> value);
+      case betweenTime:
+        ZoneId zoneId = ZoneId.systemDefault();
+        return rangePredicate(fieldVal, criteriaBuilder, rootName, root, value ->
+            LocalDateTime.ofInstant(Instant.ofEpochMilli(value), zoneId)
+        );
+      case in:
+        return criteriaBuilder.in(WhereBuilder.getPath(rootName, root)).value(fieldVal);
+      default:
+        throw new AssertionError();
+    }
+  }
+
+  /**
+   * 范围查询条件.
+   *
+   * @param fieldVal        值 [start, end]
+   * @param criteriaBuilder criteriaBuilder
+   * @param rootName        rootName
+   * @param root            root
+   * @param valueConverter  valueConverter
+   * @param <T>             type
+   * @param <Y>             comparable value type.
+   * @return 条件
+   */
+  private static <T, Y extends Comparable<Y>> Predicate rangePredicate(
+      Object fieldVal,
+      CriteriaBuilder criteriaBuilder,
+      String rootName,
+      Root<T> root,
+      Function<Long, Y> valueConverter) {
+
+    final List<Long> numbers = asList(fieldVal);
+    if (numbers.size() != 2) {
+      throw new AppException("between only two values are supported.");
+    }
+    Long min = numbers.get(0);
+    Long max = numbers.get(1);
+    if (min != null && max != null) {
+      return criteriaBuilder.between(WhereBuilder.getPath(rootName, root),
+          valueConverter.apply(min), valueConverter.apply(max));
+    }
+
+    if (min != null) {
+      return criteriaBuilder.greaterThanOrEqualTo(
+          WhereBuilder.getPath(rootName, root), valueConverter.apply(min));
+    }
+    if (max != null) {
+      return criteriaBuilder.lessThanOrEqualTo(
+          WhereBuilder.getPath(rootName, root), valueConverter.apply(max));
+    }
+    throw new AppException("between at least one value that is not null is required.");
   }
 
   /**
@@ -147,20 +171,14 @@ public class WhereBuilder {
    * @return Specification
    */
   public static <T> Specification<T> buildSpecWithDept(Object o) {
-    final Specification<T> specification = buildSpec(o);
     final Principal principal = SubjectUtils.currentUser();
-    return (root, query, builder) -> {
+    final Specification<T> deptSpecification = (root, query, builder) -> {
       final Join<Role, Dept> deptJoin = root.join("dept");
-      final Predicate deptPredicate =
-          builder.or(
-              builder.equal(deptJoin.get(BaseEntity.ID), principal.getDeptId()),
-              builder.like(deptJoin.get("path"), principal.getDeptPath() + "%"));
-      final Predicate predicate = specification.toPredicate(root, query, builder);
-      if (predicate == null) {
-        return deptPredicate;
-      }
-      return builder.and(deptPredicate, predicate);
+      return builder.or(
+          builder.equal(deptJoin.get(BaseEntity.ID), principal.getDeptId()),
+          builder.like(deptJoin.get("path"), principal.getDeptPath() + "%"));
     };
+    return deptSpecification.and(buildSpec(o));
   }
 
   /**
@@ -177,7 +195,7 @@ public class WhereBuilder {
   }
 
   /**
-   * type "between" need <span>List&lt;Long&gt; size=2</span>.
+   * Convert object to list.
    *
    * <p>supports array or Collection
    *
@@ -185,7 +203,7 @@ public class WhereBuilder {
    * @return <span>List&lt;Long&gt; size=2</span>
    */
   @SuppressWarnings("unchecked")
-  private static List<Long> asBetween(Object value) {
+  private static List<Long> asList(Object value) {
     if (value instanceof Long[]) {
       return Arrays.asList((Long[]) value);
     }

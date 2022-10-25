@@ -12,6 +12,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -22,6 +23,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @Table(name = "sys_role")
 public class Role extends BaseEntity {
 
@@ -34,16 +36,19 @@ public class Role extends BaseEntity {
 
   @ManyToMany
   @JoinTable(name = "sys_role_dept",
-      joinColumns = @JoinColumn(name = "role_id"),
-      inverseJoinColumns = @JoinColumn(name = "dept_id"),
+      joinColumns = @JoinColumn(name = "role_id",
+          foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)),
+      inverseJoinColumns = @JoinColumn(name = "dept_id",
+          foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)),
       foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
   private Set<Dept> departments;
 
   @ManyToMany
   @JoinTable(name = "sys_role_menu",
-      joinColumns = @JoinColumn(name = "role_id"),
-      inverseJoinColumns = @JoinColumn(name = "menu_id"),
-      foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+      joinColumns = @JoinColumn(name = "role_id",
+          foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)),
+      inverseJoinColumns = @JoinColumn(name = "menu_id",
+          foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT)))
   private Set<Menu> menus;
 
   /**

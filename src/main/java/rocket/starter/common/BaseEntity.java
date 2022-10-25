@@ -11,7 +11,7 @@ import javax.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -25,6 +25,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
  */
 @Getter
 @Setter
+@ToString
 @MappedSuperclass
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -57,7 +58,7 @@ public abstract class BaseEntity {
   }
 
   @Override
-  public boolean equals(Object o) {
+  public final boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -72,12 +73,8 @@ public abstract class BaseEntity {
   }
 
   @Override
-  public int hashCode() {
+  public final int hashCode() {
     return Objects.hashCode(this.id);
   }
 
-  @Override
-  public String toString() {
-    return ReflectionToStringBuilder.toString(this);
-  }
 }

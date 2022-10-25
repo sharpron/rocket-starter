@@ -12,7 +12,7 @@ import rocket.starter.common.BaseRepo;
 import rocket.starter.logging.domain.Logging;
 import rocket.starter.logging.domain.Status;
 import rocket.starter.logging.repository.LoggingRepository;
-import rocket.starter.logging.util.IpUtils;
+import rocket.starter.logging.utils.IpUtils;
 
 /**
  * logging service.

@@ -9,6 +9,7 @@ import javax.persistence.Index;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import rocket.starter.common.BaseEntity;
 
 /**
@@ -19,6 +20,7 @@ import rocket.starter.common.BaseEntity;
 @Getter
 @Setter
 @Entity
+@ToString(callSuper = true)
 @Table(name = "message_history", indexes = @Index(name = "idx_receiver", columnList = "receiver"))
 public class MessageHistory extends BaseEntity {
 

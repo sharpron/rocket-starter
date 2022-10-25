@@ -14,7 +14,7 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Component;
 import rocket.starter.common.AppException;
 import rocket.starter.limit.Limit.Type;
-import rocket.starter.logging.util.IpUtils;
+import rocket.starter.logging.utils.IpUtils;
 
 /**
  * Treatment of current limiting.

@@ -7,8 +7,9 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Random;
-import java.util.UUID;
 import javax.imageio.ImageIO;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
+import org.apache.commons.lang3.RandomStringUtils;
 
 /**
  * This is a simple captcha class, use it to generate a random string and then to create an image of
@@ -27,7 +28,7 @@ public class CaptchaUtils {
    * @return random alphanumeric string of eight characters.
    */
   public static String generateText() {
-    return UUID.randomUUID().toString().substring(0, 4);
+    return RandomStringUtils.random(4, true, true);
   }
 
   /**
@@ -53,20 +54,27 @@ public class CaptchaUtils {
     int start = 10;
     byte[] bytes = text.getBytes();
 
-    Random random = new Random();
     for (int i = 0; i < bytes.length; i++) {
-      g.setColor(new Color(random.nextInt(255), random.nextInt(255), random.nextInt(255)));
+      g.setColor(randomColor());
       g.drawString(new String(new byte[] {bytes[i]}), start + (i * 20),
           (int) (Math.random() * 10 + 20));
     }
     g.setColor(Color.white);
     g.dispose();
+
+
     ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    try {
-      ImageIO.write(image, "png", bout);
+    // 使用MemoryCacheImageOutputStream可提速20倍
+    try (MemoryCacheImageOutputStream imageOs = new MemoryCacheImageOutputStream(bout)) {
+      ImageIO.write(image, "JPEG", imageOs);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
     return bout.toByteArray();
+  }
+
+  private static Color randomColor() {
+    Random r = new Random();
+    return new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255));
   }
 }

@@ -1,4 +1,4 @@
-package rocket.starter.logging.util;
+package rocket.starter.logging.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

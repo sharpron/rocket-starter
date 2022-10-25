@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import rocket.starter.common.AppException;
 import rocket.starter.common.utils.ExcelUtils;
 import rocket.starter.common.utils.TreeUtils;
 import rocket.starter.common.validator.Create;
@@ -95,13 +97,13 @@ public class MenuRest {
   public ResponseEntity<Resource> getAsExcel(MenuQuery menuQuery) {
     Sort orderNo = Sort.by("orderNo");
     List<String[]> data = menuService.findAll(menuQuery, orderNo).stream()
-        .map(e -> new String[] {
+        .map(e -> new String[]{
             e.getTitle(), e.getIcon(), String.valueOf(e.getOrderNo()), String.valueOf(e.getType()),
             e.getPath(), ExcelUtils.formatValue(e.getCacheable()),
             ExcelUtils.formatValue(e.isHide())})
         .collect(Collectors.toList());
     Resource resource = ExcelUtils.getExcelResource(
-        new String[] {"标题", "图标", "序号", "类型", "路径", "是否缓存", "是否隐藏"}, data);
+        new String[]{"标题", "图标", "序号", "类型", "路径", "是否缓存", "是否隐藏"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
@@ -133,6 +135,11 @@ public class MenuRest {
   }
 
   private Menu beforeSave(Menu menu) {
+    if (menu.getType() == MenuType.LINK) {
+      if (StringUtils.isBlank(menu.getPath())) {
+        throw new AppException("请填写链接");
+      }
+    }
     if (menu.getType() != MenuType.MENU) {
       menu.setCacheable(Boolean.FALSE);
     }

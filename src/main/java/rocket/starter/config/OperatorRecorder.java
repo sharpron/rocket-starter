@@ -11,7 +11,6 @@ import rocket.starter.system.security.SubjectUtils;
  * @author ron 2020.10.21
  */
 @Configuration
-@SuppressWarnings("unused")
 public class OperatorRecorder implements AuditorAware<String> {
 
   /**
