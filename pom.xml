@@ -11,9 +11,9 @@
   </parent>
   <groupId>rocket</groupId>
   <artifactId>starter</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>admin</name>
-  <description>admin platform for Spring Boot</description>
+  <version>2.0-SNAPSHOT</version>
+  <name>rocket-starter</name>
+  <description>RocketStarter platform for Spring Boot</description>
 
   <properties>
     <java.version>11</java.version>
