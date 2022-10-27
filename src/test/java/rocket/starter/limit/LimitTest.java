@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import rocket.starter.common.AppException;
@@ -15,7 +16,8 @@ import rocket.starter.common.AppException;
  *
  * @author ron 2021/10/20
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@ActiveProfiles("test")
 public class LimitTest {
 
   @Resource
@@ -76,7 +78,6 @@ public class LimitTest {
         limitExample.test100timesIn2sByIp();
       }
     }, "服务器过于繁忙，稍候再试");
-
 
     makeMockRequest("10.1.1.12");
     // 两秒内执行1000次正常
