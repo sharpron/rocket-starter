@@ -18,12 +18,12 @@ public interface UserLocker {
   boolean isLocked(String username);
 
   /**
-   * 增加失败次数.
+   * 尝试对用户进行锁定，当超过最大次数将锁定并返回true，否则不处理并返回false.
    *
    * @param username 用户名
    * @return 是否锁定
    */
-  boolean checkLockedWhenFail(String username);
+  boolean tryLocked(String username);
 
   /**
    * 获取最大尝试次数.

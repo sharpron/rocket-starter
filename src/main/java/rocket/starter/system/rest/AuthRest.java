@@ -66,7 +66,7 @@ public class AuthRest {
     try {
       subject.login(new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword()));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
-      if (userLocker.checkLockedWhenFail(loginDto.getUsername())) {
+      if (userLocker.tryLocked(loginDto.getUsername())) {
         throw new AppException("登录失败次数过多，请稍候再试");
       } else {
         throw new AppException("用户名或密码错误");

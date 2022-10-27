@@ -35,7 +35,7 @@ public class DefaultUserLocker implements UserLocker {
   }
 
   @Override
-  public boolean checkLockedWhenFail(String username) {
+  public boolean tryLocked(String username) {
     String key = AUTH_FAILS_PREFIX + username;
 
     Object incrementResult = redisTemplate.execute(new SessionCallback<>() {

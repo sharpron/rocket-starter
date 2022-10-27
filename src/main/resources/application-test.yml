@@ -26,8 +26,8 @@ upload-directory: './files'
 security:
   lock:
     enabled: true
-    max-try-times: 5
-    lock-duration: 30m
+    max-try-times: 3
+    lock-duration: 10S
   password-expire:
     enabled: true
     lifetime-duration: 90d
