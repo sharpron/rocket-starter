@@ -2,7 +2,6 @@ package rocket.starter.limit;
 
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,6 +9,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Component;
 import rocket.starter.common.AppException;
@@ -23,7 +23,6 @@ import rocket.starter.logging.utils.IpUtils;
  */
 @Aspect
 @Component
-@RequiredArgsConstructor
 public class LimitAspect {
 
   /**
@@ -38,6 +37,25 @@ public class LimitAspect {
    */
   private final HttpServletRequest request;
 
+  private final RedisScript<Boolean> redisScript;
+
+  /**
+   * constructor.
+   *
+   * @param redisTemplate redisTemplate
+   * @param request       request
+   */
+  public LimitAspect(StringRedisTemplate redisTemplate, HttpServletRequest request) {
+    this.redisTemplate = redisTemplate;
+    this.request = request;
+
+    DefaultRedisScript<Boolean> redisScript = new DefaultRedisScript<>();
+    redisScript.setScriptSource(
+        new ResourceScriptSource(new ClassPathResource("/plugin/limit.lua")));
+    redisScript.setResultType(Boolean.class);
+    this.redisScript = redisScript;
+  }
+
   /**
    * 是否能够放行.
    *
@@ -47,10 +65,6 @@ public class LimitAspect {
    * @return true 可以放行
    */
   private boolean allowThrough(String key, int period, int maxCount) {
-    DefaultRedisScript<Boolean> redisScript = new DefaultRedisScript<>();
-    redisScript.setScriptSource(
-        new ResourceScriptSource(new ClassPathResource("/plugin/limit.lua")));
-    redisScript.setResultType(Boolean.class);
     Boolean result = redisTemplate.execute(
         redisScript,
         Collections.singletonList(key),
