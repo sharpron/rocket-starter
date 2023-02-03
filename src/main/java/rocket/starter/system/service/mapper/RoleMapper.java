@@ -59,13 +59,20 @@ public class RoleMapper {
     role.setName(roleBody.getName());
     role.setDescription(roleBody.getDescription());
     role.setDisabled(roleBody.getDisabled());
-    role.setDepartments(roleBody.getDeptIds()
-        .stream().map(Dept::new).collect(Collectors.toSet()));
-    role.setMenus(roleBody.getMenuIds().stream().map(e -> {
-      Menu menu = new Menu();
-      menu.setId(e);
-      return menu;
-    }).collect(Collectors.toSet()));
+
+    if (roleBody.getDeptIds() != null) {
+      role.setDepartments(roleBody.getDeptIds()
+          .stream().map(Dept::new).collect(Collectors.toSet()));
+    }
+
+    if (roleBody.getMenuIds() != null) {
+      role.setMenus(roleBody.getMenuIds().stream().map(e -> {
+        Menu menu = new Menu();
+        menu.setId(e);
+        return menu;
+      }).collect(Collectors.toSet()));
+    }
+
     role.setId(roleBody.getId());
     return role;
   }
