@@ -2,7 +2,6 @@ package rocket.starter.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.Base64;
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +14,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,7 +58,7 @@ public class AuthRest {
   @PostMapping("/authenticate")
   @Log("用户登录")
   public ResponseEntity<AuthResultDto> authenticate(
-      @Valid @RequestBody LoginDto loginDto) {
+      @Validated @RequestBody LoginDto loginDto) {
 
     captchaService.check(loginDto.getCaptchaKey(), loginDto.getCaptcha());
     final Subject subject = SecurityUtils.getSubject();

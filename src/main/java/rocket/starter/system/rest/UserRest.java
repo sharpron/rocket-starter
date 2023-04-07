@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import javax.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,7 +115,7 @@ public class UserRest {
   @PutMapping("/me")
   @Operation(tags = "用户修改自己信息")
   @Log("用户修改自己信息")
-  public ResponseEntity<?> modifySelfInfo(@RequestBody @Valid UserBaseBody userBaseBody) {
+  public ResponseEntity<?> modifySelfInfo(@RequestBody @Validated UserBaseBody userBaseBody) {
     userService.modifyUserBase(userBaseBody);
     return ResponseEntity.ok().build();
   }
@@ -124,7 +123,7 @@ public class UserRest {
   @PutMapping("/me/passwords")
   @Operation(tags = "用户修改自己的密码")
   @Log("修改自己密码")
-  public ResponseEntity<?> modifySelfPass(@RequestBody @Valid ModifyPassDto modifyPassDto) {
+  public ResponseEntity<?> modifySelfPass(@RequestBody @Validated ModifyPassDto modifyPassDto) {
     userService.modifyPass(modifyPassDto);
     return ResponseEntity.ok().build();
   }
@@ -133,7 +132,7 @@ public class UserRest {
   @Operation(tags = "管理员修改用户的密码")
   @RequiresPermissions("user:password:modify")
   @Log("修改用户密码")
-  public ResponseEntity<?> modifyPass(@RequestBody @Valid ForceModifyPassDto modifyPassDto) {
+  public ResponseEntity<?> modifyPass(@RequestBody @Validated ForceModifyPassDto modifyPassDto) {
     userService.forceModifyPass(modifyPassDto.getUserId(), modifyPassDto.getNewPass());
     return ResponseEntity.ok().build();
   }
