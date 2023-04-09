@@ -49,6 +49,9 @@ public class UserRealm extends AuthorizingRealm {
 
   @Override
   protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+    if (principalCollection.fromRealm(getName()).isEmpty()) {
+      return null;
+    }
     Principal user = (Principal) principalCollection.getPrimaryPrincipal();
 
     SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
