@@ -50,13 +50,13 @@ public class JacksonConfig {
           public LocalDate deserialize(JsonParser p, DeserializationContext context)
               throws IOException {
             String valueAsString = p.getValueAsString();
-            return LocalDate.parse(valueAsString);
+            return LocalDate.parse(valueAsString, DEFAULT_DATE_FORMATTER);
           }
         })
         .serializerByType(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
           @Override
           public void serialize(LocalDateTime value, JsonGenerator gen,
-                                SerializerProvider serializerProvider) throws IOException {
+              SerializerProvider serializerProvider) throws IOException {
             if (value != null) {
               gen.writeString(DEFAULT_DATE_TIME_FORMATTER.format(value));
             }
@@ -67,7 +67,7 @@ public class JacksonConfig {
           public LocalDateTime deserialize(JsonParser p, DeserializationContext context)
               throws IOException {
             String valueAsString = p.getValueAsString();
-            return LocalDateTime.parse(valueAsString);
+            return LocalDateTime.parse(valueAsString, DEFAULT_DATE_TIME_FORMATTER);
           }
         });
   }
