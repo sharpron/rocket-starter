@@ -57,8 +57,7 @@ public class QuartzJobManager {
         pause(quartzJob.getId());
       }
     } catch (Exception e) {
-      log.error("创建定时任务失败", e);
-      throw new AppException("创建定时任务失败");
+      throw new AppException("创建定时任务失败", e);
     }
   }
 
@@ -69,15 +68,12 @@ public class QuartzJobManager {
    */
   public void executeJobNow(QuartzJob quartzJob) {
     try {
-      TriggerKey triggerKey = TriggerKey.triggerKey(JOB_NAME + quartzJob.getId());
-      CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
       JobDataMap dataMap = new JobDataMap();
       dataMap.put(JobRunner.JOB_KEY, quartzJob);
       JobKey jobKey = JobKey.jobKey(JOB_NAME + quartzJob.getId());
       scheduler.triggerJob(jobKey, dataMap);
     } catch (Exception e) {
-      log.error("定时任务执行失败", e);
-      throw new AppException("定时任务执行失败");
+      throw new AppException("定时任务执行失败", e);
     }
   }
 
@@ -95,8 +91,7 @@ public class QuartzJobManager {
     try {
       scheduler.pauseJob(jobKey);
     } catch (SchedulerException e) {
-      log.error("暂停定时任务失败!", e);
-      throw new AppException("暂停定时任务失败!");
+      throw new AppException("暂停定时任务失败!", e);
     }
   }
 
@@ -111,8 +106,7 @@ public class QuartzJobManager {
       scheduler.pauseJob(jobKey);
       scheduler.deleteJob(jobKey);
     } catch (SchedulerException e) {
-      log.error("删除定时任务失败!", e);
-      throw new AppException("删除定时任务失败!");
+      throw new AppException("删除定时任务失败!", e);
     }
   }
 
@@ -126,8 +120,7 @@ public class QuartzJobManager {
     try {
       scheduler.resumeJob(jobKey);
     } catch (SchedulerException e) {
-      log.error("恢复定时任务失败!", e);
-      throw new AppException("恢复定时任务失败!");
+      throw new AppException("恢复定时任务失败!", e);
     }
   }
 

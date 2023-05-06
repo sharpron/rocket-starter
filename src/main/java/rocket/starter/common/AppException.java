@@ -15,6 +15,16 @@ public class AppException extends RuntimeException {
    */
   private final ErrorInfo errorInfo;
 
+  public AppException(int code, String message, Throwable throwable) {
+    super(message, throwable);
+    this.errorInfo = new ErrorInfo(code, message);
+  }
+
+  public AppException(String message, Throwable throwable) {
+    super(message, throwable);
+    this.errorInfo = new ErrorInfo(message);
+  }
+
   /**
    * 使用指定的错误码和消息构造一个异常.
    *
