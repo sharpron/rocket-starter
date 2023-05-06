@@ -138,7 +138,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param query 查询相关的数据
    * @return 条件
    */
-  private Specification<T> getSpecification(Object query) {
+  protected Specification<T> getSpecification(Object query) {
     return WhereBuilder.buildSpec(query);
   }
 
