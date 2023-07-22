@@ -1,6 +1,7 @@
 package rocket.starter.logging.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ import rocket.starter.system.security.SubjectUtils;
 @Slf4j
 @RestController
 @RequestMapping("/api/logs")
+@Tag(name = "日志管理")
 @RequiredArgsConstructor
 public class LoggingController {
 
