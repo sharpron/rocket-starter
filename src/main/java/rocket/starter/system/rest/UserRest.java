@@ -1,6 +1,7 @@
 package rocket.starter.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +44,7 @@ import rocket.starter.system.service.mapper.UserMapper;
 @Slf4j
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "用户管理")
 @RequiredArgsConstructor
 public class UserRest {
 
@@ -60,7 +62,7 @@ public class UserRest {
    * @return 数据
    */
   @GetMapping
-  @Operation(tags = "分页查询用户")
+  @Operation(summary = "分页查询用户")
   @RequiresPermissions("user:query")
   @Log("查询用户")
   public ResponseEntity<?> findByPage(Pageable pageable, UserQuery userQuery) {
@@ -93,7 +95,7 @@ public class UserRest {
   }
 
   @PostMapping
-  @Operation(tags = "创建用户")
+  @Operation(summary = "创建用户")
   @RequiresPermissions("user:create")
   @Log("创建用户")
   public ResponseEntity<?> create(
@@ -103,7 +105,7 @@ public class UserRest {
   }
 
   @PutMapping
-  @Operation(tags = "修改用户")
+  @Operation(summary = "修改用户")
   @RequiresPermissions("user:modify")
   @Log("修改用户")
   public ResponseEntity<?> modify(
@@ -113,7 +115,7 @@ public class UserRest {
   }
 
   @PutMapping("/me")
-  @Operation(tags = "用户修改自己信息")
+  @Operation(summary = "用户修改自己信息")
   @Log("用户修改自己信息")
   public ResponseEntity<?> modifySelfInfo(@RequestBody @Validated UserBaseBody userBaseBody) {
     userService.modifyUserBase(userBaseBody);
@@ -121,7 +123,7 @@ public class UserRest {
   }
 
   @PutMapping("/me/passwords")
-  @Operation(tags = "用户修改自己的密码")
+  @Operation(summary = "用户修改自己的密码")
   @Log("修改自己密码")
   public ResponseEntity<?> modifySelfPass(@RequestBody @Validated ModifyPassDto modifyPassDto) {
     userService.modifyPass(modifyPassDto);
@@ -129,7 +131,7 @@ public class UserRest {
   }
 
   @PutMapping("/passwords")
-  @Operation(tags = "管理员修改用户的密码")
+  @Operation(summary = "管理员修改用户的密码")
   @RequiresPermissions("user:password:modify")
   @Log("修改用户密码")
   public ResponseEntity<?> modifyPass(@RequestBody @Validated ForceModifyPassDto modifyPassDto) {
@@ -138,7 +140,7 @@ public class UserRest {
   }
 
   @DeleteMapping("/locked")
-  @Operation(tags = "管理员解锁指定用户")
+  @Operation(summary = "管理员解锁指定用户")
   @RequiresPermissions("user:locked")
   @Log("管理员解锁指定用户")
   public ResponseEntity<?> unlock(@RequestParam String username) {
@@ -147,7 +149,7 @@ public class UserRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "管理员删除用户")
+  @Operation(summary = "管理员删除用户")
   @RequiresPermissions("user:remove")
   @Log("删除用户")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

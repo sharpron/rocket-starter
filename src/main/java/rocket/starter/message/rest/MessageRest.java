@@ -47,7 +47,7 @@ public class MessageRest {
    * @return 结果
    */
   @PostMapping("/publishes")
-  @Operation(tags = "发布消息")
+  @Operation(summary = "发布消息")
   @RequiresPermissions("message:publish")
   @Log("发布消息")
   public ResponseEntity<?> publish(@RequestBody @Validated PublishMessage message) {
@@ -62,7 +62,7 @@ public class MessageRest {
    * @return 结果
    */
   @PostMapping("/sends")
-  @Operation(tags = "发送消息")
+  @Operation(summary = "发送消息")
   @RequiresPermissions("message:send")
   @Log("发送消息")
   public ResponseEntity<?> publish(@RequestBody @Validated ChatMessage message) {
@@ -77,7 +77,7 @@ public class MessageRest {
    * @return 结果
    */
   @PutMapping("reads")
-  @Operation(tags = "读取消息")
+  @Operation(summary = "读取消息")
   @Log("读取消息")
   public ResponseEntity<?> updateRead(@RequestParam Set<Long> ids) {
     messageHistoryService.updateRead(ids);
@@ -90,7 +90,7 @@ public class MessageRest {
    * @return 结果
    */
   @PutMapping("reads-all")
-  @Operation(tags = "全部已读")
+  @Operation(summary = "全部已读")
   @Log("全部已读")
   public ResponseEntity<?> readAll() {
     messageHistoryService.readAll();
@@ -103,20 +103,20 @@ public class MessageRest {
    * @return 未读消息总数
    */
   @GetMapping("unread-counts")
-  @Operation(tags = "查询未读消息总数")
+  @Operation(summary = "查询未读消息总数")
   public ResponseEntity<?> getUnreadCount() {
     return ResponseEntity.ok(messageHistoryService.getUnreadCount());
   }
 
   @GetMapping(params = "datatype=small")
-  @Operation(tags = "分页查询自己历史消息")
+  @Operation(summary = "分页查询自己历史消息")
   public ResponseEntity<?> findSelfByPage(Pageable pageable) {
     return ResponseEntity.ok(
         messageHistoryService.findSelfByPage(pageable).map(messageHistoryMapper::mapSmall));
   }
 
   @GetMapping
-  @Operation(tags = "分页查询历史消息")
+  @Operation(summary = "分页查询历史消息")
   @RequiresPermissions("message:query")
   @Log("分页查询消息")
   public ResponseEntity<?> findByPage(Pageable pageable, MessageHistoryQuery query) {
@@ -124,7 +124,7 @@ public class MessageRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除历史消息")
+  @Operation(summary = "删除历史消息")
   @RequiresPermissions("message:remove")
   @Log("删除历史消息")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

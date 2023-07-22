@@ -36,7 +36,7 @@ import rocket.starter.quartz.service.mapper.QuartzJobMapper;
 @Slf4j
 @RestController
 @RequestMapping("/api/jobs")
-@Tag(name = "定时任务")
+@Tag(name = "定时任务管理")
 @RequiredArgsConstructor
 public class QuartzJobRest {
 
@@ -44,14 +44,14 @@ public class QuartzJobRest {
   private final QuartzJobMapper quartzJobMapper;
 
   @GetMapping
-  @Operation(tags = "分页查询定时任务")
+  @Operation(summary = "分页查询定时任务")
   @RequiresPermissions("job:query")
   public ResponseEntity<?> findByPage(Pageable pageable, QuartzJobQuery query) {
     return ResponseEntity.ok(quartzJobService.findByPage(pageable, query));
   }
 
   @GetMapping("/logs")
-  @Operation(tags = "定时任务日志展示")
+  @Operation(summary = "定时任务日志展示")
   @RequiresPermissions("job:query")
   public ResponseEntity<?> findByPage(Pageable pageable, QuartzLogQuery query) {
     return ResponseEntity.ok(quartzJobService.findLogsByPage(pageable, query));
@@ -64,7 +64,7 @@ public class QuartzJobRest {
    * @return response
    */
   @PutMapping("/{id}/status")
-  @Operation(tags = "修改定时任务状态")
+  @Operation(summary = "修改定时任务状态")
   @RequiresPermissions("job:modify")
   public ResponseEntity<?> updateStatus(@PathVariable Long jobId) {
     quartzJobService.toggleEnabled(jobId);
@@ -78,7 +78,7 @@ public class QuartzJobRest {
    * @return response
    */
   @PostMapping("/{id}/executions")
-  @Operation(tags = "立即执行一次定时任务")
+  @Operation(summary = "立即执行一次定时任务")
   @RequiresPermissions("job:execute")
   public ResponseEntity<?> execute(@PathVariable Long jobId) {
     quartzJobService.execute(jobId);
@@ -86,7 +86,7 @@ public class QuartzJobRest {
   }
 
   @PostMapping
-  @Operation(tags = "创建定时任务")
+  @Operation(summary = "创建定时任务")
   @RequiresPermissions("job:create")
   public ResponseEntity<?> create(
       @RequestBody @Validated({Default.class, Create.class}) QuartzJobBody quartzJob) {
@@ -95,7 +95,7 @@ public class QuartzJobRest {
   }
 
   @PutMapping
-  @Operation(tags = "修改定时任务")
+  @Operation(summary = "修改定时任务")
   @RequiresPermissions("job:modify")
   public ResponseEntity<?> modify(
       @RequestBody @Validated({Default.class, Update.class}) QuartzJobBody quartzJob) {
@@ -104,7 +104,7 @@ public class QuartzJobRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除定时任务")
+  @Operation(summary = "删除定时任务")
   @RequiresPermissions("job:remove")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {
     quartzJobService.deleteByIds(ids);

@@ -35,7 +35,7 @@ public class LoggingController {
   private final LoggingService loggingService;
 
   @GetMapping("me")
-  @Operation(tags = "分页查询本人日志")
+  @Operation(summary = "分页查询本人日志")
   @RequiresAuthentication
   public ResponseEntity<?> findSelfByPage(Pageable pageable, LoggingQuery query) {
     query.setCreateBy(SubjectUtils.currentUser().getUsername());
@@ -43,7 +43,7 @@ public class LoggingController {
   }
 
   @GetMapping
-  @Operation(tags = "分页查询日志")
+  @Operation(summary = "分页查询日志")
   @RequiresPermissions("log:query")
   @Log("查询日志")
   public ResponseEntity<?> findByPage(Pageable pageable, LoggingQuery query) {
@@ -60,7 +60,8 @@ public class LoggingController {
   @Log("日志导出")
   public ResponseEntity<StreamingResponseBody> getAsExcel(LoggingQuery query) {
     return ExcelUtils.buildResponse(
-        new String[]{"操作描述", "参数", "间隔(ms)", "操作员", "时间", "客户端IP", "客户端位置", "浏览器", "异常信息"},
+        new String[]{"操作描述", "参数", "间隔(ms)", "操作员", "时间", "客户端IP", "客户端位置",
+            "浏览器", "异常信息"},
         lastId -> loggingService.findByPage(lastId, 1000, query).map(e -> new String[]{
             String.valueOf(e.getId()), e.getDescription(), e.getParams(),
             String.valueOf(e.getSpendTime()), e.getCreateBy(),
@@ -70,7 +71,7 @@ public class LoggingController {
   }
 
   @DeleteMapping
-  @Operation(tags = "清空日志")
+  @Operation(summary = "清空日志")
   @RequiresPermissions("log:clear")
   @Log("清空日志")
   public ResponseEntity<?> clear(@RequestParam Status status) {

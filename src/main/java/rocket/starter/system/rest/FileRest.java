@@ -1,5 +1,7 @@
 package rocket.starter.system.rest;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import rocket.starter.system.service.FileService;
  */
 @RestController
 @RequestMapping("/api/files")
+@Tag(name = "文件管理")
 @RequiredArgsConstructor
 @Slf4j
 public class FileRest {
@@ -37,6 +40,7 @@ public class FileRest {
    * @param file 文件
    * @return 上传结果
    */
+  @Operation(summary = "上传文件")
   @PostMapping
   public ResponseEntity<StorageResult> uploadFile(@RequestParam("file") MultipartFile file) {
     StorageResult storage = fileService.storage(file);
@@ -50,6 +54,7 @@ public class FileRest {
    * @param request 请求
    * @return 文件
    */
+  @Operation(summary = "下载文件")
   @GetMapping
   public ResponseEntity<Resource> downloadFile(@RequestParam String path,
                                                HttpServletRequest request) {

@@ -53,7 +53,7 @@ public class DictRest {
    * @return self dept tree.
    */
   @GetMapping
-  @Operation(tags = "查询字典")
+  @Operation(summary = "查询字典")
   @RequiresPermissions("dictionary:query")
   @Log("查询字典")
   public ResponseEntity<?> findDictionaries(Pageable pageable, DictQuery dictQuery) {
@@ -71,14 +71,14 @@ public class DictRest {
   @Log("字典导出")
   public ResponseEntity<Resource> getAsExcel(DictQuery dictQuery) {
     List<String[]> data = dictService.findAll(dictQuery).stream()
-        .map(e -> new String[] {e.getName(), e.getDescription()})
+        .map(e -> new String[]{e.getName(), e.getDescription()})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"字典名称", "描述"}, data);
+    Resource resource = ExcelUtils.getExcelResource(new String[]{"字典名称", "描述"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
   @PostMapping
-  @Operation(tags = "创建字典")
+  @Operation(summary = "创建字典")
   @RequiresPermissions("dictionary:create")
   @Log("创建字典")
   public ResponseEntity<?> create(
@@ -88,7 +88,7 @@ public class DictRest {
   }
 
   @PutMapping
-  @Operation(tags = "修改字典")
+  @Operation(summary = "修改字典")
   @RequiresPermissions("dictionary:modify")
   @Log("修改字典")
   public ResponseEntity<?> modify(
@@ -98,7 +98,7 @@ public class DictRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除字典")
+  @Operation(summary = "删除字典")
   @RequiresPermissions("dictionary:remove")
   @Log("删除字典")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

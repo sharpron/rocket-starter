@@ -55,7 +55,7 @@ public class DictItemRest {
    * @return self dept tree.
    */
   @GetMapping
-  @Operation(tags = "查询字典项")
+  @Operation(summary = "查询字典项")
   @RequiresPermissions("dictionary:query")
   @Log("查询字典项")
   public ResponseEntity<?> findDictionaries(Pageable pageable, DictItemQuery dictItemQuery) {
@@ -88,15 +88,16 @@ public class DictItemRest {
   @Log("字典项导出")
   public ResponseEntity<Resource> getAsExcel(DictItemQuery dictItemQuery) {
     List<String[]> data = dictItemService.findAll(dictItemQuery).stream()
-        .map(e -> new String[] {e.getName(), e.getValue(), String.valueOf(e.getOrderNo()),
+        .map(e -> new String[]{e.getName(), e.getValue(), String.valueOf(e.getOrderNo()),
             ExcelUtils.formatValue(e.getDisabled())})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"名称", "值", "序号", "是否禁用"}, data);
+    Resource resource = ExcelUtils.getExcelResource(new String[]{"名称", "值", "序号", "是否禁用"},
+        data);
     return ExcelUtils.buildResponse(resource);
   }
 
   @PostMapping
-  @Operation(tags = "创建字典项")
+  @Operation(summary = "创建字典项")
   @RequiresPermissions("dictionary:create")
   @Log("创建字典项")
   public ResponseEntity<?> create(
@@ -106,7 +107,7 @@ public class DictItemRest {
   }
 
   @PutMapping
-  @Operation(tags = "修改字典项")
+  @Operation(summary = "修改字典项")
   @RequiresPermissions("dictionary:modify")
   @Log("修改字典项")
   public ResponseEntity<?> modify(
@@ -116,7 +117,7 @@ public class DictItemRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除字典项")
+  @Operation(summary = "删除字典项")
   @RequiresPermissions("dictionary:remove")
   @Log("删除字典项")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

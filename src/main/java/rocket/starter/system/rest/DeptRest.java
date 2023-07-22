@@ -55,7 +55,7 @@ public class DeptRest {
    * @return self dept tree.
    */
   @GetMapping
-  @Operation(tags = "查询自己部门树")
+  @Operation(summary = "查询自己部门树")
   @RequiresPermissions("department:query")
   @Log("部门查询")
   public ResponseEntity<?> getSelfDepartments(DeptQuery deptQuery) {
@@ -74,9 +74,9 @@ public class DeptRest {
   @Log("部门导出")
   public ResponseEntity<Resource> getAsExcel(DeptQuery deptQuery) {
     List<String[]> departments = deptService.findSelfDepartments(deptQuery)
-        .stream().map(e -> new String[] {e.getName(), String.valueOf(e.getOrderNo())})
+        .stream().map(e -> new String[]{e.getName(), String.valueOf(e.getOrderNo())})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"部门名称", "序号"}, departments);
+    Resource resource = ExcelUtils.getExcelResource(new String[]{"部门名称", "序号"}, departments);
     return ExcelUtils.buildResponse(resource);
   }
 
@@ -97,14 +97,14 @@ public class DeptRest {
    * @return self dept tree.
    */
   @GetMapping(params = "datatype=dict")
-  @Operation(tags = "查询部门字典")
+  @Operation(summary = "查询部门字典")
   public ResponseEntity<?> getSelfDepartmentsAsDict(DeptQuery deptQuery) {
     List<Dept> departments = deptService.findSelfDepartments(deptQuery);
     return ResponseEntity.ok(buildTree(departments));
   }
 
   @PostMapping
-  @Operation(tags = "创建部门")
+  @Operation(summary = "创建部门")
   @RequiresPermissions("department:create")
   @Log("创建部门")
   public ResponseEntity<?> create(
@@ -114,7 +114,7 @@ public class DeptRest {
   }
 
   @PutMapping
-  @Operation(tags = "修改部门")
+  @Operation(summary = "修改部门")
   @RequiresPermissions("department:modify")
   @Log("修改部门")
   public ResponseEntity<?> modify(
@@ -124,7 +124,7 @@ public class DeptRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除部门")
+  @Operation(summary = "删除部门")
   @RequiresPermissions("department:remove")
   @Log("删除部门")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

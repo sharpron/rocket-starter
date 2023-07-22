@@ -1,6 +1,7 @@
 package rocket.starter.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ import rocket.starter.system.service.UserService;
 @Slf4j
 @RestController
 @RequestMapping("/api")
+@Tag(name = "认证管理")
 @RequiredArgsConstructor
 public class AuthRest {
 
@@ -54,7 +56,7 @@ public class AuthRest {
    * @param loginDto loginDto
    * @return response
    */
-  @Operation(tags = "用户登录")
+  @Operation(summary = "用户登录")
   @PostMapping("/authenticate")
   @Log("用户登录")
   public ResponseEntity<AuthResultDto> authenticate(
@@ -99,7 +101,7 @@ public class AuthRest {
    * @return response
    */
   @GetMapping("authenticated")
-  @Operation(tags = "查询当前的登录身份")
+  @Operation(summary = "查询当前的登录身份")
   @RequiresAuthentication
   public ResponseEntity<?> getUserInfo() {
     return ResponseEntity.ok(SubjectUtils.currentUser());
@@ -110,7 +112,7 @@ public class AuthRest {
    *
    * @return response
    */
-  @Operation(tags = "获取验证码")
+  @Operation(summary = "获取验证码")
   @GetMapping("/captcha")
   public ResponseEntity<CaptchaDto> getCaptcha() {
     final CaptchaService.Captcha captcha = captchaService.genCaptcha();
@@ -123,7 +125,7 @@ public class AuthRest {
     ));
   }
 
-  @Operation(tags = "退出登录")
+  @Operation(summary = "退出登录")
   @DeleteMapping("/tokens")
   @Log("退出登录")
   public ResponseEntity<?> logout() {

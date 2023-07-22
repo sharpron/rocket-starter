@@ -1,6 +1,7 @@
 package rocket.starter.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +39,7 @@ import rocket.starter.system.service.mapper.RoleMapper;
 @Slf4j
 @RestController
 @RequestMapping("/api/roles")
+@Tag(name = "角色管理")
 @RequiredArgsConstructor
 public class RoleRest {
 
@@ -52,7 +54,7 @@ public class RoleRest {
    * @return response
    */
   @GetMapping
-  @Operation(tags = "分页查询角色")
+  @Operation(summary = "分页查询角色")
   @RequiresPermissions("role:query")
   @Log("查询角色")
   public ResponseEntity<?> findByPage(Pageable pageable, RoleQuery roleQuery) {
@@ -65,7 +67,7 @@ public class RoleRest {
    * @return all roles
    */
   @GetMapping(params = "type=dict")
-  @Operation(tags = "查询所有角色")
+  @Operation(summary = "查询所有角色")
   public ResponseEntity<?> findAll(RoleQuery roleQuery) {
     return ResponseEntity.ok(
         roleService.findAll(roleQuery).stream().map(roleMapper::mapDto)
@@ -91,7 +93,7 @@ public class RoleRest {
   }
 
   @PostMapping
-  @Operation(tags = "创建角色")
+  @Operation(summary = "创建角色")
   @RequiresPermissions("role:create")
   @Log("创建角色")
   public ResponseEntity<?> create(
@@ -107,7 +109,7 @@ public class RoleRest {
    * @return response
    */
   @PutMapping
-  @Operation(tags = "修改角色")
+  @Operation(summary = "修改角色")
   @RequiresPermissions("role:modify")
   @Log("修改角色")
   public ResponseEntity<?> modify(
@@ -117,7 +119,7 @@ public class RoleRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除角色")
+  @Operation(summary = "删除角色")
   @RequiresPermissions("role:remove")
   @Log("删除角色")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

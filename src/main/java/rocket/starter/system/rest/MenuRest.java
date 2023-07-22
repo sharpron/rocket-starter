@@ -1,6 +1,7 @@
 package rocket.starter.system.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,7 @@ import rocket.starter.system.service.mapper.MenuMapper;
 @Slf4j
 @RestController
 @RequestMapping("/api/menus")
+@Tag(name = "菜单管理")
 @RequiredArgsConstructor
 public class MenuRest {
 
@@ -59,7 +61,7 @@ public class MenuRest {
    * @return response
    */
   @GetMapping("me")
-  @Operation(tags = "查询所有菜单以树的格式")
+  @Operation(summary = "查询所有菜单以树的格式")
   public ResponseEntity<?> getSelfMenus() {
     final Principal userPrincipal = SubjectUtils.currentUser();
     final List<Menu> menusByUser = menuService
@@ -77,7 +79,7 @@ public class MenuRest {
    * @return response
    */
   @GetMapping
-  @Operation(tags = "查询所有菜单以树的格式")
+  @Operation(summary = "查询所有菜单以树的格式")
   @RequiresPermissions("menu:query")
   @Log("查询菜单")
   public ResponseEntity<?> findMenus(MenuQuery menuQuery) {
@@ -113,7 +115,7 @@ public class MenuRest {
    * @return response
    */
   @GetMapping(params = "datatype=dict")
-  @Operation(tags = "查询所有菜单以树的格式")
+  @Operation(summary = "查询所有菜单以树的格式")
   public ResponseEntity<?> findMenusAsDict(MenuQuery menuQuery) {
     final List<Menu> menus = menuService.findAll(menuQuery);
     return ResponseEntity.ok(TreeUtils.buildTree(menuMapper.mapSmallDto(menus)));
@@ -125,7 +127,7 @@ public class MenuRest {
   }
 
   @PostMapping
-  @Operation(tags = "创建菜单")
+  @Operation(summary = "创建菜单")
   @RequiresPermissions("menu:create")
   @Log("创建菜单")
   public ResponseEntity<?> create(
@@ -153,7 +155,7 @@ public class MenuRest {
   }
 
   @PutMapping
-  @Operation(tags = "修改菜单")
+  @Operation(summary = "修改菜单")
   @RequiresPermissions("menu:modify")
   @Log("修改菜单")
   public ResponseEntity<?> modify(
@@ -169,7 +171,7 @@ public class MenuRest {
    * @return 响应
    */
   @DeleteMapping
-  @Operation(tags = "删除菜单")
+  @Operation(summary = "删除菜单")
   @RequiresPermissions("menu:remove")
   @Log("删除菜单")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {

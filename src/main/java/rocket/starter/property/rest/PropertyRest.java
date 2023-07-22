@@ -1,6 +1,7 @@
 package rocket.starter.property.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,6 +41,7 @@ import rocket.starter.property.service.PropertyService;
 @Slf4j
 @RestController
 @RequestMapping("/api/properties")
+@Tag(name = "属性管理")
 @RequiredArgsConstructor
 public class PropertyRest {
 
@@ -53,7 +55,7 @@ public class PropertyRest {
    * @return response
    */
   @GetMapping
-  @Operation(tags = "分页查询属性")
+  @Operation(summary = "分页查询属性")
   @RequiresPermissions("property:query")
   @Log("查询属性")
   public ResponseEntity<?> findByPage(Pageable pageable, PropertyCriteria criteria) {
@@ -71,10 +73,11 @@ public class PropertyRest {
   @Log("导出属性")
   public ResponseEntity<Resource> getAsExcel(PropertyCriteria criteria) {
     List<String[]> data = propertyService.findAll(criteria)
-        .stream().map(e -> new String[] {e.getReferenceKey(), e.getValue(),
+        .stream().map(e -> new String[]{e.getReferenceKey(), e.getValue(),
             e.getValueType().getDesc(), e.getDescription()})
         .collect(Collectors.toList());
-    Resource resource = ExcelUtils.getExcelResource(new String[] {"引用键", "配置值", "类型", "描述"}, data);
+    Resource resource = ExcelUtils.getExcelResource(
+        new String[]{"引用键", "配置值", "类型", "描述"}, data);
     return ExcelUtils.buildResponse(resource);
   }
 
@@ -100,7 +103,7 @@ public class PropertyRest {
    * @return response
    */
   @PostMapping
-  @Operation(tags = "创建属性")
+  @Operation(summary = "创建属性")
   @RequiresPermissions("property:create")
   @Log("创建属性")
   public ResponseEntity<?> create(
@@ -117,7 +120,7 @@ public class PropertyRest {
    * @return response
    */
   @PutMapping
-  @Operation(tags = "修改属性")
+  @Operation(summary = "修改属性")
   @RequiresPermissions("property:modify")
   @Log("修改属性")
   public ResponseEntity<?> modify(
@@ -129,7 +132,7 @@ public class PropertyRest {
   }
 
   @DeleteMapping
-  @Operation(tags = "删除属性")
+  @Operation(summary = "删除属性")
   @RequiresPermissions("property:remove")
   @Log("删除属性")
   public ResponseEntity<?> remove(@RequestParam Set<Long> ids) {
