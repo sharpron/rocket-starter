@@ -52,7 +52,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param t t
    */
   @Override
-  public final void update(T t) {
+  public void update(T t) {
     if (t.getId() == null) {
       throw new IllegalArgumentException("修改时必须指定id");
     }
@@ -76,7 +76,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param id id
    */
   @Override
-  public final void deleteById(Long id) {
+  public void deleteById(Long id) {
     getBaseRepo().findById(id).ifPresent(t -> {
       beforeDelete(t);
       getBaseRepo().delete(t);
@@ -93,7 +93,7 @@ public abstract class AbstractService<T extends BaseEntity>
   }
 
   @Override
-  public final void deleteByIds(Set<Long> ids) {
+  public void deleteByIds(Set<Long> ids) {
     BaseRepo<T> baseRepo = getBaseRepo();
     List<T> entities = baseRepo.findAllById(ids);
     for (T entity : entities) {
