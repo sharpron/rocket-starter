@@ -29,7 +29,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param t t
    */
   @Override
-  public final void create(T t) {
+  public void create(T t) {
     if (t.getId() != null) {
       throw new IllegalArgumentException("创建时不能指定id");
     }
