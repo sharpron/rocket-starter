@@ -83,7 +83,7 @@ public class UserRealm extends AuthorizingRealm {
 
     // 查询管理部门
     Set<Long> manageDeptIds = roleService.findManageDeptIds(user.getId());
-    Set<String> permissions = menuService.findMenusByUsername(user.getUsername()).stream()
+    Set<String> permissions = menuService.findMenusByUserId(user.getId()).stream()
         .map(Menu::getPerm)
         .filter(Objects::nonNull)
         .collect(Collectors.toSet());

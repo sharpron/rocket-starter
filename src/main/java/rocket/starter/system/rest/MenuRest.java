@@ -65,7 +65,7 @@ public class MenuRest {
   public ResponseEntity<?> getSelfMenus() {
     final Principal userPrincipal = SubjectUtils.currentUser();
     final List<Menu> menusByUser = menuService
-        .findMenusByUsername(userPrincipal.getUsername());
+        .findMenusByUserId(userPrincipal.getUserId());
     List<Menu> menus = menusByUser.stream()
         .sorted(Comparator.comparingInt(Menu::getOrderNo))
         .collect(Collectors.toList());

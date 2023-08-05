@@ -11,6 +11,6 @@ import rocket.starter.system.domain.Menu;
  */
 public interface MenuService extends BaseService<Menu> {
 
-  List<Menu> findMenusByUsername(String username);
+  List<Menu> findMenusByUserId(Long userId);
 
 }
