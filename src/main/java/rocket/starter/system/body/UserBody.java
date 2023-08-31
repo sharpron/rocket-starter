@@ -24,7 +24,6 @@ public class UserBody {
   private Long id;
 
   @NotBlank(message = "用户名称不能为空", groups = Create.class)
-  @Null(groups = Update.class)
   private String username;
 
   @NotBlank

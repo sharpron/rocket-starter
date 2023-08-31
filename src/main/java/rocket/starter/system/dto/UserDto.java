@@ -1,5 +1,6 @@
 package rocket.starter.system.dto;
 
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -20,6 +21,8 @@ public class UserDto extends BaseDto {
   private Long deptId;
 
   private String deptName;
+
+  private Set<Long> roleIds;
 
   private String username;
 
