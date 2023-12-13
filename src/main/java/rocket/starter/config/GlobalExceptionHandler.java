@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleApp(AppException e) {
     log.error("handle failed!", e);
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorInfo(e.getMessage()));
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getErrorInfo());
   }
 
   /**
