@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import rocket.starter.common.AbstractService;
+import rocket.starter.common.AppException;
 import rocket.starter.common.BaseRepo;
 import rocket.starter.system.domain.Dept;
 import rocket.starter.system.domain.User;
@@ -41,6 +42,9 @@ public class DeptServiceImpl extends AbstractService<Dept> implements DeptServic
 
   @Override
   protected void beforeUpdate(Dept dept) {
+    if (dept.getParent() != null && dept.getId().equals(dept.getParent().getId())) {
+      throw new AppException("不能将自身设置为上级部门");
+    }
     dept.setPath(generatePath(dept));
   }
 
