@@ -52,14 +52,16 @@ public class SubjectUtils {
    * @param principal principal
    */
   public static void updatePrincipal(Subject subject, Principal principal) {
-    Session session = subject.getSession();
-    PrincipalCollection pc = (PrincipalCollection) session.getAttribute(
-        DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+    if (((Principal) subject.getPrincipal()).getUserId().equals(principal.getUserId())) {
+      Session session = subject.getSession();
+      PrincipalCollection pc = (PrincipalCollection) session.getAttribute(
+          DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
 
-    if (!pc.isEmpty()) {
-      String realName = pc.getRealmNames().iterator().next();
-      SimplePrincipalCollection collection = new SimplePrincipalCollection(principal, realName);
-      session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, collection);
+      if (!pc.isEmpty()) {
+        String realName = pc.getRealmNames().iterator().next();
+        SimplePrincipalCollection collection = new SimplePrincipalCollection(principal, realName);
+        session.setAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY, collection);
+      }
     }
   }
 }
