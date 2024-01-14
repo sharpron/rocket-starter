@@ -54,8 +54,8 @@ public class DeptMapper {
     dept.setName(deptBody.getName());
     dept.setOrderNo(deptBody.getOrderNo());
     dept.setDisabled(deptBody.getDisabled());
-    dept.setParent(deptBody.getId() == null ? null :
-        new Dept(deptBody.getId()));
+    dept.setParent(deptBody.getParentId() == null ? null :
+        new Dept(deptBody.getParentId()));
     dept.setPath(deptBody.getPath());
     dept.setId(deptBody.getId());
     return dept;
