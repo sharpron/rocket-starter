@@ -27,15 +27,23 @@ public class DefaultUserLocker implements UserLocker {
 
   @Override
   public boolean isLocked(String username) {
-    String fails = redisTemplate.opsForValue().get(AUTH_FAILS_PREFIX + username);
-    if (fails == null) {
-      return false;
+    if (lockProperties.isEnabled()) {
+      String fails = redisTemplate.opsForValue().get(AUTH_FAILS_PREFIX + username);
+      if (fails == null) {
+        return false;
+      }
+      return Integer.parseInt(fails) >= lockProperties.getMaxTryTimes();
     }
-    return Integer.parseInt(fails) >= lockProperties.getMaxTryTimes();
+
+    return false;
   }
 
   @Override
   public boolean tryLocked(String username) {
+    if (!lockProperties.isEnabled()) {
+      return false;
+    }
+
     String key = AUTH_FAILS_PREFIX + username;
 
     Object incrementResult = redisTemplate.execute(new SessionCallback<>() {

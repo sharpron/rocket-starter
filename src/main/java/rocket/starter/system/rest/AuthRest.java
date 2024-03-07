@@ -28,6 +28,7 @@ import rocket.starter.system.dto.AuthResultDto;
 import rocket.starter.system.dto.AuthResultDto.Status;
 import rocket.starter.system.dto.CaptchaDto;
 import rocket.starter.system.dto.LoginDto;
+import rocket.starter.system.security.Principal;
 import rocket.starter.system.security.SubjectUtils;
 import rocket.starter.system.security.UserLocker;
 import rocket.starter.system.service.CaptchaService;
@@ -75,17 +76,22 @@ public class AuthRest {
       }
     } catch (LockedAccountException e) {
       throw new AppException("登录失败次数过多，请稍候再试");
-    } catch (ExpiredCredentialsException e) {
+    }
+
+    Principal principal = (Principal) subject.getPrincipal();
+
+    // 检查密码是否过期
+    if (userService.isPassExpired(principal.getPasswordExpireAt())) {
       if (StringUtils.isBlank(loginDto.getNewPassword())) {
         // 通知客户端需要携带新密码进行修改
         return ResponseEntity.ok(AuthResultDto.other(Status.PASSWORD_EXPIRE));
       }
-      // 修改密码
-      Long userId = Long.valueOf(e.getMessage());
-      userService.forceModifyPass(userId, loginDto.getNewPassword());
+
+      userService.forceModifyPass(principal.getUserId(), loginDto.getNewPassword());
       // 通知前端使用新密码重新登录
       return ResponseEntity.ok(AuthResultDto.other(Status.MODIFY_EXPIRE_SUCCESS));
     }
+
     return ResponseEntity.ok(AuthResultDto.ok(SubjectUtils.currentUser()));
   }
 

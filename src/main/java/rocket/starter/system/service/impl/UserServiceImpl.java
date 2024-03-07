@@ -17,7 +17,6 @@ import rocket.starter.system.domain.User;
 import rocket.starter.system.dto.ModifyPassDto;
 import rocket.starter.system.repo.UserRepo;
 import rocket.starter.system.security.PasswordEncoder;
-import rocket.starter.system.security.PasswordExpireHandler;
 import rocket.starter.system.security.Principal;
 import rocket.starter.system.security.SubjectUtils;
 import rocket.starter.system.security.properties.PasswordExpireProperties;
@@ -31,8 +30,7 @@ import rocket.starter.system.service.UserService;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserServiceImpl extends AbstractService<User> implements UserService,
-    PasswordExpireHandler {
+public class UserServiceImpl extends AbstractService<User> implements UserService {
 
   private final UserRepo userRepo;
   private final PasswordEncoder passwordEncoder;
@@ -124,6 +122,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         .deptPath(user.getDept().getPath())
         .manageDeptIds(principal.getManageDeptIds())
         .perms(principal.getPerms())
+        .passwordExpireAt(user.getPasswordExpireAt())
         .build();
   }
 
@@ -132,16 +131,11 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
   }
 
   @Override
-  public boolean isExpired(Object principal) {
+  public boolean isPassExpired(LocalDateTime passwordExpireAt) {
     if (!passwordExpireProperties.isEnabled()) {
       return false;
     }
-    if (principal instanceof User) {
-      User user = (User) principal;
-      LocalDateTime passwordExpireAt = user.getPasswordExpireAt();
-      return passwordExpireAt == null || LocalDateTime.now().isAfter(passwordExpireAt);
-    }
-    throw new IllegalArgumentException("仅支持User参数");
+    return passwordExpireAt == null || LocalDateTime.now().isAfter(passwordExpireAt);
   }
 
 }

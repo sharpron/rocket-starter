@@ -7,7 +7,7 @@
       <withJansi>true</withJansi>
       <layout class="ch.qos.logback.classic.PatternLayout">
         <Pattern>
-          %d{ISO8601} [%thread] %magenta(%-5level) %green([%-50.50class]) >>> %cyan(%msg) %n
+          %d{ISO8601} [%thread] %highlight(%-5level) %green([%-50.50class]) >>> %msg %n
         </Pattern>
       </layout>
     </appender>

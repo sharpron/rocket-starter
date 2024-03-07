@@ -12,7 +12,6 @@ import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreato
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import rocket.starter.system.security.PasswordExpireHandler;
 import rocket.starter.system.security.RestFormAuthenticationFilter;
 import rocket.starter.system.security.UserLocker;
 import rocket.starter.system.security.UserRealm;
@@ -34,6 +33,7 @@ public class SecurityConfig {
    * @param userService        userService
    * @param menuService        menuService
    * @param roleService        roleService
+   * @param userLocker         userLocker
    * @param credentialsMatcher credentials matcher
    * @return realm
    */
@@ -42,10 +42,9 @@ public class SecurityConfig {
       UserService userService, MenuService menuService,
       RoleService roleService,
       UserLocker userLocker,
-      CredentialsMatcher credentialsMatcher,
-      PasswordExpireHandler passwordExpireHandler) {
+      CredentialsMatcher credentialsMatcher) {
     final UserRealm userRealm = new UserRealm(userService,
-        menuService, roleService, userLocker, passwordExpireHandler);
+        menuService, roleService, userLocker);
     userRealm.setCredentialsMatcher(credentialsMatcher);
     return userRealm;
   }
@@ -56,7 +55,6 @@ public class SecurityConfig {
    * @param securityManager securityManager
    * @return factory
    */
-  @SuppressWarnings("SpellCheckingInspection")
   @Bean
   public ShiroFilterFactoryBean shiroFilterFactoryBean(SecurityManager securityManager) {
     ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();

@@ -8,7 +8,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.DisabledAccountException;
-import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -40,7 +39,6 @@ public class UserRealm extends AuthorizingRealm {
 
   private final UserLocker userLocker;
 
-  private final PasswordExpireHandler passwordExpireHandler;
 
   @Override
   public boolean supports(AuthenticationToken token) {
@@ -77,10 +75,6 @@ public class UserRealm extends AuthorizingRealm {
       throw new DisabledAccountException();
     }
 
-    if (passwordExpireHandler.isExpired(user)) {
-      throw new ExpiredCredentialsException(String.valueOf(user.getId()));
-    }
-
     // 查询管理部门
     Set<Long> manageDeptIds = roleService.findManageDeptIds(user.getId());
     Set<String> permissions = menuService.findMenusByUserId(user.getId()).stream()
@@ -99,6 +93,7 @@ public class UserRealm extends AuthorizingRealm {
         .deptPath(user.getDept().getPath())
         .manageDeptIds(manageDeptIds)
         .perms(permissions)
+        .passwordExpireAt(user.getPasswordExpireAt())
         .build();
 
     final ByteSource salt = Util.bytes(user.getPasswordSalt());
