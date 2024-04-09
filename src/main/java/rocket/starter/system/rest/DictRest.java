@@ -67,6 +67,7 @@ public class DictRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "字典导出")
   @RequiresPermissions("dictionary:query")
   @Log("字典导出")
   public ResponseEntity<Resource> getAsExcel(DictQuery dictQuery) {

@@ -96,6 +96,7 @@ public class AuthRest {
   }
 
   @GetMapping("is-authenticated")
+  @Operation(summary = "检查当前用户是否认证")
   public ResponseEntity<?> isAuthenticated() {
     boolean authenticated = SecurityUtils.getSubject().isAuthenticated();
     return ResponseEntity.ok(authenticated);

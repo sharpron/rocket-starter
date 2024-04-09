@@ -80,6 +80,7 @@ public class RoleRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "角色导出")
   @RequiresPermissions("role:query")
   @Log("角色导出")
   public ResponseEntity<Resource> getAsExcel(RoleQuery roleQuery) {

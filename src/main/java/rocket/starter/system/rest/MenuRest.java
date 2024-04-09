@@ -94,6 +94,7 @@ public class MenuRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "菜单导出")
   @RequiresPermissions("menu:query")
   @Log("菜单导出")
   public ResponseEntity<Resource> getAsExcel(MenuQuery menuQuery) {

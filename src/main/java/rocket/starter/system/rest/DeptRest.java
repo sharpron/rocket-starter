@@ -70,6 +70,7 @@ public class DeptRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "部门导出")
   @RequiresPermissions("department:query")
   @Log("部门导出")
   public ResponseEntity<Resource> getAsExcel(DeptQuery deptQuery) {

@@ -80,6 +80,7 @@ public class UserRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "用户导出")
   @RequiresPermissions("user:query")
   @Log("用户导出")
   public ResponseEntity<Resource> getAsExcel(UserQuery userQuery) {

@@ -70,6 +70,7 @@ public class DictItemRest {
    * @return 资源
    */
   @GetMapping(params = "datatype=dict")
+  @Operation(summary = "查询字典项")
   public ResponseEntity<List<DictItemSmallDto>> getDictItemsAsDict(
       @RequestParam String dictName) {
     List<DictItem> dictItems = dictItemService.findByDictName(dictName);
@@ -84,6 +85,7 @@ public class DictItemRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "字典项导出")
   @RequiresPermissions("dictionary:query")
   @Log("字典项导出")
   public ResponseEntity<Resource> getAsExcel(DictItemQuery dictItemQuery) {

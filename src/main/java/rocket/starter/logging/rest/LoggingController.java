@@ -58,6 +58,7 @@ public class LoggingController {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "日志导出")
   @RequiresPermissions("log:query")
   @Log("日志导出")
   public ResponseEntity<StreamingResponseBody> getAsExcel(LoggingQuery query) {

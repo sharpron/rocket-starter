@@ -69,6 +69,7 @@ public class PropertyRest {
    * @return 资源
    */
   @GetMapping("excels")
+  @Operation(summary = "导出属性")
   @RequiresPermissions("property:query")
   @Log("导出属性")
   public ResponseEntity<Resource> getAsExcel(PropertyCriteria criteria) {
