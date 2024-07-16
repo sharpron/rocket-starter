@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
@@ -70,11 +69,14 @@ public class AuthRest {
       subject.login(new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword()));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
       if (userLocker.tryLocked(loginDto.getUsername())) {
+        log.warn("Too many login failures, username={}", loginDto.getUsername());
         throw new AppException("登录失败次数过多，请稍候再试");
       } else {
+        log.info("Incorrect username or password, username={}", loginDto.getUsername());
         throw new AppException("用户名或密码错误");
       }
     } catch (LockedAccountException e) {
+      log.warn("Too many login failures, username={}", loginDto.getUsername());
       throw new AppException("登录失败次数过多，请稍候再试");
     }
 
@@ -83,15 +85,18 @@ public class AuthRest {
     // 检查密码是否过期
     if (userService.isPassExpired(principal.getPasswordExpireAt())) {
       if (StringUtils.isBlank(loginDto.getNewPassword())) {
+        log.warn("Password expired, needs to be changed, username={}", loginDto.getUsername());
         // 通知客户端需要携带新密码进行修改
         return ResponseEntity.ok(AuthResultDto.other(Status.PASSWORD_EXPIRE));
       }
 
       userService.forceModifyPass(principal.getUserId(), loginDto.getNewPassword());
+      log.info("Password changed successfully, username={}", loginDto.getUsername());
       // 通知前端使用新密码重新登录
       return ResponseEntity.ok(AuthResultDto.other(Status.MODIFY_EXPIRE_SUCCESS));
     }
 
+    log.info("Login succeeded, username={}", loginDto.getUsername());
     return ResponseEntity.ok(AuthResultDto.ok(SubjectUtils.currentUser()));
   }
 
@@ -132,11 +137,17 @@ public class AuthRest {
     ));
   }
 
-  @Operation(summary = "退出登录")
+  /**
+   * 注销登录.
+   *
+   * @return response
+   */
+  @Operation(summary = "注销登录")
   @DeleteMapping("/tokens")
-  @Log("退出登录")
+  @Log("注销登录")
   public ResponseEntity<?> logout() {
     SecurityUtils.getSubject().logout();
+    log.info("Log out completed, username={}", SubjectUtils.currentUser().getUsername());
     return ResponseEntity.noContent().build();
   }
 

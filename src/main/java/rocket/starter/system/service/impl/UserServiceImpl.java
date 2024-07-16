@@ -65,6 +65,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     final String encoded =
         passwordEncoder.encoded(modifyPassDto.getOldPass(), user.getPasswordSalt());
     if (!encoded.equals(user.getPassword())) {
+      log.info("Password change failed, original password incorrect, userId={}", userId);
       throw new AppException("修改密码失败:原密码错误");
     }
     this.forceModifyPass(userId, modifyPassDto.getNewPass());
@@ -105,7 +106,8 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
   @Override
   protected void beforeDelete(User user) {
     if (User.ADMIN.equals(user.getUsername())) {
-      throw new AppException("不能删除超级管理员");
+      log.info("Cannot delete administrator, id={}", user.getId());
+      throw new AppException("不能删除管理员");
     }
   }
 
