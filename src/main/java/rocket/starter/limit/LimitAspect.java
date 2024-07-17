@@ -2,6 +2,7 @@ package rocket.starter.limit;
 
 import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,6 +24,7 @@ import rocket.starter.logging.utils.IpUtils;
  */
 @Aspect
 @Component
+@Slf4j
 public class LimitAspect {
 
   /**
@@ -94,6 +96,9 @@ public class LimitAspect {
     if (allowThrough(key, limit.periodMills(), limit.maxCount())) {
       return point.proceed();
     }
+
+    log.warn("接口访问频繁, method={},rate={}/{}ms",
+        signature.toShortString(), limit.maxCount(), limit.periodMills());
     throw new AppException("服务器过于繁忙，稍候再试");
   }
 }

@@ -43,6 +43,7 @@ public class DeptServiceImpl extends AbstractService<Dept> implements DeptServic
   @Override
   protected void beforeUpdate(Dept dept) {
     if (dept.getParent() != null && dept.getId().equals(dept.getParent().getId())) {
+      log.info("Cannot consider oneself as a superior department,id={}", dept.getId());
       throw new AppException("不能将自身设置为上级部门");
     }
     dept.setPath(generatePath(dept));
