@@ -124,7 +124,7 @@ public abstract class AbstractService<T extends BaseEntity>
         return predicate;
       }
 
-      Predicate pagePredicate = criteriaBuilder.gt(root.get(BaseEntity.ID), lastId);
+      Predicate pagePredicate = criteriaBuilder.lt(root.get(BaseEntity.ID), lastId);
       if (predicate == null) {
         return pagePredicate;
       }
