@@ -57,6 +57,7 @@ public class QuartzJobManager {
         pause(quartzJob.getId());
       }
     } catch (Exception e) {
+      log.error(e.getLocalizedMessage(), e);
       throw new AppException("创建定时任务失败", e);
     }
   }
@@ -73,6 +74,7 @@ public class QuartzJobManager {
       JobKey jobKey = JobKey.jobKey(JOB_NAME + quartzJob.getId());
       scheduler.triggerJob(jobKey, dataMap);
     } catch (Exception e) {
+      log.error(e.getLocalizedMessage(), e);
       throw new AppException("定时任务执行失败", e);
     }
   }
@@ -91,6 +93,7 @@ public class QuartzJobManager {
     try {
       scheduler.pauseJob(jobKey);
     } catch (SchedulerException e) {
+      log.error(e.getLocalizedMessage(), e);
       throw new AppException("暂停定时任务失败!", e);
     }
   }
@@ -106,6 +109,7 @@ public class QuartzJobManager {
       scheduler.pauseJob(jobKey);
       scheduler.deleteJob(jobKey);
     } catch (SchedulerException e) {
+      log.error(e.getLocalizedMessage(), e);
       throw new AppException("删除定时任务失败!", e);
     }
   }
@@ -120,6 +124,7 @@ public class QuartzJobManager {
     try {
       scheduler.resumeJob(jobKey);
     } catch (SchedulerException e) {
+      log.error(e.getLocalizedMessage(), e);
       throw new AppException("恢复定时任务失败!", e);
     }
   }
@@ -145,7 +150,8 @@ public class QuartzJobManager {
 
       scheduler.rescheduleJob(triggerKey, trigger);
     } catch (SchedulerException e) {
-      e.printStackTrace();
+      log.error(e.getLocalizedMessage(), e);
+      throw new AppException("更新cron表达式失败", e);
     }
   }
 }
