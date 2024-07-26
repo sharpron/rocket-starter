@@ -146,8 +146,9 @@ public class AuthRest {
   @DeleteMapping("/tokens")
   @Log("注销登录")
   public ResponseEntity<?> logout() {
+    String username = SubjectUtils.currentUser().getUsername();
     SecurityUtils.getSubject().logout();
-    log.info("Log out completed, username={}", SubjectUtils.currentUser().getUsername());
+    log.info("Log out completed, username={}", username);
     return ResponseEntity.noContent().build();
   }
 
