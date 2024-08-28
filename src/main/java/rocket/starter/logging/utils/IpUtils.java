@@ -101,6 +101,10 @@ public class IpUtils {
    * @return 所在位置
    */
   public static String ip2Region(String ip) {
+    // 处理ipv6格式的loopback地址
+    if ("0:0:0:0:0:0:0:1".equals(ip)) {
+      return "内网IP";
+    }
     try {
       return THREAD_LOCAL.get().search(ip);
     } catch (Exception e) {
