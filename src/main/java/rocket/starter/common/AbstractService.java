@@ -1,9 +1,12 @@
 package rocket.starter.common;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.criteria.Predicate;
-import lombok.RequiredArgsConstructor;
+import javax.transaction.Transactional;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +20,6 @@ import rocket.starter.common.query.WhereBuilder;
  *
  * @author ron 2021/1/1
  */
-@RequiredArgsConstructor
 public abstract class AbstractService<T extends BaseEntity>
     implements BaseService<T> {
 
@@ -29,6 +31,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param t t
    */
   @Override
+  @Transactional
   public void create(T t) {
     if (t.getId() != null) {
       throw new IllegalArgumentException("创建时不能指定id");
@@ -52,6 +55,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param t t
    */
   @Override
+  @Transactional
   public void update(T t) {
     if (t.getId() == null) {
       throw new IllegalArgumentException("修改时必须指定id");
@@ -76,6 +80,7 @@ public abstract class AbstractService<T extends BaseEntity>
    * @param id id
    */
   @Override
+  @Transactional
   public void deleteById(Long id) {
     getBaseRepo().findById(id).ifPresent(t -> {
       beforeDelete(t);
@@ -93,6 +98,7 @@ public abstract class AbstractService<T extends BaseEntity>
   }
 
   @Override
+  @Transactional
   public void deleteByIds(Set<Long> ids) {
     BaseRepo<T> baseRepo = getBaseRepo();
     List<T> entities = baseRepo.findAllById(ids);
@@ -166,6 +172,24 @@ public abstract class AbstractService<T extends BaseEntity>
    */
   @Override
   public final T findById(Long id) {
-    return getBaseRepo().findById(id).orElseThrow(() -> new AppException("数据不存在id：" + id));
+    return getBaseRepo().findById(id)
+        .orElseThrow(() -> new AppException(
+            "数据类型[" + getEntityType() + "]不存在id：" + id + "，请刷新页面后重试"));
+  }
+
+  /**
+   * 获取绑定的实体类型.
+   *
+   * @return 实体类型
+   */
+  private String getEntityType() {
+    Class<?> clazz = AopProxyUtils.ultimateTargetClass(this);
+    Type type = clazz.getGenericSuperclass();
+    if (type instanceof ParameterizedType) {
+      ParameterizedType parameterizedType = (ParameterizedType) type;
+      Type actualType = parameterizedType.getActualTypeArguments()[0];
+      return actualType.getTypeName();
+    }
+    return null;
   }
 }
