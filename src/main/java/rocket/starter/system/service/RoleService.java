@@ -11,5 +11,7 @@ import rocket.starter.system.domain.Role;
  */
 public interface RoleService extends BaseService<Role> {
 
-  Set<Long> findManageDeptIds(Long userId);
+  Set<Long> findRolesByUserId(Long userId);
+
+  Set<Long> findManageDeptIds(Set<Long> roleIds);
 }

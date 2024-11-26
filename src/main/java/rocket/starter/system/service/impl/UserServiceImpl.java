@@ -140,6 +140,7 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
         .deptId(user.getDept().getId())
         .deptName(user.getDept().getName())
         .deptPath(user.getDept().getPath())
+        .roleIds(principal.getRoleIds())
         .manageDeptIds(principal.getManageDeptIds())
         .perms(principal.getPerms())
         .passwordExpireAt(user.getPasswordExpireAt())

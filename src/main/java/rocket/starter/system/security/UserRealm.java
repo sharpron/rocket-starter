@@ -39,7 +39,6 @@ public class UserRealm extends AuthorizingRealm {
 
   private final UserLocker userLocker;
 
-
   @Override
   public boolean supports(AuthenticationToken token) {
     return token instanceof UsernamePasswordToken;
@@ -67,38 +66,40 @@ public class UserRealm extends AuthorizingRealm {
       throw new LockedAccountException();
     }
 
-    final User user = userService
-        .findByUsername(username)
-        .orElseThrow(UnknownAccountException::new);
+    final User user =
+        userService.findByUsername(username).orElseThrow(UnknownAccountException::new);
 
     if (Boolean.TRUE.equals(user.getDisabled())) {
       throw new DisabledAccountException();
     }
 
-    // 查询管理部门
-    Set<Long> manageDeptIds = roleService.findManageDeptIds(user.getId());
-    Set<String> permissions = menuService.findMenusByUserId(user.getId()).stream()
-        .map(Menu::getPerm)
-        .filter(Objects::nonNull)
-        .collect(Collectors.toSet());
+    Set<Long> rolesByUserId = roleService.findRolesByUserId(user.getId());
 
-    Principal principal = Principal.builder()
-        .username(user.getUsername())
-        .nickname(user.getNickname())
-        .mobile(user.getMobile())
-        .email(user.getEmail())
-        .userId(user.getId())
-        .deptId(user.getDept().getId())
-        .deptName(user.getDept().getName())
-        .deptPath(user.getDept().getPath())
-        .manageDeptIds(manageDeptIds)
-        .perms(permissions)
-        .passwordExpireAt(user.getPasswordExpireAt())
-        .build();
+    // 查询管理部门
+    Set<Long> manageDeptIds = roleService.findManageDeptIds(rolesByUserId);
+    Set<String> permissions =
+        menuService.findMenusByUserId(user.getId()).stream()
+            .map(Menu::getPerm)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+    Principal principal =
+        Principal.builder()
+            .username(user.getUsername())
+            .nickname(user.getNickname())
+            .mobile(user.getMobile())
+            .email(user.getEmail())
+            .userId(user.getId())
+            .deptId(user.getDept().getId())
+            .deptName(user.getDept().getName())
+            .deptPath(user.getDept().getPath())
+            .roleIds(rolesByUserId)
+            .manageDeptIds(manageDeptIds)
+            .perms(permissions)
+            .passwordExpireAt(user.getPasswordExpireAt())
+            .build();
 
     final ByteSource salt = Util.bytes(user.getPasswordSalt());
     return new SimpleAuthenticationInfo(principal, user.getPassword(), salt, getName());
   }
-
-
 }

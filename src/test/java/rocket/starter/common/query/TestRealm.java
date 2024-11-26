@@ -1,6 +1,7 @@
 package rocket.starter.common.query;
 
 import java.util.Collections;
+import java.util.Set;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -46,18 +47,20 @@ class TestRealm extends AuthorizingRealm {
   @Override
   protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken)
       throws AuthenticationException {
-    Principal principal = Principal.builder()
-        .username("ron")
-        .nickname("ron")
-        .mobile("***********")
-        .email("***********")
-        .userId(1L)
-        .deptId(1L)
-        .deptName("***")
-        .deptPath("***")
-        .manageDeptIds(Collections.emptySet())
-        .perms(Collections.emptySet())
-        .build();
+    Principal principal =
+        Principal.builder()
+            .username("ron")
+            .nickname("ron")
+            .mobile("***********")
+            .email("***********")
+            .userId(1L)
+            .deptId(1L)
+            .deptName("***")
+            .deptPath("***")
+            .roleIds(Set.of(1L))
+            .manageDeptIds(Collections.emptySet())
+            .perms(Collections.emptySet())
+            .build();
 
     return new SimpleAuthenticationInfo(principal, null, getName());
   }

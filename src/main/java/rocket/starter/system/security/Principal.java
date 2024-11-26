@@ -25,6 +25,7 @@ public class Principal implements java.security.Principal, Serializable {
   String deptName;
   String deptPath;
   Set<String> perms;
+  Set<Long> roleIds;
   Set<Long> manageDeptIds;
   LocalDateTime passwordExpireAt;
 
