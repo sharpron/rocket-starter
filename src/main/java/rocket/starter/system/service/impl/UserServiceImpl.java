@@ -2,6 +2,7 @@ package rocket.starter.system.service.impl;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import javax.transaction.Transactional;
@@ -37,7 +38,6 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
   private final PasswordExpireProperties passwordExpireProperties;
 
-
   @Override
   protected BaseRepo<User> getBaseRepo() {
     return userRepo;
@@ -45,10 +45,29 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
   @Override
   protected void beforeCreate(User user) {
+    check(user);
     final String salt = randomSalt();
     final String encryptPass = passwordEncoder.encoded(user.getPassword(), salt);
     user.setPasswordSalt(salt);
     user.setPassword(encryptPass);
+  }
+
+  private void check(User user) {
+    Long idByUsername = userRepo.findIdByUsername(user.getUsername());
+    if (!Objects.equals(idByUsername, user.getId())) {
+      throw new AppException("用户名已经存在");
+    }
+
+    Long idByNickname = userRepo.findIdByNickname(user.getNickname());
+    if (!Objects.equals(idByNickname, user.getId())) {
+      throw new AppException("昵称已经存在");
+    }
+  }
+
+  @Override
+  protected void beforeUpdate(User user) {
+    super.beforeUpdate(user);
+    check(user);
   }
 
   @Override
@@ -83,7 +102,6 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
       LocalDateTime passwordExpireAt = LocalDateTime.now().plus(lifetime);
       userRepo.updatePassLifetime(userId, passwordExpireAt);
     }
-
   }
 
   @Override
@@ -139,5 +157,4 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
     }
     return passwordExpireAt == null || LocalDateTime.now().isAfter(passwordExpireAt);
   }
-
 }

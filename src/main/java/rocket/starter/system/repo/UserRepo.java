@@ -27,9 +27,9 @@ public interface UserRepo extends BaseRepo<User> {
   /**
    * 更新用户密码.
    *
-   * @param userId   用户ID
+   * @param userId 用户ID
    * @param password 密码
-   * @param salt     密码盐
+   * @param salt 密码盐
    */
   @Query("update User set password=?2, passwordSalt=?3 where id=?1")
   @Modifying
@@ -38,10 +38,28 @@ public interface UserRepo extends BaseRepo<User> {
   /**
    * 更新密码有效期.
    *
-   * @param userId           用户ID
+   * @param userId 用户ID
    * @param passwordExpireAt 密码过期时间
    */
   @Query("update User set passwordExpireAt=?2 where id=?1")
   @Modifying
   void updatePassLifetime(Long userId, LocalDateTime passwordExpireAt);
+
+  /**
+   * 通过用户名查询id.
+   *
+   * @param username 用户名
+   * @return 用户id
+   */
+  @Query("select id from User where username=?1")
+  Long findIdByUsername(String username);
+
+  /**
+   * 通过昵称查询id.
+   *
+   * @param nickname 昵称
+   * @return 用户id
+   */
+  @Query("select id from User where nickname=?1")
+  Long findIdByNickname(String nickname);
 }
