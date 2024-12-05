@@ -23,4 +23,16 @@ public abstract class BaseDto {
 
   private LocalDateTime modifyTime;
 
+  /**
+   * 设置base dto字段.
+   *
+   * @param baseEntity 实体
+   */
+  protected void setBase(BaseEntity baseEntity) {
+    this.id = baseEntity.getId();
+    this.createBy = baseEntity.getCreateBy();
+    this.createTime = baseEntity.getCreateTime();
+    this.modifyBy = baseEntity.getModifyBy();
+    this.modifyTime = baseEntity.getModifyTime();
+  }
 }
