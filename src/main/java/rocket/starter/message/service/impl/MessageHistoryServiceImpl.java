@@ -41,7 +41,7 @@ public class MessageHistoryServiceImpl extends AbstractService<MessageHistory> i
     LocalDateTime now = LocalDateTime.now();
 
     MessageHistory messageHistory = new MessageHistory();
-    messageHistory.setSender(SubjectUtils.currentUser().getUsername());
+    messageHistory.setSender(SubjectUtils.currentUserNameOrSystem());
     messageHistory.setReceiver(RECEIVER_ALL);
     messageHistory.setType(MessageType.PUBLISH);
     messageHistory.setContent(publishMessage.getContent());
@@ -57,7 +57,7 @@ public class MessageHistoryServiceImpl extends AbstractService<MessageHistory> i
     LocalDateTime now = LocalDateTime.now();
 
     MessageHistory messageHistory = new MessageHistory();
-    messageHistory.setSender(SubjectUtils.currentUser().getUsername());
+    messageHistory.setSender(SubjectUtils.currentUserNameOrSystem());
     messageHistory.setReceiver(chatMessage.getReceiver());
     messageHistory.setType(MessageType.SEND);
     messageHistory.setContent(chatMessage.getContent());

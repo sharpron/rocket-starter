@@ -17,11 +17,8 @@ import org.apache.shiro.subject.support.DefaultSubjectContext;
 @Slf4j
 public class SubjectUtils {
 
-  /**
-   * Disable the constructor.
-   */
-  private SubjectUtils() {
-  }
+  /** Disable the constructor. */
+  private SubjectUtils() {}
 
   /**
    * Get the login of the current user.
@@ -30,6 +27,15 @@ public class SubjectUtils {
    */
   public static Optional<String> getCurrentUsername() {
     return getCurrentUser().map(Principal::getUsername);
+  }
+
+  /**
+   * 获取当前认证的用户名，如果没有则返回System.
+   *
+   * @return 认证的用户 or 系统
+   */
+  public static String currentUserNameOrSystem() {
+    return SubjectUtils.getCurrentUsername().orElse("System");
   }
 
   public static Optional<Long> getCurrentDeptId() {
@@ -48,14 +54,14 @@ public class SubjectUtils {
   /**
    * update user principal.
    *
-   * @param subject   subject
+   * @param subject subject
    * @param principal principal
    */
   public static void updatePrincipal(Subject subject, Principal principal) {
     if (((Principal) subject.getPrincipal()).getUserId().equals(principal.getUserId())) {
       Session session = subject.getSession();
-      PrincipalCollection pc = (PrincipalCollection) session.getAttribute(
-          DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
+      PrincipalCollection pc =
+          (PrincipalCollection) session.getAttribute(DefaultSubjectContext.PRINCIPALS_SESSION_KEY);
 
       if (!pc.isEmpty()) {
         String realName = pc.getRealmNames().iterator().next();

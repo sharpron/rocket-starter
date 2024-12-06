@@ -28,9 +28,9 @@ public class MessageHistoryMapper {
     messageSmallDto.setContent(messageHistory.getContent());
     messageSmallDto.setType(messageHistory.getType());
     messageSmallDto.setSendTime(messageHistory.getSendTime());
-    String username = SubjectUtils.currentUser().getUsername();
 
     if (messageHistory.getReads() != null) {
+      String username = SubjectUtils.currentUserNameOrSystem();
       messageSmallDto.setRead(messageHistory.getReads().stream()
           .map(ReadInfo::getUser).anyMatch(e -> Objects.equals(e, username)));
     }
