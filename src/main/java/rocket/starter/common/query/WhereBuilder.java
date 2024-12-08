@@ -2,6 +2,7 @@ package rocket.starter.common.query;
 
 import java.lang.reflect.Field;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -32,16 +33,13 @@ import rocket.starter.system.security.SubjectUtils;
  */
 public class WhereBuilder {
 
-  /**
-   * Prevent external instantiation.
-   */
-  private WhereBuilder() {
-  }
+  /** Prevent external instantiation. */
+  private WhereBuilder() {}
 
   /**
    * 构建条件.
    *
-   * @param o   对象
+   * @param o 对象
    * @param <T> 对象的范性
    * @return 条件
    */
@@ -61,15 +59,16 @@ public class WhereBuilder {
     };
   }
 
-  private static <T> Predicate buildPredicate(Field e, Object targetObject,
-      CriteriaBuilder criteriaBuilder, Root<T> root) {
+  private static <T> Predicate buildPredicate(
+      Field e, Object targetObject, CriteriaBuilder criteriaBuilder, Root<T> root) {
     final Where where = e.getAnnotation(Where.class);
     final String rootName = where.root().isEmpty() ? e.getName() : where.root();
     e.setAccessible(true);
     Object fieldVal = ReflectionUtils.getField(e, targetObject);
     if (fieldVal == null) {
-      return where.ignoreNull() ? null :
-          criteriaBuilder.isNull(WhereBuilder.getPath(rootName, root));
+      return where.ignoreNull()
+          ? null
+          : criteriaBuilder.isNull(WhereBuilder.getPath(rootName, root));
     }
 
     switch (where.type()) {
@@ -93,9 +92,21 @@ public class WhereBuilder {
         return rangePredicate(fieldVal, criteriaBuilder, rootName, root, value -> value);
       case betweenTime:
         ZoneId zoneId = ZoneId.systemDefault();
-        return rangePredicate(fieldVal, criteriaBuilder, rootName, root, value ->
-            LocalDateTime.ofInstant(Instant.ofEpochMilli(value), zoneId)
-        );
+        Class<?> javaType = WhereBuilder.getPath(rootName, root).getJavaType();
+        if (javaType == LocalDate.class) {
+          return rangePredicate(
+              fieldVal,
+              criteriaBuilder,
+              rootName,
+              root,
+              value -> LocalDate.ofInstant(Instant.ofEpochMilli(value), zoneId));
+        }
+        return rangePredicate(
+            fieldVal,
+            criteriaBuilder,
+            rootName,
+            root,
+            value -> LocalDateTime.ofInstant(Instant.ofEpochMilli(value), zoneId));
       case in:
         return criteriaBuilder.in(WhereBuilder.getPath(rootName, root)).value(fieldVal);
       default:
@@ -106,13 +117,13 @@ public class WhereBuilder {
   /**
    * 范围查询条件.
    *
-   * @param fieldVal        值 [start, end]
+   * @param fieldVal 值 [start, end]
    * @param criteriaBuilder criteriaBuilder
-   * @param rootName        rootName
-   * @param root            root
-   * @param valueConverter  valueConverter
-   * @param <T>             type
-   * @param <Y>             comparable value type.
+   * @param rootName rootName
+   * @param root root
+   * @param valueConverter valueConverter
+   * @param <T> type
+   * @param <Y> comparable value type.
    * @return 条件
    */
   private static <T, Y extends Comparable<Y>> Predicate rangePredicate(
@@ -129,8 +140,10 @@ public class WhereBuilder {
     Long min = numbers.get(0);
     Long max = numbers.get(1);
     if (min != null && max != null) {
-      return criteriaBuilder.between(WhereBuilder.getPath(rootName, root),
-          valueConverter.apply(min), valueConverter.apply(max));
+      return criteriaBuilder.between(
+          WhereBuilder.getPath(rootName, root),
+          valueConverter.apply(min),
+          valueConverter.apply(max));
     }
 
     if (min != null) {
@@ -148,9 +161,9 @@ public class WhereBuilder {
    * Analysis of path.
    *
    * @param rootName root name
-   * @param root     root
-   * @param <Y>      type of root
-   * @param <T>      type of entity
+   * @param root root
+   * @param <Y> type of root
+   * @param <T> type of entity
    * @return Path
    */
   @SuppressWarnings("unchecked")
@@ -166,18 +179,19 @@ public class WhereBuilder {
   /**
    * Convert parameters to numeric types.
    *
-   * @param o   对象
+   * @param o 对象
    * @param <T> entity type
    * @return Specification
    */
   public static <T> Specification<T> buildSpecWithDept(Object o) {
     final Principal principal = SubjectUtils.currentUser();
-    final Specification<T> deptSpecification = (root, query, builder) -> {
-      final Join<Role, Dept> deptJoin = root.join("dept");
-      return builder.or(
-          builder.equal(deptJoin.get(BaseEntity.ID), principal.getDeptId()),
-          builder.like(deptJoin.get("path"), principal.getDeptPath() + "%"));
-    };
+    final Specification<T> deptSpecification =
+        (root, query, builder) -> {
+          final Join<Role, Dept> deptJoin = root.join("dept");
+          return builder.or(
+              builder.equal(deptJoin.get(BaseEntity.ID), principal.getDeptId()),
+              builder.like(deptJoin.get("path"), principal.getDeptPath() + "%"));
+        };
     return deptSpecification.and(buildSpec(o));
   }
 
@@ -212,5 +226,4 @@ public class WhereBuilder {
     }
     throw new AppException(String.format("只支持Collection<Long>或者Long[]类型: %s", value));
   }
-
 }
