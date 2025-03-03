@@ -25,14 +25,12 @@ import rocket.starter.system.service.FileService;
 @Service
 public class LocalFileService implements FileService {
 
-
-  private final String uploadDirectory;
+  private final Path uploadPath;
 
   @Autowired
   public LocalFileService(@Value("${upload-directory}") String uploadDirectory) {
-    this.uploadDirectory = uploadDirectory;
+    this.uploadPath = Paths.get(uploadDirectory).toAbsolutePath().normalize();
   }
-
 
   @Override
   public StorageResult storage(MultipartFile file) {
@@ -52,8 +50,24 @@ public class LocalFileService implements FileService {
     }
   }
 
+  /**
+   * 获取完整路径.
+   *
+   * @param relativePath relativePath
+   * @return 完整路径
+   */
+  private Path getFullPath(String relativePath) {
+    Path targetPath = uploadPath.resolve(relativePath).normalize();
+
+    // 确保路径在上传路径内
+    if (!targetPath.startsWith(uploadPath)) {
+      throw new SecurityException("非法访问: " + relativePath);
+    }
+    return targetPath;
+  }
+
   private Path ensurePathExists(String relativePath) {
-    Path path = Paths.get(uploadDirectory, relativePath);
+    Path path = getFullPath(relativePath);
     if (!Files.exists(path)) {
       try {
         return Files.createDirectories(path);
@@ -77,19 +91,15 @@ public class LocalFileService implements FileService {
 
   @Override
   public Resource getResource(String path) {
-    return new FileSystemResource(Paths.get(uploadDirectory, path));
+    return new FileSystemResource(getFullPath(path));
   }
 
   @Override
   public void delete(String path) {
     try {
-      Files.delete(Paths.get(uploadDirectory, path));
+      Files.delete(getFullPath(path));
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
-  }
-
-  public static void main(String[] args) throws IOException {
-    Files.createDirectory(Paths.get("./files/"));
   }
 }
