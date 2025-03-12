@@ -4,6 +4,7 @@ import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.UnauthenticatedException;
 import org.apache.shiro.authz.UnauthorizedException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import rocket.starter.common.AppException;
 import rocket.starter.common.ErrorInfo;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Global Exception handlers.
@@ -56,6 +59,11 @@ public class GlobalExceptionHandler {
   @ExceptionHandler
   public ResponseEntity<ErrorInfo> handleUnauthorized(UnauthorizedException e) {
     return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ErrorInfo(e.getMessage()));
+  }
+
+  @ExceptionHandler(DataIntegrityViolationException.class)
+  public ResponseEntity<ErrorInfo> handDataIntegrityViolation() {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorInfo("数据存在依赖，无法更新或者删除"));
   }
 
   /**
