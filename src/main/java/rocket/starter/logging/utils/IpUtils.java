@@ -91,7 +91,7 @@ public class IpUtils {
    * @return 如果是非法的地址返回true, 否则返回false
    */
   private static boolean isInvalid(String ip) {
-    return ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip);
+    return ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip);
   }
 
   /**
@@ -105,8 +105,10 @@ public class IpUtils {
     if ("0:0:0:0:0:0:0:1".equals(ip)) {
       return "内网IP";
     }
+    // ip有可能经过代理
+    String[] ipList = ip.split(",\\s*");
     try {
-      return THREAD_LOCAL.get().search(ip);
+      return THREAD_LOCAL.get().search(ipList[0]);
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
