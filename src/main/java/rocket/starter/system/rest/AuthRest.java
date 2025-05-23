@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.subject.Subject;
 import org.springframework.http.ResponseEntity;
@@ -69,15 +66,16 @@ public class AuthRest {
       subject.login(new UsernamePasswordToken(loginDto.getUsername(), loginDto.getPassword()));
     } catch (UnknownAccountException | IncorrectCredentialsException e) {
       if (userLocker.tryLocked(loginDto.getUsername())) {
-        log.warn("Too many login failures, username={}", loginDto.getUsername());
-        throw new AppException("登录失败次数过多，请稍候再试");
+        manyLogFails(loginDto.getUsername());
       } else {
         log.info("Incorrect username or password, username={}", loginDto.getUsername());
         throw new AppException("用户名或密码错误");
       }
     } catch (LockedAccountException e) {
-      log.warn("Too many login failures, username={}", loginDto.getUsername());
-      throw new AppException("登录失败次数过多，请稍候再试");
+      manyLogFails(loginDto.getUsername());
+    } catch (DisabledAccountException e) {
+      log.warn("Account has been disabled, username={}", loginDto.getUsername());
+      throw new AppException("账户已被禁用");
     }
 
     Principal principal = (Principal) subject.getPrincipal();
@@ -98,6 +96,11 @@ public class AuthRest {
 
     log.info("Login succeeded, username={}", loginDto.getUsername());
     return ResponseEntity.ok(AuthResultDto.ok(SubjectUtils.currentUser()));
+  }
+
+  private static void manyLogFails(String username) {
+    log.warn("Too many login failures, username={}", username);
+    throw new AppException("登录失败次数过多，请稍候再试");
   }
 
   @GetMapping("is-authenticated")
