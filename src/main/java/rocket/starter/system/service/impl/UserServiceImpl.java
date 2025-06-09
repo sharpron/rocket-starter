@@ -54,12 +54,12 @@ public class UserServiceImpl extends AbstractService<User> implements UserServic
 
   private void check(User user) {
     Long idByUsername = userRepo.findIdByUsername(user.getUsername());
-    if (!Objects.equals(idByUsername, user.getId())) {
+    if (idByUsername != null && !idByUsername.equals(user.getId())) {
       throw new AppException("用户名已经存在");
     }
 
     Long idByNickname = userRepo.findIdByNickname(user.getNickname());
-    if (!Objects.equals(idByNickname, user.getId())) {
+    if (idByNickname != null && !idByNickname.equals(user.getId())) {
       throw new AppException("昵称已经存在");
     }
   }
