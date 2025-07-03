@@ -42,8 +42,6 @@ public class CaptchaServiceImpl implements CaptchaService {
     if (!oldCode.equalsIgnoreCase(code)) {
       throw new AppException("验证码错误");
     }
-    // 清空已经成功验证的验证码
-    redisTemplate.delete(CAPTCHA_CACHE_KEY + key);
   }
 
   @Override
