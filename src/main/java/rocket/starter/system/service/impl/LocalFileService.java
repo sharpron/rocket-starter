@@ -14,6 +14,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import rocket.starter.common.AppException;
 import rocket.starter.system.dto.StorageResult;
 import rocket.starter.system.service.FileService;
 
@@ -91,7 +92,11 @@ public class LocalFileService implements FileService {
 
   @Override
   public Resource getResource(String path) {
-    return new FileSystemResource(getFullPath(path));
+    FileSystemResource fileSystemResource = new FileSystemResource(getFullPath(path));
+    if (fileSystemResource.exists()) {
+      return fileSystemResource;
+    }
+    throw new AppException("文件不存在: " + path);
   }
 
   @Override
